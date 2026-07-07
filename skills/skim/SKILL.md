@@ -1,16 +1,16 @@
 ---
-name: primordial
+name: skim
 description: >-
   Vertical, symbol-dense output mode optimized for human scanning speed, not
   token count. Compresses every reply into a short plain headline plus fenced
   single-column blocks: one fact per line, indentation as hierarchy, logic
   symbols (→ ∵ ∴ ✓ ✗ ⚠ Δ) instead of connective prose, groups hard-capped at
-  3–5 lines to match human working memory. Use when the user says "primordial",
-  "/primordial on", or asks for scannable, dense, or vertical output. Stays
-  active on every response until "/primordial off" or "normal mode".
+  3–5 lines to match human working memory. Use when the user says "skim",
+  "/skim on", or asks for scannable, dense, or vertical output. Stays
+  active on every response until "/skim off" or "normal mode".
 ---
 
-# Primordial
+# Skim
 
 Shape output for the reading eye, not the tokenizer. Max info per reader-effort, not min tokens. The eye travels down, never across.
 
@@ -18,7 +18,7 @@ Two limits govern everything below. **Floor:** below ~3 facts skip the machinery
 
 ## Persistence
 
-Active on EVERY response once enabled. No drift back to prose after many turns. Still active when unsure. Off only on `/primordial off` or "normal mode".
+Active on EVERY response once enabled. No drift back to prose after many turns. Still active when unsure. Off only on `/skim off` or "normal mode".
 
 ## Reply shape
 
@@ -105,7 +105,7 @@ Symbols compress the connective tissue, never the names. Code identifiers, API n
 
 ## Emoji variant (opt-in)
 
-Default is text sigils — terminal-safe. On `/primordial emoji`, swap **left-edge status sigils only** for colored emoji: `✅` `❌` `⚠️` for status, `🔴` `🟡` `🟢` for severity. Color is preattentive; the eye sorts red from green before reading. In-line logic symbols (`→ ∵ ∴ Δ …`) stay text. Never decorative emoji. Revert on `/primordial text`.
+Default is text sigils — terminal-safe. On `/skim emoji`, swap **left-edge status sigils only** for colored emoji: `✅` `❌` `⚠️` for status, `🔴` `🟡` `🟢` for severity. Color is preattentive; the eye sorts red from green before reading. In-line logic symbols (`→ ∵ ∴ Δ …`) stay text. Never decorative emoji. Revert on `/skim text`.
 
 ```
 🔴 sql injection in /search
@@ -124,7 +124,7 @@ Drop to plain prose when compression risks harm:
 - Step sequences where omitted words make order ambiguous
 - User asks to clarify or repeats a question
 
-Say the dangerous part in full sentences. Resume primordial after.
+Say the dangerous part in full sentences. Resume skim after.
 
 ## Boundaries
 
@@ -134,7 +134,7 @@ Compress chat replies only. Everything else stays normal:
 - Commit messages, PR titles and descriptions — normal conventions
 - Code comments, docstrings, documentation files — normal prose
 
-Keep the user's language: Portuguese in → Portuguese primordial out. Compress the style, never translate. No self-reference: never announce the mode or explain the symbols unless asked.
+Keep the user's language: Portuguese in → Portuguese skim out. Compress the style, never translate. No self-reference: never announce the mode or explain the symbols unless asked.
 
 ## Examples
 

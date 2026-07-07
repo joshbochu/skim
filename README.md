@@ -1,10 +1,10 @@
-# primordial
+# skim
 
 > read down, not across
 
 Output shaped for the eye, not the tokenizer.
 
-Primordial is a skill for Claude Code, Cursor, Pi, and any agent that reads a `SKILL.md`. It rewires how your agent answers: one plain headline, then vertical, symbol-dense blocks — one fact per line, indentation as hierarchy, logic symbols instead of connective prose, and never more than 3–5 items in a group, because that is all a human working memory holds.
+Skim is a skill for Claude Code, Cursor, Pi, and any agent that reads a `SKILL.md`. It rewires how your agent answers: one plain headline, then vertical, symbol-dense blocks — one fact per line, indentation as hierarchy, logic symbols instead of connective prose, and never more than 3–5 items in a group, because that is all a human working memory holds.
 
 Not fewer tokens. Fewer eye movements.
 
@@ -14,7 +14,7 @@ Not fewer tokens. Fewer eye movements.
 
 > I've updated the authentication flow. I modified three files: auth.ts to add token refresh, session.ts to extend expiry handling, and api.ts to retry on 401. All 42 tests pass. Note that I didn't touch the mobile client, which may need the same fix.
 
-**Primordial:**
+**Skim:**
 
 Auth flow updated — token refresh added.
 
@@ -37,9 +37,9 @@ Same information. Your eye makes one fixation per fact, travels one direction, a
 
 ## Not caveman
 
-[caveman](https://github.com/juliusbrussee/caveman) shrinks what the agent *says* — output tokens down 65%. Primordial shapes what remains for the human *reading* it. Different objective function:
+[caveman](https://github.com/juliusbrussee/caveman) shrinks what the agent *says* — output tokens down 65%. Skim shapes what remains for the human *reading* it. Different objective function:
 
-|  | caveman | primordial |
+|  | caveman | skim |
 |---|---|---|
 | optimizes | output tokens | scanning speed |
 | unit of design | the token | the line |
@@ -47,7 +47,7 @@ Same information. Your eye makes one fixation per fact, travels one direction, a
 | layout | horizontal fragments | vertical, indented |
 | structure | decorative, dropped | the whole point |
 
-Both keep code, commands, and error strings byte-exact. Use caveman when the bill hurts. Use primordial when your eyes do. They compose: caveman decides how little to say, primordial decides what shape it lands in.
+Both keep code, commands, and error strings byte-exact. Use caveman when the bill hurts. Use skim when your eyes do. They compose: caveman decides how little to say, skim decides what shape it lands in.
 
 ## The rules
 
@@ -104,7 +104,7 @@ No legend needed at read time — nothing here is exotic past a math class. The 
 
 ### Emoji mode (opt-in)
 
-`/primordial emoji` swaps left-edge status sigils for colored emoji — `✅` `❌` `⚠️`, and `🔴` `🟡` `🟢` for severity. Color is preattentive: your eye sorts red from green before it reads a single word. In-line logic symbols stay text. `/primordial text` reverts. Default is text — terminals render it everywhere.
+`/skim emoji` swaps left-edge status sigils for colored emoji — `✅` `❌` `⚠️`, and `🔴` `🟡` `🟢` for severity. Color is preattentive: your eye sorts red from green before it reads a single word. In-line logic symbols stay text. `/skim text` reverts. Default is text — terminals render it everywhere.
 
 ```
 🔴 sql injection in /search
@@ -139,36 +139,36 @@ symbols over connectives
 **Skills registry (Cursor, Claude Code, Cline, 40+ agents):**
 
 ```bash
-npx skills add joshbochu/primordial
+npx skills add joshbochu/skim
 ```
 
 **Manual — Cursor:**
 
 ```bash
-git clone https://github.com/joshbochu/primordial ~/dev/primordial
-ln -s ~/dev/primordial/skills/primordial ~/.cursor/skills/primordial
+git clone https://github.com/joshbochu/skim ~/dev/skim
+ln -s ~/dev/skim/skills/skim ~/.cursor/skills/skim
 ```
 
 **Manual — Claude Code:**
 
 ```bash
-ln -s ~/dev/primordial/skills/primordial ~/.claude/skills/primordial
+ln -s ~/dev/skim/skills/skim ~/.claude/skills/skim
 ```
 
-**Pi:** works with any extension that toggles skills as config — `/primordial on` persists across sessions until `/primordial off`.
+**Pi:** works with any extension that toggles skills as config — `/skim on` persists across sessions until `/skim off`.
 
 ## Toggle
 
 ```
-/primordial on      activate · persists all session
-/primordial off     back to normal prose
-/primordial emoji   colored status anchors
-/primordial text    terminal-safe sigils (default)
+/skim on      activate · persists all session
+/skim off     back to normal prose
+/skim emoji   colored status anchors
+/skim text    terminal-safe sigils (default)
 ```
 
 ## Escape hatch
 
-Primordial drops to full sentences — on its own — for security warnings, irreversible-action confirmations, and anywhere compression would make step order ambiguous. Dense is the default; unambiguous is the law.
+Skim drops to full sentences — on its own — for security warnings, irreversible-action confirmations, and anywhere compression would make step order ambiguous. Dense is the default; unambiguous is the law.
 
 ## License
 
