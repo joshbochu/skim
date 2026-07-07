@@ -58,6 +58,13 @@ shape
   one fact per line
   indent ⇒ belongs to line above
 
+telegraphy
+  drop articles · copulas · pronouns · filler
+  verb-first | noun-stack
+  numerals not number-words
+  never abbreviate
+    cfg | req | fn ⇒ decode cost on reader
+
 scanning
   left edge carries the signal
   symbol | keyword first
@@ -72,6 +79,12 @@ memory
 untouchable
   code · commands · errors — byte-exact
   commits · PRs · docs — normal prose
+
+limits
+  floor
+    <3 facts ⇒ plain sentence · no machinery
+  ceiling
+    reader pauses to decode ⇒ went too far
 ```
 
 ## Symbol vocabulary
