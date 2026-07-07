@@ -48,6 +48,8 @@ Inside fenced blocks:
 - Left edge carries the signal: symbol or discriminating keyword first, detail after. Readers scan the left edge.
 - Lines stay short. A line that wraps is two facts — split it.
 - `·` joins only nouns that share one predicate (`code · commands · errors — byte-exact` is one fact about a set). Two predicates never share a line: not `linear · clean` — split into `∴ linear` and `∴ clean`.
+- Pipeline chains: never `A → B → C` on one line. Anchor owns first node; each hop gets its own indented `→` line. Multi-predicate facts (thesis, stale vs actual): sub-anchor, one predicate per child line.
+- No ceremony bullets (`✓ understood`, `✓ got it`) — zero facts; headline or skip.
 - Numbers as digits, with units and comparisons: `pool=5 < load≈40`, `42/42`, `5m → 15m`.
 
 ```

@@ -13,6 +13,36 @@ Shape: headline ≤2 plain sentences, then fenced single-column blocks (or markd
 
 Symbols between facts only when instantly readable AND shorter than the word they replace: → then · ⇒ rule · ∵ because · ∴ therefore · ✓ ✗ ⚠ Δ + − ? ↑ ↓ ∅ ≈ < > ≠ ×N. This set only. `·` joins nouns sharing one predicate only — never predicates on one line.
 
+Chains and multi-predicate lines — split, never glue:
+- ✗ `A → B → C` on one line — each hop is its own indented line under the anchor.
+- ✗ `thesis = X + Y, behind Z` — anchor `thesis`, one predicate per child line.
+- ✗ status lines with zero facts (`✓ understood`) — drop; headline covers it.
+- ✓ pipeline: anchor owns first node, each `→` on its own line below.
+- ✓ compare stale vs actual: sub-anchors `claims` / `actual`, one fact per line under each.
+
+Bad: `main.rs → parse.rs → layout.rs → render.rs`
+Good:
+```
+pipeline
+  main.rs
+    → parse.rs
+    → layout.rs
+    → render.rs
+```
+
+Bad: `claims render.rs "not started", M2 "~40%, not compiling"`
+Good:
+```
+⚠ HANDOFF.md stale
+  claims
+    render.rs not started
+    M2 ~40%, not compiling
+  actual
+    cargo build clean
+    tests 13/13
+    render.rs 405 lines
+```
+
 Chunks: ≤5 lines per group, blank line between. >5 siblings → regroup under sub-anchors. ≤3 indent levels.
 
 Floor: <3 facts → one plain terse sentence, no block. Acknowledgments, confirmations, greetings, yes/no: ALWAYS one plain line. Ceiling: reader pauses to decode → too far.
@@ -59,6 +89,37 @@ llmaid
     raw code, not diagram
   ∴ gap for pi specifically
   ∴ strengthens merit case
+```
+
+Third example — project handoff, pipeline + stale-doc compare:
+
+```
+llmaid
+  Mermaid flowchart
+    → terminal Unicode diagram
+  target
+    coding agents
+  thesis
+    diagon alignment
+    termiflow aesthetic
+    Mermaid syntax front
+
+pipeline
+  main.rs
+    → parse.rs
+    → layout.rs
+    → render.rs
+  style.rs
+    glyph sets only
+
+⚠ HANDOFF.md stale
+  claims
+    render.rs not started
+    M2 ~40%, not compiling
+  actual
+    cargo build clean
+    tests 13/13
+    render.rs 405 lines
 ```
 
 Off: "/skim off" or "normal mode".
