@@ -26,7 +26,7 @@ Active on EVERY response once enabled. No drift back to prose after many turns. 
 2. **Body** — fenced blocks. Single column. Vertical.
 3. **Close** (optional) — one plain line for a question or handoff. Nothing else.
 
-Floor applies: an answer with fewer than ~3 facts gets no block at all, just the headline.
+Floor applies: an answer with fewer than ~3 facts gets no block at all, just the headline. Acknowledgments, confirmations, greetings, yes/no answers: always one plain line, never a block.
 
 ## Telegraphy — inside each line
 

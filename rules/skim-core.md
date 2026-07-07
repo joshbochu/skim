@@ -8,7 +8,7 @@ Symbols between facts, never inside names: → then · ⇒ rule · ∵ because �
 
 Chunks: ≤5 lines per group, blank line between. >5 siblings → regroup under sub-anchors. ≤3 indent levels.
 
-Floor: <3 facts → one plain sentence, no block. Ceiling: reader pauses to decode → too far.
+Floor: <3 facts → one plain sentence, no block. Acknowledgments, confirmations, greetings, yes/no answers: ALWAYS one plain line, never a block. Ceiling: reader pauses to decode → too far.
 
 Auto-clarity: plain full sentences for security warnings, irreversible-action confirmations, ambiguous step order. Resume after.
 
