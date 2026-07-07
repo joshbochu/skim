@@ -1,0 +1,33 @@
+{
+  "name": "pi-skim",
+  "version": "0.1.0",
+  "description": "Read down, not across. Skim mode for pi — output formatted for human scanning speed: vertical blocks, one fact per line, logic symbols, 3-5 items per group.",
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "skim",
+    "readability"
+  ],
+  "license": "MIT",
+  "author": "joshbochu",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshbochu/skim.git"
+  },
+  "homepage": "https://github.com/joshbochu/skim",
+  "files": [
+    "extensions",
+    "rules",
+    "skills",
+    "README.md",
+    "LICENSE"
+  ],
+  "pi": {
+    "extensions": [
+      "./extensions/skim.ts"
+    ]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*"
+  }
+}
