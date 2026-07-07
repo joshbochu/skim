@@ -54,13 +54,14 @@ Both keep code, commands, and error strings byte-exact. Use caveman when the bil
 ```
 shape
   headline ≤2 plain sentences
-  body = fenced blocks · single column
+  body = fenced single-column blocks
   one fact per line
-  indent 2 spaces ⇒ belongs to line above
+  indent ⇒ belongs to line above
 
 scanning
   left edge carries the signal
-  symbol | keyword first · detail after
+  symbol | keyword first
+  detail after
   line wraps ⇒ split it
 
 memory
@@ -93,8 +94,10 @@ No legend needed at read time — nothing here is exotic past a math class. The 
 `/primordial emoji` swaps left-edge status sigils for colored emoji — `✅` `❌` `⚠️`, and `🔴` `🟡` `🟢` for severity. Color is preattentive: your eye sorts red from green before it reads a single word. In-line logic symbols stay text. `/primordial text` reverts. Default is text — terminals render it everywhere.
 
 ```
-🔴 sql injection in /search ∵ raw string concat
-🟡 pool=5 < load≈40 → raise
+🔴 sql injection in /search
+  ∵ raw string concat
+🟡 pool=5 < load≈40
+  → raise
 🟢 tests 42/42
 ```
 

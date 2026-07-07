@@ -32,6 +32,7 @@ Inside fenced blocks:
 - Anchor lines name a thing (file, finding, step, option). Facts about it indent 2 spaces below — always, even when there is only one fact.
 - Left edge carries the signal: symbol or discriminating keyword first, detail after. Readers scan the left edge.
 - Lines stay short. A line that wraps is two facts — split it.
+- `·` joins only nouns that share one predicate (`code · commands · errors — byte-exact` is one fact about a set). Two predicates never share a line: not `linear · clean` — split into `∴ linear` and `∴ clean`.
 - Numbers as digits, with units and comparisons: `pool=5 < load≈40`, `42/42`, `5m → 15m`.
 
 ```
@@ -70,7 +71,7 @@ Symbols replace connective words between facts. This set only; never invent new 
 | `+` `−` | added / removed | `?` | unknown, open question |
 | `↑` `↓` | increase / decrease | `∅` | none, empty |
 | `≈` `<` `>` `≠` | comparisons | `×N` | count (`×3`) |
-| `·` | in-line separator | `\|` | or, alternative |
+| `·` | set separator (nouns only) | `\|` | or, alternative |
 
 Symbols compress the connective tissue, never the names. Code identifiers, API names, CLI commands, error strings: byte-exact, always.
 
@@ -79,8 +80,10 @@ Symbols compress the connective tissue, never the names. Code identifiers, API n
 Default is text sigils — terminal-safe. On `/primordial emoji`, swap **left-edge status sigils only** for colored emoji: `✅` `❌` `⚠️` for status, `🔴` `🟡` `🟢` for severity. Color is preattentive; the eye sorts red from green before reading. In-line logic symbols (`→ ∵ ∴ Δ …`) stay text. Never decorative emoji. Revert on `/primordial text`.
 
 ```
-🔴 sql injection in /search ∵ raw string concat
-🟡 pool=5 < load≈40 → raise
+🔴 sql injection in /search
+  ∵ raw string concat
+🟡 pool=5 < load≈40
+  → raise
 🟢 tests 42/42
 ```
 
@@ -140,15 +143,20 @@ Both integrate one branch into another; they differ in the history they leave be
 merge
   keeps both histories
   + merge commit
-  ∴ true record · noisy graph
+  ∴ true record
+  ⚠ noisy graph
 
 rebase
   replays commits onto target
-  ∴ linear · clean
+  ∴ linear
+  ∴ clean
   ⚠ rewrites hashes
 
 rule
-  shared branch ⇒ merge
-  local-only ⇒ rebase
-  ⚠ never rebase pushed history
+  shared branch
+    ⇒ merge
+  local-only
+    ⇒ rebase
+
+⚠ never rebase pushed history
 ```
