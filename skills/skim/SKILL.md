@@ -42,8 +42,8 @@ Every line goes on the same diet:
 
 Inside fenced blocks:
 
-- One fact per line. Never two.
-- Anchor lines name a thing (file, finding, step, option). Facts about it indent 2 spaces below — always, even when there is only one fact.
+- One fact per line. Never two. Never chain facts horizontally — each `→`, `∵`, `∴`, `⚠` starts its own indented line.
+- Anchor lines name a thing (file, finding, step, option) and start at column 0 — never indent the whole block. Facts about it indent 2 spaces below — always, even when there is only one fact.
 - Left edge carries the signal: symbol or discriminating keyword first, detail after. Readers scan the left edge.
 - Lines stay short. A line that wraps is two facts — split it.
 - `·` joins only nouns that share one predicate (`code · commands · errors — byte-exact` is one fact about a set). Two predicates never share a line: not `linear · clean` — split into `∴ linear` and `∴ clean`.
