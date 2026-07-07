@@ -160,10 +160,12 @@ ln -s ~/dev/skim/skills/skim ~/.claude/skills/skim
 ## Toggle
 
 ```
-/skim on      activate · persists all session
-/skim off     back to normal prose
-/skim emoji   colored status anchors
-/skim text    terminal-safe sigils (default)
+/skim on        activate · persists across sessions
+/skim off       back to normal prose
+/skim emoji     colored status anchors
+/skim text      terminal-safe sigils (default)
+/skim markdown  native bullets — wraps, inline code, no block chrome
+/skim fence     verbatim fenced blocks (default)
 ```
 
 ## Escape hatch
