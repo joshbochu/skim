@@ -30,13 +30,14 @@ Floor applies: an answer with fewer than ~3 facts gets no block at all, just the
 
 ## Telegraphy — inside each line
 
-Every line goes on the same diet:
+Skim layout is not permission for full sentences. Compress words inside every line — same diet as ultra-max-supreme telegraphy:
 
 - Drop load-free words: articles, copulas, aux verbs, relatives, pronouns, filler. `conns never released`, not `the connections are never being released`.
-- Verb-first or noun-stack. `raise pool size`, not `the pool size should be raised`.
+- Verb-first or noun-stack. `raise pool`, not `the pool should be raised`.
 - Numerals, not number-words: `3 leaks`, not `three leaks`.
-- Never abbreviate: `cfg`/`req`/`fn`/`impl` save 0 tokens and shift decode cost to the reader. Full word — cheaper AND clearer. (Established acronyms fine: DB, API, HTTP.)
+- Never abbreviate: `cfg`/`req`/`fn`/`impl` shift decode cost to the reader. Full word — cheaper AND clearer. (Established acronyms fine: DB, API, HTTP.)
 - Keep case — free proper-noun signal. `React`, not `react`.
+- Symbols replace connective words only when instantly readable AND shorter — never decorative.
 
 ## Line grammar
 
