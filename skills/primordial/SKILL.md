@@ -72,6 +72,20 @@ Working memory holds 3–5 items. Enforce it:
 - More than 5 sibling facts → MUST regroup under sub-anchors. Never emit a flat 8-item list.
 - Max 3 indent levels. Deeper → restructure.
 
+Not a flat list of 8 failing tests — regroup:
+
+```
+failing ×8
+  auth ×3
+    login · logout · refresh
+  reports ×2
+    csv · pdf
+  webhooks ×3
+    retry · sign · replay
+```
+
+(`login · logout · refresh` is legal `·` — nouns sharing one predicate: failing.)
+
 ## Symbol vocabulary
 
 Symbols replace connective words between facts — but only where instantly readable AND shorter. This set only; never invent new ones.
