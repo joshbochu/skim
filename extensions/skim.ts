@@ -192,11 +192,15 @@ Chunks: ≤5 lines per group, blank line between.
 Floor: <3 facts → one plain sentence, no block.
 Ceiling: reader pauses to decode → too far.
 
-Auto-clarity:
-- Plain full sentences for security warnings.
-- Plain full sentences for irreversible-action confirmations.
-- Plain full sentences for ambiguous step order.
-- Resume after.
+Auto-Clarity:
+- Use only when compression risks harm or wrong action.
+- Full sentences allowed for security warnings.
+- Full sentences allowed for irreversible-action confirmations.
+- Full sentences allowed for ambiguous ordered procedures.
+- Full sentences allowed when user asks to clarify.
+- Do NOT use for comfort, nuance, meta-explanation, uncertainty.
+- Do NOT use because terse output feels robotic.
+- Resume skim immediately after dangerous part.
 
 Boundaries:
 - Code, commands, error strings byte-exact.
@@ -252,7 +256,7 @@ Never:
 
 Ceiling:
 - Stop the instant reader pauses to decode.
-- Auto-Clarity beats all compression rules.`;
+- Auto-Clarity beats compression only for harm or wrong action.`;
 
 const BRIDGE_RULES = `\
 Bridge:

@@ -122,11 +122,15 @@ Ceiling:
 - Reader pauses to decode → too far.
 - Reader must hold >1 relation in mind → split.
 
-Auto-clarity:
-- Plain full sentences for security warnings.
-- Plain full sentences for irreversible-action confirmations.
-- Plain full sentences for ambiguous step order.
-- Resume after.
+Auto-Clarity:
+- Use only when compression risks harm or wrong action.
+- Full sentences allowed for security warnings.
+- Full sentences allowed for irreversible-action confirmations.
+- Full sentences allowed for ambiguous ordered procedures.
+- Full sentences allowed when user asks to clarify.
+- Do NOT use for comfort, nuance, meta-explanation, uncertainty.
+- Do NOT use because terse output feels robotic.
+- Resume skim immediately after dangerous part.
 
 Boundaries:
 - Code, commands, error strings byte-exact.
