@@ -8,11 +8,9 @@
  *
  * Commands:
  *   /skim           Toggle skim on/off
- *   /skim emoji     Toggle emoji anchors
  *   /skim emoji on  Enable emoji anchors
  *   /skim emoji off Disable emoji anchors
  *   /skim text      Alias for /skim emoji off
- *   /skim fence     Toggle fence/markdown containers
  *   /skim fence on  Use fenced blocks
  *   /skim fence off Use markdown bullets
  *   /skim off       Disable (aliases: stop, quit)
@@ -49,11 +47,6 @@ const COMMAND_OPTIONS = [
 		description: "Disable skim",
 	},
 	{
-		value: "emoji",
-		label: "emoji",
-		description: "Toggle emoji anchors; accepts on/off",
-	},
-	{
 		value: "emoji on",
 		label: "emoji on",
 		description: "Enable emoji anchors",
@@ -67,11 +60,6 @@ const COMMAND_OPTIONS = [
 		value: "text",
 		label: "text",
 		description: "Alias for emoji off",
-	},
-	{
-		value: "fence",
-		label: "fence",
-		description: "Toggle fence/markdown; accepts on/off",
 	},
 	{
 		value: "fence on",
@@ -371,17 +359,6 @@ export default function skim(pi: ExtensionAPI) {
 		await applyState(activeMode, container, ctx);
 	}
 
-	async function toggleEmoji(ctx: ExtensionContext) {
-		await setMode(mode === "emoji" ? "text" : "emoji", ctx);
-	}
-
-	async function toggleFence(ctx: ExtensionContext) {
-		await setContainer(
-			config.container === "fence" ? "markdown" : "fence",
-			ctx,
-		);
-	}
-
 	// -- Restore state on session load --
 
 	pi.on("session_start", async (_event, ctx) => {
@@ -440,23 +417,23 @@ export default function skim(pi: ExtensionAPI) {
 				await setMode("text", ctx);
 			} else if (primary === "emoji") {
 				if (!secondary) {
-					await toggleEmoji(ctx);
+					ctx.ui.notify('Use: /skim emoji on|off', "error");
 				} else if (secondary === "on") {
 					await setMode("emoji", ctx);
 				} else if (secondary === "off") {
 					await setMode("text", ctx);
 				} else {
-					ctx.ui.notify('Use: /skim emoji [on|off]', "error");
+					ctx.ui.notify('Use: /skim emoji on|off', "error");
 				}
 			} else if (primary === "fence") {
 				if (!secondary) {
-					await toggleFence(ctx);
+					ctx.ui.notify('Use: /skim fence on|off', "error");
 				} else if (secondary === "on") {
 					await setContainer("fence", ctx);
 				} else if (secondary === "off") {
 					await setContainer("markdown", ctx);
 				} else {
-					ctx.ui.notify('Use: /skim fence [on|off]', "error");
+					ctx.ui.notify('Use: /skim fence on|off', "error");
 				}
 			} else {
 				ctx.ui.notify(

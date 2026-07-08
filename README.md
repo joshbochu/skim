@@ -139,10 +139,9 @@ limits
 No legend needed at read time — nothing here is exotic past a
 math class. The skill forbids inventing new ones.
 
-### Emoji toggle
+### Emoji setting
 
-`/skim emoji` toggles left-edge status sigils.
-`/skim emoji on|off` sets them explicitly.
+`/skim emoji on|off` sets left-edge status sigils explicitly.
 When on, text sigils become colored emoji:
 `✅` `❌` `⚠️`, and `🔴` `🟡` `🟢` for severity.
 
@@ -228,11 +227,9 @@ ln -s ~/dev/skim/skills/skim ~/.claude/skills/skim
 ```
 /skim on        activate · persists across sessions
 /skim off       back to normal prose
-/skim emoji     toggle colored status anchors
 /skim emoji on  force colored status anchors
 /skim emoji off terminal-safe sigils
 /skim text      alias for /skim emoji off
-/skim fence     toggle fence/markdown
 /skim fence on  verbatim fenced blocks
 /skim fence off native markdown bullets
 ```

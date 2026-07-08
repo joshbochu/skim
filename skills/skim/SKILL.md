@@ -247,11 +247,10 @@ Symbols compress the connective tissue, never the names.
 Code identifiers, API names, CLI commands, error strings:
 byte-exact, always.
 
-## Emoji Toggle
+## Emoji Setting
 
 Default is text sigils — terminal-safe.
-`/skim emoji` toggles colored anchors.
-`/skim emoji on|off` sets them explicitly.
+`/skim emoji on|off` sets colored anchors explicitly.
 On emoji on, swap **left-edge status sigils only** for
 colored emoji: `✅` `❌` `⚠️` for status, `🔴` `🟡` `🟢`
 for severity.
@@ -268,10 +267,9 @@ Never decorative emoji. `/skim text` = `/skim emoji off`.
 🟢 tests 42/42
 ```
 
-## Container Toggle
+## Container Setting
 
 Default container is fenced blocks.
-`/skim fence` toggles fenced blocks vs markdown bullets.
 `/skim fence on|off` sets it explicitly.
 
 Fenced mode:
