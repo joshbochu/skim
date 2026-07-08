@@ -1,7 +1,7 @@
 {
   "name": "pi-skim",
   "version": "0.1.0",
-  "description": "Read down, not across. Skim mode for pi — output formatted for human scanning speed: vertical blocks, one fact per line, logic symbols, 3-5 items per group.",
+  "description": "Skim mode for pi: high-density, low-load output.",
   "keywords": [
     "pi-package",
     "pi-extension",

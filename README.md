@@ -1,18 +1,29 @@
 # skim
 
-> read down, not across
+> max info per reader-effort
 
-Output shaped for the eye, not the tokenizer.
+Output shaped for density and low cognitive load, not token count.
 
-Skim is a skill for Claude Code, Cursor, Pi, and any agent that reads a `SKILL.md`. It rewires how your agent answers: one plain headline, then vertical, symbol-dense blocks — one fact per line, indentation as hierarchy, logic symbols instead of connective prose, and never more than 3–5 items in a group, because that is all a human working memory holds.
+Skim is a skill for Claude Code, Cursor, Pi, and any agent
+that reads a `SKILL.md`.
 
-Not fewer tokens. Fewer eye movements.
+It rewires how your agent answers: ultra-compressed wording,
+one plain headline, then vertical, symbol-dense blocks — one fact
+per line, indentation as hierarchy, logic symbols instead of
+connective prose, and never more than 3–5 items in a group.
+
+That is about all a human working memory can hold.
+
+Not fewer tokens. Lower reader effort.
 
 ## Before / after
 
 **Normal agent:**
 
-> I've updated the authentication flow. I modified three files: auth.ts to add token refresh, session.ts to extend expiry handling, and api.ts to retry on 401. All 42 tests pass. Note that I didn't touch the mobile client, which may need the same fix.
+> I've updated the authentication flow. I modified three files:
+> auth.ts to add token refresh, session.ts to extend expiry handling,
+> and api.ts to retry on 401. All 42 tests pass. Note that I didn't
+> touch the mobile client, which may need the same fix.
 
 **Skim:**
 
@@ -33,25 +44,46 @@ Auth flow updated — token refresh added.
   → may need same fix
 ```
 
-Same information. Your eye makes one fixation per fact, travels one direction, and the left edge tells you which lines you can skip.
+Same information. Lower working-memory load, fewer rereads,
+and enough left-edge signal to skip what you do not need.
 
-## Not caveman
+## Caveman lineage
 
-[caveman](https://github.com/juliusbrussee/caveman) shrinks what the agent *says* — output tokens down 65%. Skim shapes what remains for the human *reading* it. Different objective function:
+[caveman](https://github.com/juliusbrussee/caveman) shrinks
+what the agent *says* — output tokens down 65%.
+
+Skim uses that lineage, but optimizes reader effort instead.
+Different objective function:
 
 |  | caveman | skim |
 |---|---|---|
-| optimizes | output tokens | scanning speed |
-| unit of design | the token | the line |
-| symbols & arrows | banned — zero token savings | core vocabulary — the eye reads shape faster than words |
-| layout | horizontal fragments | vertical, indented |
-| structure | decorative, dropped | the whole point |
+| optimizes | output tokens | reader effort |
+| primary cost | model output | human cognition |
+| unit of design | token | fact line |
+| symbols & arrows | usually banned | allowed when load drops |
+| layout | mostly horizontal | vertical, grouped |
 
-Both keep code, commands, and error strings byte-exact. Use caveman when the bill hurts. Use skim when your eyes do. They compose: caveman decides how little to say, skim decides what shape it lands in.
+Both keep code, commands, and error strings byte-exact.
+Use caveman when the bill hurts.
+Use skim when your brain does.
+
+Skim vendors the upstream Caveman skill as reference material,
+then uses `ultra-max-supreme` as its native compression layer.
 
 ## The rules
 
 ```
+objective
+  max info per reader-effort
+  minimize cognitive load
+  eye scanning = proxy, not goal
+
+ultra-max-supreme
+  drop load-free words
+  verb-first | noun-stack
+  stop before decode pause
+  never abbreviate
+
 shape
   headline ≤2 plain sentences
   body = fenced single-column blocks
@@ -59,17 +91,21 @@ shape
   indent ⇒ belongs to line above
 
 telegraphy
-  drop articles · copulas · pronouns · filler
-  verb-first | noun-stack
   numerals not number-words
-  never abbreviate
-    cfg | req | fn ⇒ decode cost on reader
+  code/API/CLI/errors verbatim
 
 scanning
   left edge carries the signal
   symbol | keyword first
   detail after
   line wraps ⇒ split it
+
+line budget
+  target 45–65 visible chars
+  split before 72 when possible
+  80 = hard ceiling
+  CJK target ≈40 glyphs
+  code · commands · errors stay byte-exact
 
 memory
   ≤5 lines per group
@@ -100,11 +136,20 @@ limits
 | `≈` `<` `>` `≠` | comparisons | `×N` | count |
 | `·` | separator | `\|` | or |
 
-No legend needed at read time — nothing here is exotic past a math class. The skill forbids inventing new ones.
+No legend needed at read time — nothing here is exotic past a
+math class. The skill forbids inventing new ones.
 
-### Emoji mode (opt-in)
+### Emoji toggle
 
-`/skim emoji` swaps left-edge status sigils for colored emoji — `✅` `❌` `⚠️`, and `🔴` `🟡` `🟢` for severity. Color is preattentive: your eye sorts red from green before it reads a single word. In-line logic symbols stay text. `/skim text` reverts. Default is text — terminals render it everywhere.
+`/skim emoji` toggles left-edge status sigils.
+`/skim emoji on|off` sets them explicitly.
+When on, text sigils become colored emoji:
+`✅` `❌` `⚠️`, and `🔴` `🟡` `🟢` for severity.
+
+Color is preattentive: your eye sorts red from green before it
+reads a single word. In-line logic symbols stay text.
+`/skim text` = `/skim emoji off`.
+Default is text — terminals render it everywhere.
 
 ```
 🔴 sql injection in /search
@@ -117,6 +162,11 @@ No legend needed at read time — nothing here is exotic past a math class. The 
 ## Why it works
 
 ```
+objective
+  density ↑
+  working-memory load ↓
+  eye scanning = proxy metric
+
 3–5 chunk cap
   working memory holds ~4 items (Cowan, 2001)
   6+ item lists get re-read, not read
@@ -125,14 +175,29 @@ one fact per line
   one fixation per fact
   vertical saccades ⇒ no line-wrap regression
 
+45–65 char line target
+  line starts arrive often enough to refocus
+  72+ chars ⇒ split before wrap
+  80 chars = WCAG text-width ceiling
+
 left-edge signal
   readers scan in an F-pattern (Nielsen)
-  first token decides skip | read
+  first token supports skip | read
 
 symbols over connectives
-  shape recognition beats word decoding
+  visible relation beats connective prose
   "∵" lands before "because of the fact that"
 ```
+
+## Research hooks
+
+- Cowan argues for a working-memory capacity closer to 4 chunks
+  than Miller's older 7±2 heuristic.
+- W3C WCAG 1.4.8 caps blocks of text at 80 characters, 40 for CJK.
+- Baymard's UX research points to roughly 50–75 characters for
+  readable body text.
+- NN/g eye-tracking research supports strong left-edge signals for
+  scanning behavior.
 
 ## Install
 
@@ -155,22 +220,30 @@ ln -s ~/dev/skim/skills/skim ~/.cursor/skills/skim
 ln -s ~/dev/skim/skills/skim ~/.claude/skills/skim
 ```
 
-**Pi:** works with any extension that toggles skills as config — `/skim on` persists across sessions until `/skim off`.
+**Pi:** works with any extension that toggles skills as config.
+`/skim on` persists across sessions until `/skim off`.
 
 ## Toggle
 
 ```
 /skim on        activate · persists across sessions
 /skim off       back to normal prose
-/skim emoji     colored status anchors
-/skim text      terminal-safe sigils (default)
-/skim markdown  native bullets — wraps, inline code, no block chrome
-/skim fence     verbatim fenced blocks (default)
+/skim emoji     toggle colored status anchors
+/skim emoji on  force colored status anchors
+/skim emoji off terminal-safe sigils
+/skim text      alias for /skim emoji off
+/skim fence     toggle fence/markdown
+/skim fence on  verbatim fenced blocks
+/skim fence off native markdown bullets
 ```
 
 ## Escape hatch
 
-Skim drops to full sentences — on its own — for security warnings, irreversible-action confirmations, and anywhere compression would make step order ambiguous. Dense is the default; unambiguous is the law.
+Skim drops to full sentences — on its own — for security warnings,
+irreversible-action confirmations, and anywhere compression would
+make step order ambiguous.
+
+Dense is the default; unambiguous is the law.
 
 ## License
 

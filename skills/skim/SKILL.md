@@ -1,56 +1,191 @@
 ---
 name: skim
 description: >-
-  Vertical, symbol-dense output mode optimized for human scanning speed, not
-  token count. Compresses every reply into a short plain headline plus fenced
-  single-column blocks: one fact per line, indentation as hierarchy, logic
-  symbols (→ ∵ ∴ ✓ ✗ ⚠ Δ) instead of connective prose, groups hard-capped at
-  3–5 lines to match human working memory. Use when the user says "skim",
-  "/skim on", or asks for scannable, dense, or vertical output. Stays
-  active on every response until "/skim off" or "normal mode".
+  High-density, low-cognitive-load output mode. Maximizes
+  information per reader-effort using ultra-max-supreme telegraphy,
+  vertical one-fact lines, 3–5 item chunks, short line budgets, and
+  instantly readable symbols. Use when the user says "skim",
+  "/skim on", or asks for scannable, dense, or vertical output.
+  Stays active on every response until "/skim off" or "normal mode".
 ---
 
 # Skim
 
-Shape output for the reading eye, not the tokenizer. Max info per reader-effort, not min tokens. The eye travels down, never across.
+Shape output for the reader, not the tokenizer.
+Max info per reader-effort, not min tokens.
+Minimize cognitive load.
+Eye scanning is a proxy, not the goal.
 
-Two limits govern everything below. **Floor:** below ~3 facts skip the machinery — one plain terse sentence wins over ceremony. **Ceiling:** stop compressing the instant a reader would pause to decode.
+Two limits govern everything below.
+
+**Floor:** below ~3 facts skip the machinery — one plain
+terse sentence wins over ceremony.
+
+**Ceiling:** stop compressing the instant a reader would
+pause to decode.
 
 ## Persistence
 
-Active on EVERY response once enabled. No drift back to prose after many turns. Still active when unsure. Off only on `/skim off` or "normal mode".
+Active on EVERY response once enabled.
+No drift back to prose after many turns.
+Still active when unsure.
+Off only on `/skim off` or "normal mode".
 
 ## Reply shape
 
 1. **Headline** — at most 2 plain sentences. Lead with the outcome.
 2. **Body** — fenced blocks. Single column. Vertical.
-3. **Close** (optional) — one plain line for a question or handoff. Nothing else.
+3. **Close** (optional) — one plain line for a question or handoff.
 
-Floor applies: an answer with fewer than ~3 facts gets no block at all, just the headline. Acknowledgments, confirmations, greetings, yes/no answers: always one plain line, never a block.
+Floor applies: an answer with fewer than ~3 facts gets no block
+at all, just the headline.
+
+Acknowledgments, confirmations, greetings, yes/no answers:
+always one plain line, never a block.
+
+## Ultra-Max-Supreme
+
+Max info per reader-effort, not min tokens.
+
+Priority:
+
+- Minimize cognitive load.
+- Maximize information density.
+- Eye scanning = proxy, not goal.
+
+Levers, strongest first:
+
+1. Telegraphy
+2. Layout
+3. Chunking
+4. Symbols
+5. Numerals
+
+Telegraphy:
+
+- Drop load-free words: articles, copulas, aux, relatives,
+  pronouns, filler.
+- Prefer verb-first.
+- Use noun-stacks until decode cost rises.
+- Stop when reader must reconstruct grammar.
+
+Never:
+
+- Invent abbreviations: `cfg`, `req`, `fn`, `impl`.
+- Save tokens by shifting decode cost to reader.
+- Compress code, API names, CLI commands, error strings.
+
+Preserve:
+
+- Case.
+- User language.
+- Technical terms.
+- Copy-pasteable text.
+
+Ceiling:
+
+- Stop the instant reader pauses to decode.
+- If compression creates ambiguity, expand.
 
 ## Telegraphy — inside each line
 
-Skim layout is not permission for full sentences. Compress words inside every line — same diet as ultra-max-supreme telegraphy:
+Skim layout is not permission for full sentences.
+Compress words inside every line — same diet as
+ultra-max-supreme telegraphy:
 
-- Drop load-free words: articles, copulas, aux verbs, relatives, pronouns, filler. `conns never released`, not `the connections are never being released`.
-- Verb-first or noun-stack. `raise pool`, not `the pool should be raised`.
+- Drop load-free words: articles, copulas, aux verbs, relatives,
+  pronouns, filler. `connections never released`, not
+  `the connections are never being released`.
+- Verb-first or noun-stack:
+  `raise pool`, not `the pool should be raised`.
 - Numerals, not number-words: `3 leaks`, not `three leaks`.
-- Never abbreviate: `cfg`/`req`/`fn`/`impl` shift decode cost to the reader. Full word — cheaper AND clearer. (Established acronyms fine: DB, API, HTTP.)
+- Never abbreviate: `cfg`/`req`/`fn`/`impl` shift decode cost
+  to the reader. Full word — cheaper AND clearer.
+  Established acronyms fine: DB, API, HTTP.
 - Keep case — free proper-noun signal. `React`, not `react`.
-- Symbols replace connective words only when instantly readable AND shorter — never decorative.
+- Symbols replace connective words only when instantly readable
+  AND shorter — never decorative.
 
 ## Line grammar
 
 Inside fenced blocks:
 
-- One fact per line. Never two. Never chain facts horizontally — each `→`, `∵`, `∴`, `⚠` starts its own indented line.
-- Anchor lines name a thing (file, finding, step, option) and start at column 0 — never indent the whole block. Facts about it indent 2 spaces below — always, even when there is only one fact.
-- Left edge carries the signal: symbol or discriminating keyword first, detail after. Readers scan the left edge.
-- Lines stay short. A line that wraps is two facts — split it.
-- `·` joins only nouns that share one predicate (`code · commands · errors — byte-exact` is one fact about a set). Two predicates never share a line: not `linear · clean` — split into `∴ linear` and `∴ clean`.
-- Pipeline chains: never `A → B → C` on one line. Anchor owns first node; each hop gets its own indented `→` line. Multi-predicate facts (thesis, stale vs actual): sub-anchor, one predicate per child line.
-- No ceremony bullets (`✓ understood`, `✓ got it`) — zero facts; headline or skip.
-- Numbers as digits, with units and comparisons: `pool=5 < load≈40`, `42/42`, `5m → 15m`.
+Core:
+
+- One fact per line. Never two.
+- Never chain facts horizontally.
+- Each `→`, `∵`, `∴`, `⚠` starts its own indented line.
+
+Hierarchy:
+
+- Anchor lines name a thing and start at column 0.
+- Facts indent 2 spaces below the anchor.
+- Left edge carries the signal:
+  symbol or discriminating keyword first, detail after.
+
+Noise control:
+
+- No ceremony bullets (`✓ understood`, `✓ got it`).
+- Numbers as digits, with units and comparisons:
+  `pool=5 < load≈40`, `42/42`, `5m → 15m`.
+
+## Line budget
+
+Wrap avoidance is a cognitive-load rule, not only typography.
+A wrapped line forces regression and rereading.
+
+- Target 45–65 visible characters in skim blocks.
+- Split before 72 characters whenever possible.
+- Treat 80 characters as a hard ceiling.
+- CJK target ≈40 glyphs.
+- Prefer 2 clear lines over 1 loaded line.
+
+Byte-exact exceptions:
+
+- Code
+- Commands
+- URLs
+- Identifiers
+- Error messages
+- Quoted user text
+
+Split patterns:
+
+- Reason/result → child lines.
+- Caveat → child line.
+- Status/action → separate lines.
+- Long noun list → regroup under sub-anchors.
+
+`·` joins only nouns that share one predicate.
+
+```
+code · commands · errors
+  byte-exact
+```
+
+Two predicates never share one line:
+
+```
+✗ linear · clean
+```
+
+Split instead:
+
+```
+∴ linear
+∴ clean
+```
+
+Pipeline chains: never `A → B → C` on one line.
+Anchor owns first node; each hop gets its own indented `→` line.
+
+Multi-predicate facts need sub-anchors:
+
+```
+thesis
+  claim
+  caveat
+```
 
 ```
 ✓ auth flow updated
@@ -72,7 +207,8 @@ Inside fenced blocks:
 Working memory holds 3–5 items. Enforce it:
 
 - Max 5 lines per group. Blank line between groups.
-- More than 5 sibling facts → MUST regroup under sub-anchors. Never emit a flat 8-item list.
+- More than 5 sibling facts → MUST regroup under sub-anchors.
+  Never emit a flat 8-item list.
 - Max 3 indent levels. Deeper → restructure.
 
 Not a flat list of 8 failing tests — regroup:
@@ -87,11 +223,14 @@ failing ×8
     retry · sign · replay
 ```
 
-(`login · logout · refresh` is legal `·` — nouns sharing one predicate: failing.)
+(`login · logout · refresh` is legal `·`:
+nouns sharing one predicate: failing.)
 
 ## Symbol vocabulary
 
-Symbols replace connective words between facts — but only where instantly readable AND shorter. This set only; never invent new ones.
+Symbols replace connective words between facts — but only where
+instantly readable AND shorter.
+This set only; never invent new ones.
 
 | sym | meaning | sym | meaning |
 |-----|---------|-----|---------|
@@ -104,11 +243,22 @@ Symbols replace connective words between facts — but only where instantly read
 | `≈` `<` `>` `≠` | comparisons | `×N` | count (`×3`) |
 | `·` | set separator (nouns only) | `\|` | or, alternative |
 
-Symbols compress the connective tissue, never the names. Code identifiers, API names, CLI commands, error strings: byte-exact, always.
+Symbols compress the connective tissue, never the names.
+Code identifiers, API names, CLI commands, error strings:
+byte-exact, always.
 
-## Emoji variant (opt-in)
+## Emoji Toggle
 
-Default is text sigils — terminal-safe. On `/skim emoji`, swap **left-edge status sigils only** for colored emoji: `✅` `❌` `⚠️` for status, `🔴` `🟡` `🟢` for severity. Color is preattentive; the eye sorts red from green before reading. In-line logic symbols (`→ ∵ ∴ Δ …`) stay text. Never decorative emoji. Revert on `/skim text`.
+Default is text sigils — terminal-safe.
+`/skim emoji` toggles colored anchors.
+`/skim emoji on|off` sets them explicitly.
+On emoji on, swap **left-edge status sigils only** for
+colored emoji: `✅` `❌` `⚠️` for status, `🔴` `🟡` `🟢`
+for severity.
+
+Color is preattentive; the eye sorts red from green before reading.
+In-line logic symbols (`→ ∵ ∴ Δ …`) stay text.
+Never decorative emoji. `/skim text` = `/skim emoji off`.
 
 ```
 🔴 sql injection in /search
@@ -117,6 +267,26 @@ Default is text sigils — terminal-safe. On `/skim emoji`, swap **left-edge sta
   → raise
 🟢 tests 42/42
 ```
+
+## Container Toggle
+
+Default container is fenced blocks.
+`/skim fence` toggles fenced blocks vs markdown bullets.
+`/skim fence on|off` sets it explicitly.
+
+Fenced mode:
+
+```
+cause
+  pool exhausted
+  connections never released
+```
+
+Markdown mode:
+
+- **cause**
+  - pool exhausted
+  - connections never released
 
 ## Auto-clarity
 
@@ -137,11 +307,15 @@ Compress chat replies only. Everything else stays normal:
 - Commit messages, PR titles and descriptions — normal conventions
 - Code comments, docstrings, documentation files — normal prose
 
-Keep the user's language: Portuguese in → Portuguese skim out. Compress the style, never translate. No self-reference: never announce the mode or explain the symbols unless asked.
+Keep the user's language: Portuguese in → Portuguese skim out.
+Compress the style, never translate.
+No self-reference:
+never announce the mode or explain the symbols unless asked.
 
 ## Examples
 
-**Q: what port does the dev server run on?** (floor — too few facts for machinery)
+**Q: what port does the dev server run on?**
+(floor — too few facts for machinery)
 
 Not:
 
@@ -156,7 +330,10 @@ Yes:
 **Q: why are my tests failing?**
 
 Not:
-> I investigated the failing tests. The database connection pool is being exhausted because connections aren't released after each request. This happens in three places: the auth middleware, the report generator, and the webhook handler...
+> I investigated the failing tests. The database connection pool is
+> being exhausted because connections aren't released after each
+> request. This happens in three places: the auth middleware,
+> the report generator, and the webhook handler...
 
 Yes:
 
@@ -165,7 +342,7 @@ Pool exhaustion — connections are never released.
 ```
 ✗ tests fail
   ∵ pool exhausted
-  ∵ conns never released
+  ∵ connections never released
 
 leaks ×3
   auth middleware
@@ -180,7 +357,8 @@ leaks ×3
 
 **Q: explain git rebase vs merge**
 
-Both integrate one branch into another; they differ in the history they leave behind.
+Both integrate one branch into another; they differ in the history
+they leave behind.
 
 ```
 merge
