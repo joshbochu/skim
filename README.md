@@ -84,6 +84,13 @@ ultra-max-supreme
   stop before decode pause
   never abbreviate
 
+quantified grammar
+  anchor 1–4 words
+  child fact 3–9 words
+  group 3–5 siblings
+  line 45–65 chars ideal
+  hard line 72 chars
+
 shape
   headline ≤2 plain sentences
   body = fenced single-column blocks
@@ -138,6 +145,75 @@ limits
 
 No legend needed at read time — nothing here is exotic past a
 math class. The skill forbids inventing new ones.
+
+## Separator grammar
+
+```
+·
+  set members sharing one predicate
+  build · test · fmt · deps
+
+|
+  choice or alternative branch
+  text | emoji
+
+/
+  paired labels or compact binary forms
+  on/off · read/write
+
++
+  additive composition
+  skim + ultra-max-supreme
+
+,
+  avoid in skim blocks
+  ∵ prose-like, weak grouping
+```
+
+Budget:
+
+```
+· run
+  2–5 members
+| run
+  2–3 choices
+separator run
+  max 1 per line
+too many items
+  → subgroup
+```
+
+## Style calibration
+
+Too normal:
+
+```
+ceiling is subjective
+  → my judgment, not measured
+```
+
+Better:
+
+```
+ceiling subjective
+  my judgment
+  not measured
+```
+
+Too normal:
+
+```
+best as opt-in per query
+  not global persistent
+```
+
+Better:
+
+```
+best
+  opt-in per query
+  not global
+```
 
 ### Emoji setting
 

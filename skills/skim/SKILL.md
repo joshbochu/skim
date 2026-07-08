@@ -87,6 +87,57 @@ Ceiling:
 - Stop the instant reader pauses to decode.
 - If compression creates ambiguity, expand.
 
+Quantified grammar:
+
+- Anchor: 1–4 words.
+- Child fact: 3–9 words.
+- Ideal line: 45–65 chars.
+- Hard line: 72 chars.
+- Group: 3–5 siblings.
+- Separator run: 2–5 members.
+- Relation symbol: max 1 per line.
+- Repeated fact: 0.
+- Full sentence inside blocks: rare.
+
+Tone target:
+
+- Smart caveman, not polished consultant.
+- Fragment OK when meaning survives.
+- Drop connective tissue first.
+- Keep enough grammar for instant read.
+
+Style calibration:
+
+Too normal:
+
+```
+ceiling is subjective
+  → my judgment, not measured
+```
+
+Better:
+
+```
+ceiling subjective
+  my judgment
+  not measured
+```
+
+Too normal:
+
+```
+best as opt-in per query
+  not global persistent
+```
+
+Better:
+
+```
+best
+  opt-in per query
+  not global
+```
+
 ## Telegraphy — inside each line
 
 Skim layout is not permission for full sentences.
@@ -246,6 +297,26 @@ This set only; never invent new ones.
 Symbols compress the connective tissue, never the names.
 Code identifiers, API names, CLI commands, error strings:
 byte-exact, always.
+
+Separator grammar:
+
+- `·` = set members sharing one predicate.
+  Best for grouped siblings.
+- `|` = choice or alternative branch.
+  Best when only one path applies.
+- `/` = paired labels or compact binary forms.
+  Best for on/off, read/write.
+- `+` = additive composition.
+  Best when parts combine.
+- `,` = avoid in skim blocks.
+  Too prose-like; weak grouping.
+
+Separator budgets:
+
+- `·` run: 2–5 members.
+- `|` run: 2–3 choices.
+- Max 1 separator run per line.
+- More items → subgroup.
 
 ## Emoji Setting
 

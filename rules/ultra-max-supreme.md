@@ -39,6 +39,51 @@ Levers, strongest first:
 - Numerals, not number-words.
 - Include units and comparisons when useful.
 
+Quantified grammar:
+- Anchor: 1–4 words.
+- Child fact: 3–9 words.
+- Ideal line: 45–65 chars.
+- Hard line: 72 chars.
+- Group: 3–5 siblings.
+- Separator run: 2–5 members.
+- Relation symbol: max 1 per line.
+- Repeated fact: 0.
+- Full sentence inside blocks: rare.
+
+Tone target:
+- Smart caveman, not polished consultant.
+- Fragment OK when meaning survives.
+- Drop connective tissue first.
+- Keep enough grammar for instant read.
+
+Style calibration:
+
+Too normal:
+```
+ceiling is subjective
+  → my judgment, not measured
+```
+
+Better:
+```
+ceiling subjective
+  my judgment
+  not measured
+```
+
+Too normal:
+```
+best as opt-in per query
+  not global persistent
+```
+
+Better:
+```
+best
+  opt-in per query
+  not global
+```
+
 Never:
 - Invent abbreviations:
   cfg, req, fn, impl.

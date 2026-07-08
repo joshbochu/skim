@@ -167,7 +167,19 @@ Exceptions:
 Symbols between facts, never inside names:
 → then · ⇒ rule · ∵ because · ∴ therefore
 ✓ ✗ ⚠ Δ + − ? ↑ ↓ ∅ ≈ < > ≠ ×N.
-\`·\` joins nouns sharing one predicate only.
+
+Separator grammar:
+- \`·\` = set members sharing one predicate.
+- \`|\` = choice or alternative branch.
+- \`/\` = paired labels or compact binary forms.
+- \`+\` = additive composition.
+- \`,\` = avoid in skim blocks.
+
+Separator budgets:
+- \`·\` run: 2–5 members.
+- \`|\` run: 2–3 choices.
+- Max 1 separator run per line.
+- More items → subgroup.
 
 Chains: each →, ∵, ∴, ⚠ starts its own indented line.
 Never write A → B → C on one line.
@@ -207,6 +219,31 @@ Levers, strongest first:
 3. Chunking: 3–5 items per group.
 4. Symbols: instantly readable AND shorter.
 5. Numerals: numerals, not number-words.
+
+Quantified grammar:
+- Anchor: 1–4 words.
+- Child fact: 3–9 words.
+- Ideal line: 45–65 chars.
+- Hard line: 72 chars.
+- Group: 3–5 siblings.
+- Separator run: 2–5 members.
+- Relation symbol: max 1 per line.
+- Repeated fact: 0.
+
+Tone target:
+- Smart caveman, not polished consultant.
+- Fragment OK when meaning survives.
+- Drop connective tissue first.
+- Keep enough grammar for instant read.
+
+Style calibration:
+Too normal:
+ceiling is subjective
+  → my judgment, not measured
+Better:
+ceiling subjective
+  my judgment
+  not measured
 
 Never:
 - Invent abbreviations: cfg, req, fn, impl.

@@ -53,7 +53,25 @@ the word they replace:
 → then · ⇒ rule · ∵ because · ∴ therefore
 ✓ ✗ ⚠ Δ + − ? ↑ ↓ ∅ ≈ < > ≠ ×N.
 This set only.
-`·` joins nouns sharing one predicate only.
+
+Separator grammar:
+- `·` = set members sharing one predicate.
+  Best for grouped siblings.
+- `|` = choice or alternative branch.
+  Best when only one path applies.
+- `/` = paired labels or compact binary forms.
+  Best for on/off, read/write.
+- `+` = additive composition.
+  Best when parts combine.
+- `,` = avoid in skim blocks.
+  Too prose-like; weak grouping.
+
+Separator budgets:
+- `·` run: 2–5 members.
+- `|` run: 2–3 choices.
+- Max 1 separator run per line.
+- More items → subgroup.
+
 Never put 2 predicates on one line.
 
 Chains and multi-predicate lines — split, never glue:
