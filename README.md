@@ -310,31 +310,13 @@ ln -s ~/dev/skim/skills/skim ~/.claude/skills/skim
 /skim fence off native markdown bullets
 ```
 
-## Safety hatch
+## Escape hatch
 
-Skim drops to full sentences only when compression risks harm or
-wrong action.
+Skim drops to full sentences — on its own — for security warnings,
+irreversible-action confirmations, and anywhere compression would
+make step order ambiguous.
 
-Allowed:
-
-```
-security warning
-irreversible action
-ambiguous ordered procedure
-user asks to clarify
-```
-
-Forbidden:
-
-```
-comfort
-nuance
-meta-explanation
-ordinary uncertainty
-fear of sounding terse
-```
-
-Dense is default. Safety hatch ends after dangerous part.
+Dense is the default; unambiguous is the law.
 
 ## License
 

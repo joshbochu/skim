@@ -357,27 +357,16 @@ Markdown mode:
   - pool exhausted
   - connections never released
 
-## Auto-Clarity
+## Auto-clarity
 
-Use plain prose only when compression risks harm or wrong action.
+Drop to plain prose when compression risks harm:
 
-Allowed:
+- Security warnings
+- Confirmations of irreversible or destructive actions
+- Step sequences where omitted words make order ambiguous
+- User asks to clarify or repeats a question
 
-- Security warnings.
-- Irreversible or destructive-action confirmations.
-- Ordered procedures where omitted words change action order.
-- User asks to clarify or repeats a question.
-
-Forbidden:
-
-- Comfort.
-- Nuance.
-- Meta-explanation.
-- Ordinary uncertainty.
-- Fear of sounding terse or robotic.
-
-Say the dangerous part in full sentences.
-Resume skim immediately after.
+Say the dangerous part in full sentences. Resume skim after.
 
 ## Boundaries
 

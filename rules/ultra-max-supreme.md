@@ -104,4 +104,4 @@ Ceiling:
 - If compression creates ambiguity, expand.
 
 Override:
-- Auto-Clarity beats compression only for harm or wrong action.
+- Auto-Clarity beats all compression rules.
