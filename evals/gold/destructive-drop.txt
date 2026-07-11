@@ -1,0 +1,9 @@
+Destructive command blocked.
+
+```text
+⚠ `DROP TABLE users`
+  permanently deletes every row
+  cannot undo
+  require verified backup
+  → continue only after confirmation
+```

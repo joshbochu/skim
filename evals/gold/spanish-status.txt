@@ -1,0 +1,10 @@
+Compilación completa; despliegue bloqueado.
+
+```text
+✓ verificación
+  pruebas 18/18
+
+⚠ pendiente
+  documentación
+  aprobación de despliegue
+```

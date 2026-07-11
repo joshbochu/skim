@@ -1,0 +1,215 @@
+[
+  {
+    "id": "short-port",
+    "category": "floor",
+    "prompt": "What port does the Vite development server use? It is configured as 3000 in vite.config.ts.",
+    "requiredTerms": ["3000", "vite.config.ts"],
+    "expectedShape": "plain"
+  },
+  {
+    "id": "short-yes-no",
+    "category": "floor",
+    "prompt": "Tests passed 42 out of 42. Did the test suite pass?",
+    "requiredTerms": ["42/42"],
+    "expectedShape": "plain"
+  },
+  {
+    "id": "diagnose-pool",
+    "category": "diagnosis",
+    "prompt": "Explain this failure: tests hang under load because DB connections are not released in auth middleware, report generator, and webhook handler. Pool size is 5 while load is about 40. Recommend the fix.",
+    "requiredTerms": ["connections", "auth middleware", "report generator", "webhook handler", "try/finally"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "diagnose-react",
+    "category": "diagnosis",
+    "prompt": "Why does this React child rerender? Parent creates a new inline object prop every render. Recommend useMemo.",
+    "requiredTerms": ["object", "render", "useMemo"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "diagnose-timeout",
+    "category": "diagnosis",
+    "prompt": "Requests time out after 30 seconds. Upstream responds in 45 seconds, retry runs twice, and no circuit breaker exists. Explain cause, risk, and next action.",
+    "requiredTerms": ["30", "45", "retry", "circuit breaker"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "change-auth",
+    "category": "change-summary",
+    "prompt": "Summarize completed work: auth.ts gained refresh logic, session.ts changed expiry handling, api.ts retries on 401, tests pass 42/42, mobile client remains untouched.",
+    "requiredTerms": ["auth.ts", "session.ts", "api.ts", "42/42", "mobile client"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "change-release",
+    "category": "change-summary",
+    "prompt": "Release status: build complete, unit tests 186/186, integration tests 24/24, docs updated, deployment waiting for security approval.",
+    "requiredTerms": ["186/186", "24/24", "docs", "security approval"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "compare-git",
+    "category": "comparison",
+    "prompt": "Compare git merge and rebase. Include history shape, hash rewriting, and the rule for shared versus local-only branches.",
+    "requiredTerms": ["merge", "rebase", "hash", "shared", "local-only"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "compare-api",
+    "category": "comparison",
+    "prompt": "Compare REST and GraphQL for a mobile app: caching, overfetching, schema complexity, and best fit for unstable client data needs.",
+    "requiredTerms": ["REST", "GraphQL", "caching", "overfetching", "schema"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "compare-storage",
+    "category": "comparison",
+    "prompt": "Compare localStorage, IndexedDB, and server storage for offline drafts. Include capacity, query ability, synchronization, and recommendation.",
+    "requiredTerms": ["localStorage", "IndexedDB", "server", "offline"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "plan-evals",
+    "category": "plan",
+    "prompt": "Plan a staged rollout for this output-style eval system: capture baseline, change prompt, compare, then consider structured output.",
+    "requiredTerms": ["baseline", "prompt", "compare", "structured output"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "plan-migration",
+    "category": "plan",
+    "prompt": "Plan a PostgreSQL migration from integer IDs to UUIDs with backup, dual-write, backfill, validation, cutover, and rollback.",
+    "requiredTerms": ["backup", "dual-write", "backfill", "validation", "cutover", "rollback"],
+    "expectedShape": "block",
+    "maxBodyLines": 24
+  },
+  {
+    "id": "plan-refactor",
+    "category": "plan",
+    "prompt": "Plan refactoring a 2,000-line service into parser, validator, persistence, and API layers while keeping behavior stable.",
+    "requiredTerms": ["parser", "validator", "persistence", "API", "tests"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "research-pi",
+    "category": "research",
+    "prompt": "Summarize findings: Pi before_agent_start can modify system prompts; message_end can replace finalized messages; structured tools can terminate a run; current skim extension only injects prompt text.",
+    "requiredTerms": ["before_agent_start", "message_end", "structured", "injects"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "research-options",
+    "category": "research",
+    "prompt": "Summarize four implementation options: prompt only, prompt plus evals, structured response tool, and second-pass repair. Include cost and reliability tradeoffs.",
+    "requiredTerms": ["prompt", "evals", "structured", "repair", "cost", "reliability"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "explain-pooling",
+    "category": "explanation",
+    "prompt": "Explain database connection pooling, including reuse, handshake savings, pool exhaustion, and connection release.",
+    "requiredTerms": ["reuse", "handshake", "exhaustion", "release"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "explain-cache",
+    "category": "explanation",
+    "prompt": "Explain cache stampede, why synchronized expiry causes it, and three mitigations: jitter, request coalescing, stale-while-revalidate.",
+    "requiredTerms": ["expiry", "jitter", "coalescing", "stale-while-revalidate"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "explain-oauth",
+    "category": "explanation",
+    "prompt": "Explain OAuth authorization code flow using browser, authorization server, callback code, token exchange, and access token.",
+    "requiredTerms": ["browser", "authorization server", "callback", "token exchange", "access token"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "security-sql",
+    "category": "safety",
+    "prompt": "Warn about a SQL injection in /search caused by raw string concatenation. Explain impact and recommend parameterized queries.",
+    "requiredTerms": ["SQL injection", "/search", "concatenation", "parameterized"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "destructive-drop",
+    "category": "safety",
+    "prompt": "The user is about to run DROP TABLE users. Warn that all rows will be permanently deleted, require a verified backup, then state the next step.",
+    "requiredTerms": ["DROP TABLE users", "permanently", "backup"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "ordered-restore",
+    "category": "safety",
+    "prompt": "Give an unambiguous restore sequence: stop writers, snapshot current DB, restore backup, run migrations, validate counts, then reopen traffic.",
+    "requiredTerms": ["stop writers", "snapshot", "restore", "migrations", "validate", "reopen"],
+    "expectedShape": "block",
+    "maxBodyLines": 24
+  },
+  {
+    "id": "handoff-project",
+    "category": "handoff",
+    "prompt": "Create a project handoff: parser complete, renderer 80% complete, tests 13/13, docs stale, next task is Unicode width handling, risk is Windows terminal behavior.",
+    "requiredTerms": ["parser", "80%", "13/13", "docs", "Unicode width", "Windows"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "review-code",
+    "category": "review",
+    "prompt": "Summarize code review findings: critical auth bypass in middleware.ts line 42, medium unbounded retry in client.ts, low duplicate logging, tests missing for expired tokens.",
+    "requiredTerms": ["middleware.ts", "42", "client.ts", "retry", "expired tokens"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "decision-queue",
+    "category": "decision",
+    "prompt": "Recommend between RabbitMQ, Kafka, and SQS for a small AWS team processing 2 million independent jobs daily. Prefer low operations burden and managed scaling.",
+    "requiredTerms": ["RabbitMQ", "Kafka", "SQS", "2 million", "operations"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "unknown-root-cause",
+    "category": "uncertainty",
+    "prompt": "Report uncertainty: CPU spikes correlate with batch jobs, but profiling data is missing. Memory and DB latency look normal. Recommend collecting a flame graph before changing code.",
+    "requiredTerms": ["CPU", "batch jobs", "profiling", "Memory", "DB latency", "flame graph"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "api-error",
+    "category": "exact-text",
+    "prompt": "Explain API failure while preserving this exact error: `HTTP 429: rate_limit_exceeded`. Current limit is 100 requests/minute and traffic is 160 requests/minute. Recommend backoff and throttling.",
+    "requiredTerms": ["HTTP 429: rate_limit_exceeded", "100", "160", "backoff", "throttling"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "docs-summary",
+    "category": "summary",
+    "prompt": "Summarize documentation changes: installation updated for pnpm, configuration gained rulesPath, troubleshooting gained fallback warning, examples gained markdown mode.",
+    "requiredTerms": ["pnpm", "rulesPath", "fallback", "markdown mode"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "long-audit",
+    "category": "global-cap",
+    "prompt": "Summarize an audit with eight topics without using more than five top-level sections: authentication, authorization, input validation, secrets, logging, dependencies, backups, incident response. Authentication and secrets are critical; dependencies and backups are medium; others pass.",
+    "requiredTerms": ["authentication", "authorization", "input validation", "secrets", "logging", "dependencies", "backups", "incident response"],
+    "expectedShape": "block",
+    "maxBodyLines": 24
+  },
+  {
+    "id": "spanish-status",
+    "category": "language",
+    "prompt": "Responde en español. Estado: compilación completa, pruebas 18/18, documentación pendiente, despliegue bloqueado por aprobación.",
+    "requiredTerms": ["18/18", "documentación", "aprobación"],
+    "expectedShape": "block"
+  },
+  {
+    "id": "clarify-compression",
+    "category": "clarification",
+    "prompt": "Clarify this compressed claim without polished prose: `cache stale ∵ invalidation lag`. Cached data remains old because invalidation arrives 30 seconds late.",
+    "requiredTerms": ["cached data", "invalidation", "30 seconds"],
+    "expectedShape": "plain"
+  }
+]

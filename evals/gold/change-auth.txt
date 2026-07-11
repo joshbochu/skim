@@ -1,0 +1,14 @@
+Auth flow updated.
+
+```text
+✓ changes
+  auth.ts refresh logic
+  session.ts expiry handling
+  api.ts retry on 401
+
+✓ verification
+  tests 42/42
+
+⚠ remaining
+  mobile client untouched
+```

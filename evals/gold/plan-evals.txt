@@ -1,0 +1,17 @@
+Start measurable; add enforcement only if needed.
+
+```text
+phase 1
+  collect 30 prompts
+  save baseline outputs
+  mark preferred results
+
+phase 2
+  tighten contract
+  rerun same prompts
+  compare regressions
+
+phase 3
+  add structured output
+  only if prompt plateaus
+```

@@ -15,10 +15,18 @@
     "url": "git+https://github.com/joshbochu/skim.git"
   },
   "homepage": "https://github.com/joshbochu/skim",
+  "scripts": {
+    "test": "node --test evals/*.test.mjs",
+    "eval:lint": "node evals/lint.mjs --gold",
+    "eval:dry": "node evals/run.mjs --dry-run",
+    "eval": "node evals/run.mjs"
+  },
   "files": [
     "extensions",
     "rules",
     "skills",
+    "evals",
+    "IMPROVING.md",
     "README.md",
     "LICENSE"
   ],

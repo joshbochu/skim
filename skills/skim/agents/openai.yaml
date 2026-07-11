@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skim"
+  short_description: "Caveman wording in compact Skim layout"
+  default_prompt: "Use $skim to answer with Caveman-full wording and compact vertical structure."

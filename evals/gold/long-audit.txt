@@ -1,0 +1,19 @@
+2 critical findings; 2 medium; remaining controls pass.
+
+```text
+✗ critical
+  authentication
+  secrets
+
+⚠ medium
+  dependencies
+  backups
+
+✓ application
+  authorization
+  input validation
+  logging
+
+✓ operations
+  incident response
+```

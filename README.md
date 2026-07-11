@@ -10,7 +10,8 @@ that reads a `SKILL.md`.
 It rewires how your agent answers: ultra-compressed wording,
 one plain headline, then vertical, symbol-dense blocks — one fact
 per line, indentation as hierarchy, logic symbols instead of
-connective prose, and never more than 3–5 items in a group.
+connective prose, never more than 5 top-level anchors, and never
+more than 5 child facts under one parent.
 
 That is about all a human working memory can hold.
 
@@ -67,8 +68,8 @@ Both keep code, commands, and error strings byte-exact.
 Use caveman when the bill hurts.
 Use skim when your brain does.
 
-Skim vendors the upstream Caveman skill as reference material,
-then uses `ultra-max-supreme` as its native compression layer.
+Skim derives its wording rules from the Caveman lineage, then applies
+a compact native Caveman-full contract inside Skim layout.
 
 ## The rules
 
@@ -78,7 +79,7 @@ objective
   minimize cognitive load
   eye scanning = proxy, not goal
 
-ultra-max-supreme
+Caveman-full
   drop load-free words
   verb-first | noun-stack
   stop before decode pause
@@ -87,7 +88,8 @@ ultra-max-supreme
 quantified grammar
   anchor 1–4 words
   child fact 3–9 words
-  group 3–5 siblings
+  top-level anchors 1–5 total
+  child facts 1–5 per parent
   line 45–65 chars ideal
   hard line 72 chars
 
@@ -115,7 +117,8 @@ line budget
   code · commands · errors stay byte-exact
 
 memory
-  ≤5 lines per group
+  ≤5 top-level anchors total
+  ≤5 child facts per parent
   >5 siblings ⇒ regroup under sub-anchors
   ≤3 indent levels
 
@@ -155,7 +158,7 @@ math class. The skill forbids inventing new ones.
 
 |
   choice or alternative branch
-  text | emoji
+  fence | markdown
 
 /
   paired labels or compact binary forms
@@ -163,7 +166,7 @@ math class. The skill forbids inventing new ones.
 
 +
   additive composition
-  skim + ultra-max-supreme
+  skim + Caveman-full
 
 ,
   avoid in skim blocks
@@ -213,25 +216,6 @@ Better:
 best
   opt-in per query
   not global
-```
-
-### Emoji setting
-
-`/skim emoji on|off` sets left-edge status sigils explicitly.
-When on, text sigils become colored emoji:
-`✅` `❌` `⚠️`, and `🔴` `🟡` `🟢` for severity.
-
-Color is preattentive: your eye sorts red from green before it
-reads a single word. In-line logic symbols stay text.
-`/skim text` = `/skim emoji off`.
-Default is text — terminals render it everywhere.
-
-```
-🔴 sql injection in /search
-  ∵ raw string concat
-🟡 pool=5 < load≈40
-  → raise
-🟢 tests 42/42
 ```
 
 ## Why it works
@@ -303,20 +287,41 @@ ln -s ~/dev/skim/skills/skim ~/.claude/skills/skim
 ```
 /skim on        activate · persists across sessions
 /skim off       back to normal prose
-/skim emoji on  force colored status anchors
-/skim emoji off terminal-safe sigils
-/skim text      alias for /skim emoji off
+/skim capture   save last prompt + response for later review
 /skim fence on  verbatim fenced blocks
 /skim fence off native markdown bullets
 ```
 
-## Escape hatch
+Add an optional note after `capture`:
 
-Skim drops to full sentences — on its own — for security warnings,
-irreversible-action confirmations, and anywhere compression would
-make step order ambiguous.
+```bash
+/skim capture too much normal prose
+```
 
-Dense is the default; unambiguous is the law.
+Captures stay local under `~/.pi/agent/skim/captures/`. Keep using Pi;
+later ask Codex to “review my Skim captures and improve the skill.”
+Capture is explicit because stored prompts and responses may contain sensitive
+material; inspect or delete these local JSON files whenever needed.
+
+Compression never changes factual meaning. No prose escape mode.
+
+## Evals and improvement
+
+Skim includes captured real failures, 30 repeatable behavior cases,
+hand-approved gold outputs, a deterministic linter, and a headless Pi
+adapter. Codex operates this tooling during skill-creator review.
+
+```bash
+npm run eval:lint
+npm run eval:dry
+npm run eval -- --label baseline
+```
+
+Normal users only need `/skim capture`; these commands support Codex and CI.
+
+See [`evals/README.md`](evals/README.md) for the benchmark workflow.
+See [`IMPROVING.md`](IMPROVING.md) for future options: live linting,
+structured final responses, repair passes, and eventual fine-tuning.
 
 ## License
 

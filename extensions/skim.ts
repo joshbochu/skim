@@ -2,15 +2,13 @@
  * pi-skim — max info per reader-effort
  *
  * A pi extension that formats agent output for high density and
- * low cognitive load: ultra-compressed wording, one fact per line,
- * logic symbols, and 3-5 items per group.
+ * low cognitive load: Caveman-full wording, one fact per line,
+ * logic symbols, and at most 5 top-level anchors.
  * https://github.com/joshbochu/skim
  *
  * Commands:
  *   /skim           Toggle skim on/off
- *   /skim emoji on  Enable emoji anchors
- *   /skim emoji off Disable emoji anchors
- *   /skim text      Alias for /skim emoji off
+ *   /skim capture   Save last prompt/response for later improvement
  *   /skim fence on  Use fenced blocks
  *   /skim fence off Use markdown bullets
  *   /skim off       Disable (aliases: stop, quit)
@@ -21,16 +19,22 @@
  */
 
 import { readFile, writeFile, mkdir } from "node:fs/promises";
-import { homedir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type {
 	ExtensionAPI,
+	ExtensionCommandContext,
 	ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
+import {
+	createCaptureRecord,
+	findLatestExchange,
+	fingerprintText,
+	getAgentDir,
+	saveCapture,
+} from "./skim-capture.mjs";
 
-const MODES = ["off", "text", "emoji"] as const;
-type Mode = (typeof MODES)[number];
+type Mode = "off" | "on";
 const CONTAINERS = ["fence", "markdown"] as const;
 type Container = (typeof CONTAINERS)[number];
 const STOP_ALIASES = new Set(["off", "stop", "quit"]);
@@ -47,19 +51,9 @@ const COMMAND_OPTIONS = [
 		description: "Disable skim",
 	},
 	{
-		value: "emoji on",
-		label: "emoji on",
-		description: "Enable emoji anchors",
-	},
-	{
-		value: "emoji off",
-		label: "emoji off",
-		description: "Disable emoji anchors",
-	},
-	{
-		value: "text",
-		label: "text",
-		description: "Alias for emoji off",
+		value: "capture",
+		label: "capture",
+		description: "Save last prompt and response for later improvement",
 	},
 	{
 		value: "fence on",
@@ -84,22 +78,28 @@ interface SkimConfig {
 	container: Container;
 	/** Optional override path to the skim-core rules file. */
 	rulesPath?: string;
-	/** Optional override path to the ultra-max-supreme rules file. */
+	/** Optional override path to the Caveman-full wording rules file. */
 	ultraPath?: string;
 }
 
-const CONFIG_PATH = join(homedir(), ".pi", "agent", "skim.json");
+const CONFIG_PATH = join(getAgentDir(), "skim.json");
 const DEFAULT_CONFIG: SkimConfig = {
 	defaultMode: "off",
 	container: "fence",
 };
 
+function normalizeMode(value: unknown): Mode | null {
+	if (value === "off") return "off";
+	// One-way migration only; legacy presentation modes no longer exist.
+	if (value === "on" || value === "text" || value === "emoji") return "on";
+	return null;
+}
+
 async function loadConfig(): Promise<SkimConfig> {
 	try {
 		const parsed = JSON.parse(await readFile(CONFIG_PATH, "utf8"));
-		const defaultMode = MODES.includes(parsed.defaultMode)
-			? parsed.defaultMode
-			: DEFAULT_CONFIG.defaultMode;
+		const defaultMode =
+			normalizeMode(parsed.defaultMode) ?? DEFAULT_CONFIG.defaultMode;
 		const container = CONTAINERS.includes(parsed.container)
 			? parsed.container
 			: DEFAULT_CONFIG.container;
@@ -137,15 +137,15 @@ Max info per reader-effort, not min tokens.
 Eye scanning is proxy, not goal.
 
 Bridge:
-- ultra-max-supreme governs wording.
+- Caveman-full governs wording.
 - skim-core governs structure.
-- Auto-Clarity overrides both.
+- Preserve necessary grammar only when omission changes meaning.
 
 Three layout levers: vertical layout, chunking, line budget.
 Skim layout is NOT permission for full sentences.
 
 Shape:
-- Headline ≤2 plain sentences.
+- Headline ≤1 terse line.
 - Body = fenced single-column blocks.
 
 Line grammar:
@@ -185,18 +185,12 @@ Chains: each →, ∵, ∴, ⚠ starts its own indented line.
 Never write A → B → C on one line.
 Never put 2 predicates on one line.
 
+Top-level anchors: 1–5 TOTAL per reply.
 Chunks: ≤5 lines per group, blank line between.
 >5 siblings → regroup under sub-anchors.
 ≤3 indent levels.
 
-Floor: <3 facts → one plain sentence, no block.
-Ceiling: reader pauses to decode → too far.
-
-Auto-clarity:
-- Plain full sentences for security warnings.
-- Plain full sentences for irreversible-action confirmations.
-- Plain full sentences for ambiguous step order.
-- Resume after.
+Floor: <3 facts → one terse line, no block.
 
 Boundaries:
 - Code, commands, error strings byte-exact.
@@ -205,7 +199,7 @@ Boundaries:
 - Never announce the mode.`;
 
 const ULTRA_FALLBACK = `\
-ultra-max-supreme
+Caveman-full wording
 Max info per reader-effort, not min tokens.
 
 Priority:
@@ -231,7 +225,7 @@ Quantified grammar:
 - Repeated fact: 0.
 
 Tone target:
-- Smart caveman, not polished consultant.
+- Caveman-full, not polished consultant.
 - Fragment OK when meaning survives.
 - Drop connective tissue first.
 - Keep enough grammar for instant read.
@@ -251,23 +245,22 @@ Never:
 - Compress code, API names, CLI commands, error strings.
 
 Ceiling:
-- Stop the instant reader pauses to decode.
-- Auto-Clarity beats all compression rules.`;
+- Compression must not change factual meaning.`;
 
 const BRIDGE_RULES = `\
 Bridge:
-- ultra-max-supreme governs wording.
+- Caveman-full governs every chat word.
 - skim-core governs structure.
-- If rules conflict, preserve Skim structure and symbols.
-- Auto-Clarity overrides both.`;
+- Safety and factual meaning outrank style.
+- Keep only grammar required for exact meaning.`;
 
-const EMOJI_ADDENDUM = `\
-Emoji anchors active:
-- Left-edge status sigils become ✅ ❌ ⚠️.
-- Severity marks become 🔴 🟡 🟢.
-- Status at line start only.
-- Never decorative emoji.
-- In-line logic symbols (→ ∵ ∴ Δ …) stay text.`;
+const FINAL_CHECK = `\
+FINAL OUTPUT CHECK:
+- Caveman-full wording in headline, anchors, and facts.
+- 1–5 top-level anchors TOTAL, not per group.
+- 1–5 child facts per parent.
+- No polished introduction.
+- No prose escape mode.`;
 
 const MARKDOWN_ADDENDUM = `\
 Container override — markdown, not fences:
@@ -351,15 +344,49 @@ export default function skim(pi: ExtensionAPI) {
 		await configLoadPromise;
 	};
 
+	async function captureLatest(note: string, ctx: ExtensionCommandContext) {
+		await ctx.waitForIdle();
+		const exchange = findLatestExchange(ctx.sessionManager.getBranch());
+		if (!exchange) {
+			ctx.ui.notify("Nothing to capture yet.", "error");
+			return;
+		}
+
+		try {
+			const { text: rulesText } = await loadRules(config);
+			const record = createCaptureRecord({
+				exchange,
+				note,
+				cwd: ctx.cwd,
+				sessionId: ctx.sessionManager.getSessionId(),
+				sessionFile: ctx.sessionManager.getSessionFile(),
+				model: ctx.model
+					? { provider: ctx.model.provider, id: ctx.model.id }
+					: null,
+				mode,
+				container: config.container,
+				rulesFingerprint: fingerprintText(rulesText),
+			});
+			const path = await saveCapture(record);
+			pi.appendEntry("skim-capture", {
+				id: record.id,
+				path,
+				note: record.note,
+			});
+			ctx.ui.notify(`Captured ${record.id}.`, "info");
+		} catch (error) {
+			const message = error instanceof Error ? error.message : String(error);
+			ctx.ui.notify(`Capture failed: ${message}`, "error");
+		}
+	}
+
 	function syncStatus(ctx: Pick<ExtensionContext, "ui">) {
 		if (mode === "off") {
 			ctx.ui.setStatus("skim", "");
 			return;
 		}
 		const theme = ctx.ui.theme;
-		const label =
-			(mode === "emoji" ? "EMOJI" : "TEXT") +
-			(config.container === "markdown" ? "·MD" : "");
+		const label = "ON" + (config.container === "markdown" ? "·MD" : "");
 		ctx.ui.setStatus(
 			"skim",
 			theme.fg("muted", "⇊ skim: ") + theme.fg("text", label),
@@ -379,7 +406,7 @@ export default function skim(pi: ExtensionAPI) {
 		await saveConfig(config);
 		syncStatus(ctx);
 		ctx.ui.notify(
-			mode === "off" ? "Skim off." : `Skim on (${mode}, ${newContainer}).`,
+			mode === "off" ? "Skim off." : `Skim on (${newContainer}).`,
 			"info",
 		);
 	}
@@ -392,7 +419,7 @@ export default function skim(pi: ExtensionAPI) {
 		container: Container,
 		ctx: ExtensionContext,
 	) {
-		const activeMode = mode === "off" ? "text" : mode;
+		const activeMode = mode === "off" ? "on" : mode;
 		await applyState(activeMode, container, ctx);
 	}
 
@@ -404,8 +431,9 @@ export default function skim(pi: ExtensionAPI) {
 		let sessionMode: Mode | null = null;
 		for (const entry of ctx.sessionManager.getEntries()) {
 			if (entry.type === "custom" && entry.customType === "skim-mode") {
-				const data = entry.data as { mode: Mode; container?: Container };
-				if (MODES.includes(data?.mode)) sessionMode = data.mode;
+				const data = entry.data as { mode?: unknown; container?: Container };
+				const restoredMode = normalizeMode(data?.mode);
+				if (restoredMode) sessionMode = restoredMode;
 				if (data?.container && CONTAINERS.includes(data.container)) {
 					config.container = data.container;
 				}
@@ -426,7 +454,7 @@ export default function skim(pi: ExtensionAPI) {
 
 	pi.registerCommand("skim", {
 		description:
-			"Toggle skim. Args: on, off, emoji [on|off], fence [on|off]",
+			"Toggle skim or capture output. Args: on, off, capture [note], fence [on|off]",
 		getArgumentCompletions: (prefix: string) => {
 			const normalized = prefix.trim().toLowerCase();
 			const items = COMMAND_OPTIONS.filter((item) =>
@@ -436,11 +464,15 @@ export default function skim(pi: ExtensionAPI) {
 		},
 		handler: async (args, ctx) => {
 			await ensureConfigLoaded();
-			const arg = args?.trim().toLowerCase() ?? "";
-			const activeMode = mode === "off" ? "text" : mode;
-			const [primary, secondary] = arg.split(/\s+/, 2);
+			const rawArg = args?.trim() ?? "";
+			const arg = rawArg.toLowerCase();
+			const activeMode = mode === "off" ? "on" : mode;
+			const [primary = "", secondary] = arg.split(/\s+/, 2);
 
-			if (!arg) {
+			if (primary === "capture") {
+				const note = rawArg.slice(rawArg.split(/\s+/, 1)[0].length).trim();
+				await captureLatest(note, ctx);
+			} else if (!arg) {
 				await applyState(
 					mode === "off" ? activeMode : "off",
 					config.container,
@@ -450,18 +482,6 @@ export default function skim(pi: ExtensionAPI) {
 				await setMode(activeMode, ctx);
 			} else if (STOP_ALIASES.has(arg)) {
 				await setMode("off", ctx);
-			} else if (arg === "text") {
-				await setMode("text", ctx);
-			} else if (primary === "emoji") {
-				if (!secondary) {
-					ctx.ui.notify('Use: /skim emoji on|off', "error");
-				} else if (secondary === "on") {
-					await setMode("emoji", ctx);
-				} else if (secondary === "off") {
-					await setMode("text", ctx);
-				} else {
-					ctx.ui.notify('Use: /skim emoji on|off', "error");
-				}
 			} else if (primary === "fence") {
 				if (!secondary) {
 					ctx.ui.notify('Use: /skim fence on|off', "error");
@@ -474,7 +494,7 @@ export default function skim(pi: ExtensionAPI) {
 				}
 			} else {
 				ctx.ui.notify(
-					`Unknown: "${arg}". Use: on, off, emoji, fence`,
+					`Unknown: "${arg}". Use: on, off, capture, fence`,
 					"error",
 				);
 			}
@@ -497,8 +517,8 @@ export default function skim(pi: ExtensionAPI) {
 		}
 
 		const parts = ["IMPORTANT — SKIM MODE ACTIVE:", text];
-		if (mode === "emoji") parts.push(EMOJI_ADDENDUM);
 		if (config.container === "markdown") parts.push(MARKDOWN_ADDENDUM);
+		parts.push(FINAL_CHECK);
 
 		return {
 			systemPrompt: `${event.systemPrompt}\n\n${parts.join("\n\n")}`,
