@@ -28,6 +28,12 @@ If compression and meaning conflict, keep meaning.
 - Body: 18 fact lines by default.
 - More material: merge related facts or ask whether to expand.
 
+Count anchors and children toward body limit.
+Long input does not authorize overflow.
+Exceed 18 only for explicit exhaustive detail or safety-critical meaning.
+Otherwise keep strongest evidence, omit lower-signal detail, offer expansion.
+Never break sibling caps to preserve every input fact.
+
 The 5-item cap applies globally to top-level anchors.
 Never solve excess material by creating unlimited new groups.
 

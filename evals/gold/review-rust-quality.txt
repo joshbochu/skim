@@ -1,0 +1,22 @@
+Verified quality high; layout monolith remains main cost.
+
+- ✓ **proof**
+  - release build: 2.6s, 0 warnings
+  - clippy: 0 warnings, all targets
+  - sole dependency: unicode-width
+- ✓ **design**
+  - B6/B14 refs bind behavior to code
+  - `render_scene_with_checks` verifies output
+  - signed `Scene` keeps exact bounds
+- ✓ **tests ×4**
+  - behavior.rs contract scenarios
+  - golden.rs byte snapshots
+  - scene.rs frame invariants
+  - quality.rs geometry predicates
+- ⚠ **layout**
+  - `layout_fit`: 556 lines
+  - `layout_fit` mixes ranking · sizing · special cases
+  - `layout.rs`: 1,730 lines, 40% project
+  - accumulated heuristics lack decomposition
+
+→ Decomposition sketch available.

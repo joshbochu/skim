@@ -256,30 +256,24 @@ Bridge:
 
 const FINAL_CHECK = `\
 FINAL OUTPUT CHECK:
+- Active container honored: fence or Markdown bullets.
 - Caveman-full wording in headline, anchors, and facts.
 - 1–5 top-level anchors TOTAL, not per group.
 - 1–5 child facts per parent.
+- Count anchors plus children; body ≤18 lines by default.
 - No polished introduction.
 - No prose escape mode.`;
 
-const MARKDOWN_ADDENDUM = `\
+const MARKDOWN_FALLBACK = `\
 Container override — markdown, not fences:
 - NO fenced code blocks for skim structure.
 - Fences remain for actual code only.
-- Anchors are top-level bullets with label bold:
-  \`- ✓ **auth.ts**\`.
+- Anchors are top-level bullets with bold labels.
 - Facts are nested bullets.
 - One fact per line.
 - 2-space indent per level.
 - Same symbols and chunk caps.
-- Inline \`code\` backticks allowed.
-
-Example:
-- ✗ **tests fail**
-  - ∵ pool exhausted
-  - ∵ connections never released
-- ⚠ **pool** 5 < load≈40
-  - → raise`;
+- Inline code backticks allowed.`;
 
 interface LoadedText {
 	text: string;
@@ -320,6 +314,13 @@ async function loadRules(config: SkimConfig): Promise<LoadedText> {
 		text: [BRIDGE_RULES, ultra.text, core.text].join("\n\n"),
 		fromFile: core.fromFile && ultra.fromFile,
 	};
+}
+
+async function loadMarkdownRules(): Promise<LoadedText> {
+	const markdownPath = fileURLToPath(
+		new URL("../rules/skim-markdown.md", import.meta.url),
+	);
+	return loadFirstText([markdownPath], MARKDOWN_FALLBACK);
 }
 
 // ------------------------------------------------------------------
@@ -517,7 +518,10 @@ export default function skim(pi: ExtensionAPI) {
 		}
 
 		const parts = ["IMPORTANT — SKIM MODE ACTIVE:", text];
-		if (config.container === "markdown") parts.push(MARKDOWN_ADDENDUM);
+		if (config.container === "markdown") {
+			const { text: markdownRules } = await loadMarkdownRules();
+			parts.push(markdownRules);
+		}
 		parts.push(FINAL_CHECK);
 
 		return {

@@ -39,12 +39,6 @@ Meaning beats compression. Keep only grammar needed for exact meaning.
 - Indent depth: 3 levels maximum.
 - Body: 18 fact lines by default.
 
-Count anchors and children toward body limit.
-Long input does not authorize overflow.
-Exceed 18 only for explicit exhaustive detail or safety-critical meaning.
-Otherwise keep strongest evidence, omit lower-signal detail, offer expansion.
-Never break sibling caps to preserve every input fact.
-
 The 5-item cap applies globally to top-level anchors.
 Never create unlimited groups to evade the cap.
 
@@ -194,25 +188,12 @@ skill improvement. Capture only on explicit user command.
 `/skim fence off` uses native Markdown bullets.
 All limits and Caveman wording remain unchanged.
 
-Fence-off target:
-
-Pool exhaustion causes test failures.
-
-- ✗ **tests**
-  - ∵ connections never released
-  - ∵ pool exhausted
-- ⚠ **pool**
-  - 5 < load≈40
-  - → raise after leak fix
-
 ## Final check
 
 Before sending:
 
-- Active fence setting honored?
 - Caveman wording everywhere?
 - No polished introduction?
 - 1–5 top-level anchors total?
 - 1–5 children per parent?
-- Body within 18-line default?
 - Meaning complete?

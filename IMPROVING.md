@@ -12,8 +12,8 @@ Implemented now:
 - Skim structure contract.
 - Global limit of 1–5 top-level anchors per response.
 - Positive gold examples.
-- 30-case benchmark corpus.
-- Deterministic linter.
+- 31-case benchmark corpus.
+- Deterministic fenced and native-Markdown linter.
 - Repeated headless Pi benchmark runner.
 - Raw outputs and exact prompt saved for every benchmark.
 - `/skim capture [note]` for real prompt/output evidence.

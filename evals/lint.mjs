@@ -20,6 +20,16 @@ const POLISHED_OPENERS = [
 	/^i(?:'ve| have)\b/i,
 ];
 
+const BANNED_ABBREVIATIONS = ["cfg", "req", "fn", "impl"];
+
+function normalizeOutput(text) {
+	return text
+		.split(/\r?\n/)
+		.map((line) => line.replace(/[ \t]+$/, ""))
+		.join("\n")
+		.replace(/^\n+|\n+$/g, "");
+}
+
 function stripProtected(text) {
 	return text
 		.replace(/`[^`]*`/g, "")
@@ -32,7 +42,7 @@ function wordCount(text) {
 }
 
 function extractTextBlock(output) {
-	const match = /```text[ \t]*\r?\n([\s\S]*?)\r?\n```/m.exec(output);
+	const match = /^[ \t]{0,3}```text[ \t]*\n([\s\S]*?)\n[ \t]{0,3}```[ \t]*$/m.exec(output);
 	if (!match) return null;
 	return {
 		body: match[1],
@@ -41,12 +51,35 @@ function extractTextBlock(output) {
 	};
 }
 
+function extractMarkdownBody(output) {
+	const lines = output.split("\n");
+	const start = lines.findIndex((line) => /^-\s+\S/.test(line));
+	if (start === -1) return null;
+
+	let end = start;
+	for (; end < lines.length; end += 1) {
+		const line = lines[end];
+		if (!line.trim() || /^ *-\s+\S/.test(line)) continue;
+		break;
+	}
+
+	return {
+		body: lines.slice(start, end).join("\n").trimEnd(),
+		headline: lines.slice(0, start).join("\n").trim(),
+		trailing: lines.slice(end).join("\n").trim(),
+	};
+}
+
 export function lintOutput(output, options = {}) {
+	output = normalizeOutput(output);
 	const expectedShape = options.expectedShape ?? "auto";
 	const maxBodyLines = options.maxBodyLines ?? 18;
 	const errors = [];
 	const warnings = [];
 	const block = extractTextBlock(output);
+	const markdown = block ? null : extractMarkdownBody(output);
+	const structured = block ?? markdown;
+	const bodyKind = block ? "block" : markdown ? "markdown" : "plain";
 
 	if (expectedShape === "block" && !block) {
 		errors.push("missing fenced text body");
@@ -54,8 +87,17 @@ export function lintOutput(output, options = {}) {
 	if (expectedShape === "plain" && block) {
 		errors.push("unexpected fenced text body");
 	}
+	if (expectedShape === "markdown" && block) {
+		errors.push("unexpected fenced text body; markdown container required");
+	}
+	if (expectedShape === "markdown" && !markdown) {
+		errors.push("missing markdown bullet body");
+	}
+	if (expectedShape === "plain" && markdown) {
+		errors.push("unexpected markdown bullet body");
+	}
 
-	const headline = block ? block.headline : output.trim();
+	const headline = structured ? structured.headline : output.trim();
 	const headlineLines = headline.split(/\r?\n/).filter((line) => line.trim());
 	const headlineLimit = 1;
 	if (headlineLines.length > headlineLimit) {
@@ -65,9 +107,10 @@ export function lintOutput(output, options = {}) {
 		errors.push("polished introduction detected");
 	}
 
-	if (block?.trailing) {
-		const closeLines = block.trailing.split(/\r?\n/).filter((line) => line.trim());
+	if (structured?.trailing) {
+		const closeLines = structured.trailing.split(/\r?\n/).filter((line) => line.trim());
 		if (closeLines.length > 1) errors.push("close exceeds 1 line");
+		if (wordCount(structured.trailing) > 12) errors.push("close not terse");
 	}
 
 	let anchors = 0;
@@ -77,8 +120,11 @@ export function lintOutput(output, options = {}) {
 	const siblingCounts = new Map();
 	const stack = [];
 
-	if (block) {
-		for (const [index, rawLine] of block.body.split(/\r?\n/).entries()) {
+	if (structured) {
+		for (const [index, sourceLine] of structured.body.split(/\r?\n/).entries()) {
+			const rawLine = bodyKind === "markdown"
+				? sourceLine.replace(/^( *)-\s+/, "$1")
+				: sourceLine;
 			if (!rawLine.trim()) continue;
 			bodyLines += 1;
 			if (rawLine.includes("\t")) {
@@ -92,6 +138,9 @@ export function lintOutput(output, options = {}) {
 			maxDepth = Math.max(maxDepth, depth);
 			if (depth > 3) errors.push(`line ${index + 1}: depth ${depth} > 3`);
 			if (depth === 0) anchors += 1;
+			if (bodyKind === "markdown" && depth === 0 && !/\*\*[^*]+\*\*/.test(rawLine)) {
+				errors.push(`line ${index + 1}: markdown anchor missing bold label`);
+			}
 
 			const parent = depth === 0 ? "root" : stack[depth - 1] ?? "orphan";
 			const count = (siblingCounts.get(parent) ?? 0) + 1;
@@ -113,9 +162,15 @@ export function lintOutput(output, options = {}) {
 	if (bodyLines > maxBodyLines) {
 		errors.push(`body fact lines ${bodyLines} > ${maxBodyLines}`);
 	}
-	if (block && anchors === 0) errors.push("body has no top-level anchor");
+	if (structured && anchors === 0) errors.push("body has no top-level anchor");
 
-	const analyzedText = `${headline}\n${block?.body ?? ""}`;
+	const analyzedText = `${headline}\n${structured?.body ?? ""}\n${structured?.trailing ?? ""}`;
+	const abbreviationText = stripProtected(analyzedText).toLocaleLowerCase();
+	for (const abbreviation of BANNED_ABBREVIATIONS) {
+		if (new RegExp(`\\b${abbreviation}\\b`, "u").test(abbreviationText)) {
+			errors.push(`invented abbreviation: ${abbreviation}`);
+		}
+	}
 	const words = stripProtected(analyzedText).toLowerCase().match(/[\p{L}]+/gu) ?? [];
 	const functionWords = words.filter((word) => FUNCTION_WORDS.has(word)).length;
 	const functionWordRate = words.length === 0 ? 0 : (functionWords / words.length) * 100;
@@ -139,6 +194,7 @@ export function lintOutput(output, options = {}) {
 		errors,
 		warnings,
 		metrics: {
+			bodyKind,
 			anchors,
 			bodyLines,
 			maxDepth,

@@ -8,8 +8,8 @@ normal Pi work, then ask Codex to review captures and improve Skim.
 
 ## What exists
 
-- `cases.json`: 30 prompts across floor, diagnosis, comparison, plan,
-  research, safety, exact-text, global-cap, and language cases.
+- `cases.json`: 31 prompts across floor, diagnosis, comparison, plan,
+  research, safety, exact-text, global-cap, language, and container cases.
 - `gold/`: hand-approved outputs defining current taste.
 - `lint.mjs`: deterministic structure, wording, and required-term checks.
 - `run.mjs`: repeated headless Pi runs with raw-output preservation.
@@ -63,7 +63,7 @@ the exact system prompt, stderr where present, and `summary.json`.
 Hard failures:
 
 - Missing required facts.
-- Wrong plain/block shape.
+- Wrong plain/fenced/markdown shape.
 - More than 5 top-level anchors.
 - More than 5 children under one parent.
 - More than 3 indentation levels.

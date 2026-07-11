@@ -211,5 +211,13 @@
     "prompt": "Clarify this compressed claim without polished prose: `cache stale ∵ invalidation lag`. Cached data remains old because invalidation arrives 30 seconds late.",
     "requiredTerms": ["cached data", "invalidation", "30 seconds"],
     "expectedShape": "plain"
+  },
+  {
+    "id": "review-rust-quality",
+    "category": "review",
+    "container": "markdown",
+    "prompt": "Assess whether this Rust codebase is genuinely high quality from verified evidence, not documentation claims. Facts: Rust 2024 with idiomatic let-chains; release build clean in 2.6s with 0 warnings; clippy has 0 warnings across all targets; tests pass in 0.83s against a 5s budget; sole dependency is unicode-width; live-rendered diagrams look correct; B6/B14 behavior references anchor code to specification; render_scene_with_checks verifies renderer output; signed Scene normalization gives exact bounds; doubled coordinates avoid floats; ordered Vec usage and no HashMap enforce determinism; behavior.rs, golden.rs, scene.rs, and quality.rs provide four test layers. Main weakness: layout_fit spans about 556 lines and mixes ranking, sizing, and special cases; layout.rs is 1,730 lines and 40% of the project; accumulated layout heuristics remain undecomposed. Give verdict, evidence, strengths, and weak spots. Offer deeper decomposition only as a terse handoff.",
+    "requiredTerms": ["2.6s", "0 warnings", "layout_fit", "layout.rs", "40%"],
+    "expectedShape": "markdown"
   }
 ]
