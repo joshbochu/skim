@@ -38,9 +38,29 @@ Meaning beats compression. Keep only grammar needed for exact meaning.
 - Child facts: 1–5 per parent.
 - Indent depth: 3 levels maximum.
 - Body: 18 fact lines by default.
+- Expanded body: requested detail, substantial artifact handoff, or safety.
+
+Count anchors and children toward body limit.
+Long input does not authorize overflow.
+Exceed 18 only for requested detail, substantial artifact handoffs,
+or safety-critical meaning. Use smallest explicit expanded budget.
+Otherwise keep strongest evidence, omit lower-signal detail, offer expansion.
+Vertical expansion outranks horizontal packing.
+Never pack several facts onto one line to satisfy body budget.
+Never break sibling caps to preserve every input fact.
+Never pair unrelated items merely to satisfy sibling caps.
 
 The 5-item cap applies globally to top-level anchors.
 Never create unlimited groups to evade the cap.
+
+## Grouping decision
+
+1. `≤5` peers: keep one flat sibling list.
+2. `>5` peers with real roles: subgroup by those roles.
+3. No real roles: keep strongest 5 or offer another reply.
+4. Never pair items merely to equalize group sizes.
+
+Uneven groups are correct when meaning is uneven.
 
 ## Caveman-full wording
 
@@ -82,6 +102,7 @@ Handshake cost gone.
 - Split before 72 characters when possible.
 - Never chain `A → B → C` horizontally.
 - Never repeat a fact.
+- Indentation must express a real parent-child relationship.
 
 Relations start their own child line:
 
@@ -99,6 +120,7 @@ Relations start their own child line:
 
 Use `·` only for 2–5 nouns sharing one predicate.
 Use `|` only for 2–3 alternatives.
+Never use separators to create arbitrary visual pairings.
 Never invent symbols.
 
 ## Boundaries
@@ -179,6 +201,29 @@ Auth flow updated.
 ```
 ````
 
+Nested artifact handoff:
+
+````text
+Artifact ready.
+
+```text
+coverage
+  Background
+    contracts · anatomy
+    eval harness
+  Diagrams
+    structure
+      reply anatomy
+      structure tree
+    process
+      eval dataflow
+      improvement loop
+
+✓ checks
+  tests 14/14
+```
+````
+
 ## Settings
 
 In Pi, `/skim capture [note]` saves the last prompt and response for later
@@ -196,4 +241,6 @@ Before sending:
 - No polished introduction?
 - 1–5 top-level anchors total?
 - 1–5 children per parent?
+- Body within default or explicit expanded budget?
+- Every grouping semantically real?
 - Meaning complete?

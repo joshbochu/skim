@@ -21,6 +21,9 @@ const POLISHED_OPENERS = [
 ];
 
 const BANNED_ABBREVIATIONS = ["cfg", "req", "fn", "impl"];
+const SOFT_LINE_LENGTH = 72;
+const HARD_PROSE_LINE_LENGTH = 100;
+const DEFAULT_MAX_LONG_PROSE_LINES = 2;
 
 function normalizeOutput(text) {
 	return text
@@ -117,6 +120,7 @@ export function lintOutput(output, options = {}) {
 	let bodyLines = 0;
 	let maxDepth = 0;
 	let fullSentenceLines = 0;
+	let longProseLines = 0;
 	const siblingCounts = new Map();
 	const stack = [];
 
@@ -151,11 +155,33 @@ export function lintOutput(output, options = {}) {
 			stack[depth] = `${index}:${rawLine.trim()}`;
 			stack.length = depth + 1;
 
-			if (rawLine.length > 72 && !/https?:\/\//.test(rawLine)) {
-				warnings.push(`line ${index + 1}: ${rawLine.length} chars > 72`);
+			if (rawLine.length > SOFT_LINE_LENGTH && !/https?:\/\//.test(rawLine)) {
+				warnings.push(
+					`line ${index + 1}: ${rawLine.length} chars > ${SOFT_LINE_LENGTH}`,
+				);
+			}
+
+			const proseLine = stripProtected(rawLine).trimEnd();
+			if (proseLine.trim().length > 0 && proseLine.length > SOFT_LINE_LENGTH) {
+				longProseLines += 1;
+			}
+			const hardProseLineLength =
+				options.hardProseLineLength ?? HARD_PROSE_LINE_LENGTH;
+			if (proseLine.length > hardProseLineLength) {
+				errors.push(
+					`line ${index + 1}: prose length ${proseLine.length} > ${hardProseLineLength}`,
+				);
 			}
 			if (/[.!]$/.test(rawLine.trim())) fullSentenceLines += 1;
 		}
+	}
+
+	const maxLongProseLines =
+		options.maxLongProseLines ?? DEFAULT_MAX_LONG_PROSE_LINES;
+	if (longProseLines > maxLongProseLines) {
+		errors.push(
+			`overlong prose lines ${longProseLines} > ${maxLongProseLines}`,
+		);
 	}
 
 	if (anchors > 5) errors.push(`top-level anchors ${anchors} > 5`);
@@ -201,6 +227,7 @@ export function lintOutput(output, options = {}) {
 			headlineLines: headlineLines.length,
 			functionWordRate: Number(functionWordRate.toFixed(1)),
 			bodySentenceRate: Number(sentenceRate.toFixed(1)),
+			longProseLines,
 			words: wordCount(analyzedText),
 		},
 	};

@@ -158,6 +158,8 @@ Line budget:
 - Target 45–65 visible characters in skim blocks.
 - Split before 72 characters whenever possible.
 - Treat 80 characters as a hard ceiling.
+- Default budget never authorizes horizontal packing.
+- Requested detail or substantial artifact handoff may expand vertically.
 - CJK target ≈40 glyphs.
 
 Exceptions:
@@ -180,6 +182,15 @@ Separator budgets:
 - \`|\` run: 2–3 choices.
 - Max 1 separator run per line.
 - More items → subgroup.
+- Subgroups must reflect real relationships.
+- Never pair unrelated items to satisfy caps.
+
+Grouping decision:
+1. ≤5 peers → one flat sibling list.
+2. >5 peers with real roles → subgroup by those roles.
+3. No real roles → keep strongest 5 or offer another reply.
+4. Never pair items merely to equalize group sizes.
+Uneven groups are correct when meaning is uneven.
 
 Chains: each →, ∵, ∴, ⚠ starts its own indented line.
 Never write A → B → C on one line.
@@ -261,6 +272,8 @@ FINAL OUTPUT CHECK:
 - 1–5 top-level anchors TOTAL, not per group.
 - 1–5 child facts per parent.
 - Count anchors plus children; body ≤18 lines by default.
+- Expanded budget only for requested detail, artifact handoff, or safety.
+- Every indent and grouping reflects a real relationship.
 - No polished introduction.
 - No prose escape mode.`;
 
@@ -273,7 +286,25 @@ Container override — markdown, not fences:
 - One fact per line.
 - 2-space indent per level.
 - Same symbols and chunk caps.
-- Inline code backticks allowed.`;
+- Inline code backticks allowed.
+
+Semantic nesting target:
+
+Artifact ready.
+
+- **coverage**
+  - **Background**
+    - contracts · anatomy
+    - eval harness
+  - **Diagrams**
+    - **structure**
+      - reply anatomy
+      - structure tree
+    - **process**
+      - eval dataflow
+      - improvement loop
+- ✓ **checks**
+  - tests 14/14`;
 
 interface LoadedText {
 	text: string;

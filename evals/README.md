@@ -8,8 +8,9 @@ normal Pi work, then ask Codex to review captures and improve Skim.
 
 ## What exists
 
-- `cases.json`: 31 prompts across floor, diagnosis, comparison, plan,
-  research, safety, exact-text, global-cap, language, and container cases.
+- `cases.json`: 32 prompts across floor, diagnosis, comparison, plan,
+  research, safety, exact-text, global-cap, language, container, and
+  artifact-handoff cases.
 - `gold/`: hand-approved outputs defining current taste.
 - `lint.mjs`: deterministic structure, wording, and required-term checks.
 - `run.mjs`: repeated headless Pi runs with raw-output preservation.
@@ -36,7 +37,7 @@ Inspect planned benchmark size without calling a model:
 npm run eval:dry
 ```
 
-Run all 30 cases 3 times with Pi defaults:
+Run all 32 cases 3 times with Pi defaults:
 
 ```bash
 npm run eval -- --label baseline
@@ -68,11 +69,13 @@ Hard failures:
 - More than 5 children under one parent.
 - More than 3 indentation levels.
 - More than default body-line budget.
+- More than two prose lines over 72 characters.
+- Any prose line over 100 characters.
 - Polished introduction.
 
 Warnings:
 
-- Lines over 72 characters.
+- Individual lines over 72 characters, including protected exact text.
 - High function-word rate.
 - High full-sentence rate inside Skim body.
 

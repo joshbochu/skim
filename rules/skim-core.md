@@ -26,16 +26,30 @@ If compression and meaning conflict, keep meaning.
 - Child facts: 1–5 per parent.
 - Indent depth: 3 levels maximum.
 - Body: 18 fact lines by default.
-- More material: merge related facts or ask whether to expand.
+- Expanded body: requested detail, substantial artifact handoff, or safety.
+- More material: subgroup real relationships, omit low signal, or expand.
 
 Count anchors and children toward body limit.
 Long input does not authorize overflow.
-Exceed 18 only for explicit exhaustive detail or safety-critical meaning.
+Exceed 18 only for requested detail, substantial artifact handoffs,
+or safety-critical meaning. Use smallest explicit expanded budget.
 Otherwise keep strongest evidence, omit lower-signal detail, offer expansion.
+Vertical expansion outranks horizontal packing.
+Never pack several facts onto one line to satisfy body budget.
 Never break sibling caps to preserve every input fact.
+Never pair unrelated items merely to satisfy sibling caps.
 
 The 5-item cap applies globally to top-level anchors.
 Never solve excess material by creating unlimited new groups.
+
+## Grouping decision
+
+1. `≤5` peers: keep one flat sibling list.
+2. `>5` peers with real roles: subgroup by those roles.
+3. No real roles: keep strongest 5 or offer another reply.
+4. Never pair items merely to equalize group sizes.
+
+Uneven groups are correct when meaning is uneven.
 
 ## Line grammar
 
@@ -47,6 +61,7 @@ Never solve excess material by creating unlimited new groups.
 - Split before 72 characters when possible.
 - Never chain `A → B → C` horizontally.
 - Never repeat a fact.
+- Indentation must express a real parent-child relationship.
 
 Relations start their own child line:
 
@@ -62,6 +77,7 @@ Relations start their own child line:
 
 Use `·` only for 2–5 nouns sharing one predicate.
 Use `|` only for 2–3 alternatives.
+Never use separators to create arbitrary visual pairings.
 Never invent symbols.
 
 ## Boundaries

@@ -1,0 +1,44 @@
+Explanation built and opened.
+
+- **file**
+  - `/tmp/2026-07-11-skim-eval-example-explanation.html`
+  - 58 KB
+  - self-contained HTML · CSS · JS
+- Δ **change**
+  - `1c80ad4` “use eval example to improve”
+  - 13 files
+  - +492/−33
+- **coverage**
+  - **Background**
+    - deep: Skim contracts · anatomy
+    - systems: eval harness · improvement loop
+    - narrow: 3 pre-commit gaps
+  - **Intuition**
+    - specimen · 4 failure modes
+    - two-forms-one-tree trick
+    - 7-child violation
+  - **Code**
+    - 3rd linter shape
+    - 3 new checks
+    - per-container prompts · rule alignment
+  - **Diagrams ×6**
+    - **structure**
+      - reply anatomy
+      - structure tree
+    - **process**
+      - eval dataflow
+      - improvement loop
+    - **mapping**
+      - two-forms-one-tree
+    - **history**
+      - commit thread
+  - **Quiz ×5**
+    - interactive answers
+    - immediate feedback
+    - live score
+- ✓ **checks**
+  - 19 `<pre>` blocks
+  - code whitespace preserved
+  - no ASCII diagrams
+  - tags balanced
+  - tests 14/14

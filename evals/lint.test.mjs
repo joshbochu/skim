@@ -94,3 +94,28 @@ test("real fence-off failure remains rejected", async () => {
 	assert.match(report.errors.join("\n"), /close exceeds 1 line/);
 	assert.match(report.errors.join("\n"), /invented abbreviation: fn/);
 });
+
+test("rejects repeated horizontal packing from artifact capture", async () => {
+	const path = resolve("evals/fixtures/artifact-explanation-packed.txt");
+	const output = await readFile(path, "utf8");
+	const report = lintOutput(output, {
+		expectedShape: "markdown",
+		maxBodyLines: 42,
+	});
+	assert.equal(report.pass, false);
+	assert.match(report.errors.join("\n"), /prose length \d+ > 100/);
+	assert.match(report.errors.join("\n"), /overlong prose lines \d+ > 2/);
+});
+
+test("accepts semantically nested artifact handoff", async () => {
+	const path = resolve("evals/gold/artifact-explanation.txt");
+	const output = await readFile(path, "utf8");
+	const report = lintOutput(output, {
+		expectedShape: "markdown",
+		maxBodyLines: 42,
+	});
+	assert.equal(report.pass, true, report.errors.join("\n"));
+	assert.equal(report.metrics.bodyLines, 42);
+	assert.equal(report.metrics.maxDepth, 3);
+	assert.equal(report.metrics.longProseLines, 0);
+});

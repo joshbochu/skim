@@ -219,5 +219,14 @@
     "prompt": "Assess whether this Rust codebase is genuinely high quality from verified evidence, not documentation claims. Facts: Rust 2024 with idiomatic let-chains; release build clean in 2.6s with 0 warnings; clippy has 0 warnings across all targets; tests pass in 0.83s against a 5s budget; sole dependency is unicode-width; live-rendered diagrams look correct; B6/B14 behavior references anchor code to specification; render_scene_with_checks verifies renderer output; signed Scene normalization gives exact bounds; doubled coordinates avoid floats; ordered Vec usage and no HashMap enforce determinism; behavior.rs, golden.rs, scene.rs, and quality.rs provide four test layers. Main weakness: layout_fit spans about 556 lines and mixes ranking, sizing, and special cases; layout.rs is 1,730 lines and 40% of the project; accumulated layout heuristics remain undecomposed. Give verdict, evidence, strengths, and weak spots. Offer deeper decomposition only as a terse handoff.",
     "requiredTerms": ["2.6s", "0 warnings", "layout_fit", "layout.rs", "40%"],
     "expectedShape": "markdown"
+  },
+  {
+    "id": "artifact-explanation",
+    "category": "artifact-handoff",
+    "container": "markdown",
+    "prompt": "Summarize this completed artifact handoff without omitting the supplied facts. File: /tmp/2026-07-11-skim-eval-example-explanation.html; 58 KB; self-contained HTML, CSS, and JavaScript. Target: commit 1c80ad4, use eval example to improve; 13 files; +492/-33. Coverage: Background includes deep Skim contracts and anatomy, eval harness and improvement loop, and 3 narrow pre-commit gaps. Intuition includes a specimen with 4 failure modes, the two-forms-one-tree trick, and a 7-child violation. Code includes a 3rd linter shape, 3 new checks, per-container prompts, and rule alignment. Six diagram families: reply anatomy, eval dataflow, improvement loop, two-forms-one-tree, structure tree, and commit thread. Quiz: 5 interactive multiple-choice questions, immediate feedback, and live score. Verification: 19 pre blocks, code whitespace preserved, no ASCII diagrams, balanced tags, tests 14/14. The explanation was built and opened.",
+    "requiredTerms": ["/tmp/2026-07-11-skim-eval-example-explanation.html", "1c80ad4", "reply anatomy", "eval dataflow", "improvement loop", "two-forms-one-tree", "structure tree", "commit thread", "14/14"],
+    "expectedShape": "markdown",
+    "maxBodyLines": 42
   }
 ]

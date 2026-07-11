@@ -1,0 +1,21 @@
+Explanation built and opened.
+
+- **file**
+  - `/tmp/2026-07-11-skim-eval-example-explanation.html`
+  - 58KB, self-contained HTML+CSS+JS
+- **target commit**
+  - `1c80ad4` "use eval example to improve"
+  - 13 files, +492/−33
+- **sections**
+  - Background → deep (Skim contracts, anatomy, eval harness, improvement loop) + narrow (3 pre-commit gaps)
+  - Intuition → specimen + 4 diseases, two-surfaces-one-tree trick, 7-child violation
+  - Code → 5 groups: specimen · 3rd linter shape · 3 new checks · per-container runner prompts · rules/skill/ext alignment
+  - Quiz → 5 interactive MCQs with feedback + live score
+- **diagrams**
+  - 6 reusable HTML families: reply anatomy · eval dataflow · improvement loop · two-forms-one-tree · structure tree · commit thread
+  - no ASCII; code in `<pre>` with `white-space:pre`
+- **verified**
+  - 19 pre blocks, 0 raw brackets, tags balanced
+  - matches repo: gold = `bodyKind:markdown`, 4 anchors, 18 lines; 14/14 tests pass
+
+Want deeper dive on any one group, or a darker theme variant?
