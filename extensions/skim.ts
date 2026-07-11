@@ -119,7 +119,7 @@ async function loadConfig(): Promise<SkimConfig> {
 }
 
 async function saveConfig(config: SkimConfig): Promise<void> {
-	await mkdir(join(homedir(), ".pi", "agent"), { recursive: true });
+	await mkdir(getAgentDir(), { recursive: true });
 	await writeFile(
 		CONFIG_PATH,
 		JSON.stringify(config, null, 2) + "\n",
