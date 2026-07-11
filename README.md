@@ -1,327 +1,217 @@
 # skim
 
-> max info per reader-effort
+> Your agent wrote 11 paragraphs. You needed 6 facts.
 
-Output shaped for density and low cognitive load, not token count.
+Skim is output discipline for coding agents.
 
-Skim is a skill for Claude Code, Cursor, Pi, and any agent
-that reads a `SKILL.md`.
+It turns the usual foam into compact, vertical answers: one fact per line,
+useful symbols, shallow nesting, no warm-up paragraph, no tiny management
+consultant living in your terminal.
 
-It rewires how your agent answers: ultra-compressed wording,
-one plain headline, then vertical, symbol-dense blocks — one fact
-per line, indentation as hierarchy, logic symbols instead of
-connective prose, never more than 5 top-level anchors, and never
-more than 5 child facts under one parent.
+```text
+before
+  "I've updated the authentication flow..."
+  1 paragraph
+  3 files hiding inside it
+  warning bolted onto the end
 
-That is about all a human working memory can hold.
-
-Not fewer tokens. Lower reader effort.
-
-## Before / after
-
-**Normal agent:**
-
-> I've updated the authentication flow. I modified three files:
-> auth.ts to add token refresh, session.ts to extend expiry handling,
-> and api.ts to retry on 401. All 42 tests pass. Note that I didn't
-> touch the mobile client, which may need the same fix.
-
-**Skim:**
-
-Auth flow updated — token refresh added.
-
-```
-✓ auth flow updated
-  auth.ts
-    + refresh logic
-  session.ts
-    Δ expiry handling
-  api.ts
-    + retry on 401
-
-✓ tests 42/42
-⚠ mobile client
-  untouched
-  → may need same fix
+after
+  facts visible at left edge
+  files grouped by job
+  warning impossible to miss
 ```
 
-Same information. Lower working-memory load, fewer rereads,
-and enough left-edge signal to skip what you do not need.
+Skim works anywhere that can load a `SKILL.md`, including Claude Code,
+Cursor, Pi, and compatible agent runners.
 
-## Caveman lineage
+## See it
 
-[caveman](https://github.com/juliusbrussee/caveman) shrinks
-what the agent *says* — output tokens down 65%.
+Normal output:
 
-Skim uses that lineage, but optimizes reader effort instead.
-Different objective function:
+> I've updated the authentication flow. I modified three files: auth.ts to
+> add token refresh, session.ts to extend expiry handling, and api.ts to retry
+> on 401. All 42 tests pass. I didn't touch the mobile client, which may need
+> the same fix.
 
-|  | caveman | skim |
-|---|---|---|
-| optimizes | output tokens | reader effort |
-| primary cost | model output | human cognition |
-| unit of design | token | fact line |
-| symbols & arrows | usually banned | allowed when load drops |
-| layout | mostly horizontal | vertical, grouped |
+Skim output:
 
-Both keep code, commands, and error strings byte-exact.
-Use caveman when the bill hurts.
-Use skim when your brain does.
+```text
+Auth flow updated.
 
-Skim derives its wording rules from the Caveman lineage, then applies
-a compact native Caveman-full contract inside Skim layout.
+✓ changes
+  auth.ts refresh logic
+  session.ts expiry handling
+  api.ts retry on 401
 
-## The rules
+✓ verification
+  tests 42/42
 
-```
-objective
-  max info per reader-effort
-  minimize cognitive load
-  eye scanning = proxy, not goal
-
-Caveman-full
-  drop load-free words
-  verb-first | noun-stack
-  stop before decode pause
-  never abbreviate
-
-quantified grammar
-  anchor 1–4 words
-  child fact 3–9 words
-  top-level anchors 1–5 total
-  child facts 1–5 per parent
-  line 45–65 chars ideal
-  hard line 72 chars
-
-shape
-  headline ≤2 plain sentences
-  body = fenced single-column blocks
-  one fact per line
-  indent ⇒ belongs to line above
-
-telegraphy
-  numerals not number-words
-  code/API/CLI/errors verbatim
-
-scanning
-  left edge carries the signal
-  symbol | keyword first
-  detail after
-  line wraps ⇒ split it
-
-line budget
-  target 45–65 visible chars
-  split before 72 when possible
-  80 = hard ceiling
-  CJK target ≈40 glyphs
-  code · commands · errors stay byte-exact
-
-memory
-  ≤5 top-level anchors total
-  ≤5 child facts per parent
-  >5 siblings ⇒ regroup under sub-anchors
-  ≤3 indent levels
-
-untouchable
-  code · commands · errors — byte-exact
-  commits · PRs · docs — normal prose
-
-limits
-  floor
-    <3 facts ⇒ plain sentence · no machinery
-  ceiling
-    reader pauses to decode ⇒ went too far
+⚠ remaining
+  mobile client untouched
 ```
 
-## Symbol vocabulary
-
-| sym | meaning | sym | meaning |
-|-----|---------|-----|---------|
-| `→` | leads to, then | `✓` | done, pass |
-| `⇒` | implies, rule | `✗` | fail, missing |
-| `∵` | because | `⚠` | caution, risk |
-| `∴` | therefore | `Δ` | changed |
-| `+` `−` | added / removed | `?` | open question |
-| `↑` `↓` | increase / decrease | `∅` | none |
-| `≈` `<` `>` `≠` | comparisons | `×N` | count |
-| `·` | separator | `\|` | or |
-
-No legend needed at read time — nothing here is exotic past a
-math class. The skill forbids inventing new ones.
-
-## Separator grammar
-
-```
-·
-  set members sharing one predicate
-  build · test · fmt · deps
-
-|
-  choice or alternative branch
-  fence | markdown
-
-/
-  paired labels or compact binary forms
-  on/off · read/write
-
-+
-  additive composition
-  skim + Caveman-full
-
-,
-  avoid in skim blocks
-  ∵ prose-like, weak grouping
-```
-
-Budget:
-
-```
-· run
-  2–5 members
-| run
-  2–3 choices
-separator run
-  max 1 per line
-too many items
-  → subgroup
-```
-
-## Style calibration
-
-Too normal:
-
-```
-ceiling is subjective
-  → my judgment, not measured
-```
-
-Better:
-
-```
-ceiling subjective
-  my judgment
-  not measured
-```
-
-Too normal:
-
-```
-best as opt-in per query
-  not global persistent
-```
-
-Better:
-
-```
-best
-  opt-in per query
-  not global
-```
-
-## Why it works
-
-```
-objective
-  density ↑
-  working-memory load ↓
-  eye scanning = proxy metric
-
-3–5 chunk cap
-  working memory holds ~4 items (Cowan, 2001)
-  6+ item lists get re-read, not read
-
-one fact per line
-  one fixation per fact
-  vertical saccades ⇒ no line-wrap regression
-
-45–65 char line target
-  line starts arrive often enough to refocus
-  72+ chars ⇒ split before wrap
-  80 chars = WCAG text-width ceiling
-
-left-edge signal
-  readers scan in an F-pattern (Nielsen)
-  first token supports skip | read
-
-symbols over connectives
-  visible relation beats connective prose
-  "∵" lands before "because of the fact that"
-```
-
-## Research hooks
-
-- Cowan argues for a working-memory capacity closer to 4 chunks
-  than Miller's older 7±2 heuristic.
-- W3C WCAG 1.4.8 caps blocks of text at 80 characters, 40 for CJK.
-- Baymard's UX research points to roughly 50–75 characters for
-  readable body text.
-- NN/g eye-tracking research supports strong left-edge signals for
-  scanning behavior.
+Same payload. Less archaeology.
 
 ## Install
 
-**Skills registry (Cursor, Claude Code, Cline, 40+ agents):**
+From the skills registry:
 
 ```bash
 npx skills add joshbochu/skim
 ```
 
-**Manual — Cursor:**
+Manual install for Cursor:
 
 ```bash
 git clone https://github.com/joshbochu/skim ~/dev/skim
 ln -s ~/dev/skim/skills/skim ~/.cursor/skills/skim
 ```
 
-**Manual — Claude Code:**
+Manual install for Claude Code:
 
 ```bash
 ln -s ~/dev/skim/skills/skim ~/.claude/skills/skim
 ```
 
-**Pi:** works with any extension that toggles skills as config.
-`/skim on` persists across sessions until `/skim off`.
+Pi can load the included extension. Its mode persists between sessions and
+its rules reload on every turn, so edits apply without a reinstall.
 
-## Toggle
+## Use
 
+Ask for `skim`, or use the Pi commands:
+
+```text
+/skim on        activate and persist
+/skim off       return to normal prose
+/skim capture   save last exchange for review
+/skim fence on  use fenced text blocks
+/skim fence off use native Markdown lists
 ```
-/skim on        activate · persists across sessions
-/skim off       back to normal prose
-/skim capture   save last prompt + response for later review
-/skim fence on  verbatim fenced blocks
-/skim fence off native markdown bullets
-```
 
-Add an optional note after `capture`:
+Capture accepts a note:
 
 ```bash
 /skim capture too much normal prose
 ```
 
-Captures stay local under `~/.pi/agent/skim/captures/`. Keep using Pi;
-later ask Codex to “review my Skim captures and improve the skill.”
-Capture is explicit because stored prompts and responses may contain sensitive
-material; inspect or delete these local JSON files whenever needed.
+Captures stay local in `~/.pi/agent/skim/captures/`. They may contain prompts,
+responses, code, or other sensitive material. Inspect them before sharing.
 
-Compression never changes factual meaning. No prose escape mode.
+## The contract
 
-## Evals and improvement
+Skim does not ask the agent to "be concise" and hope for the best. It gives
+the output a grammar.
 
-Skim includes captured real failures, 30 repeatable behavior cases,
-hand-approved gold outputs, a deterministic linter, and a headless Pi
-adapter. Codex operates this tooling during skill-creator review.
+```text
+shape
+  1 terse headline
+  1 fact per line
+  1-5 top-level anchors
+  1-5 child facts per anchor
+  3 indent levels maximum
+
+wording
+  concrete noun stacks
+  fragments when meaning survives
+  numerals instead of number words
+  no invented abbreviations
+
+line budget
+  45-65 visible characters preferred
+  split before 72 when possible
+  code and errors remain exact
+
+escape hatch
+  fewer than 3 facts
+  use 1 plain sentence
+  put the machinery away
+```
+
+Hard boundary: code, commands, URLs, identifiers, quoted text, and error
+messages stay byte-exact. Compression never gets to "fix" the evidence.
+
+Commits, pull requests, documentation, and code comments keep normal prose.
+Skim is a reply format, not permission to write cursed release notes.
+
+## Small symbol cult
+
+The vocabulary is deliberately boring. If a symbol needs a decoder ring, it
+does not belong here.
+
+| Symbol | Meaning | Symbol | Meaning |
+|---|---|---|---|
+| `→` | next, result | `✓` | done, pass |
+| `⇒` | rule, implication | `✗` | fail, missing |
+| `∵` | cause | `⚠` | caution, risk |
+| `∴` | conclusion | `Δ` | changed |
+| `?` | unknown | `≈` `<` `>` `≠` | comparison |
+| `·` | shared predicate | `\|` | choice |
+
+Relations get their own lines. Horizontal symbol soup is still soup.
+
+```text
+bad
+  leak → pool fills → tests fail
+
+good
+  tests fail
+    ∵ pool exhausted
+    ∵ connections leaked
+```
+
+## Caveman ancestry
+
+[caveman](https://github.com/juliusbrussee/caveman) attacks output-token
+count. Skim borrows its telegraphic wording, then aims at a different bill:
+reader attention.
+
+| | caveman | skim |
+|---|---|---|
+| optimizes | output tokens | reader effort |
+| design unit | token | fact line |
+| layout | mostly horizontal | vertical and grouped |
+| symbols | usually avoided | used when immediately clear |
+
+Use Caveman when the token bill hurts. Use Skim when the scrollback hurts.
+
+## Repository anatomy
+
+```text
+skills/skim/SKILL.md    portable skill contract
+extensions/skim.ts      Pi toggle and persistence
+rules/                  live-reloaded Pi rules
+evals/cases.json        behavior corpus
+evals/gold/             hand-approved outputs
+evals/lint.mjs          deterministic structure checks
+```
+
+The skill is the product. The Pi extension is the switchboard. The evals keep
+prompt edits from quietly turning "dense" back into "sounds professional."
+
+## Hack on it
 
 ```bash
+npm test
 npm run eval:lint
 npm run eval:dry
 npm run eval -- --label baseline
 ```
 
-Normal users only need `/skim capture`; these commands support Codex and CI.
+`eval:lint` checks the gold corpus without calling a model. `eval:dry` shows
+the planned benchmark. The full eval stores raw outputs, exact prompts, stderr,
+and summaries under `evals/results/`.
 
-See [`evals/README.md`](evals/README.md) for the benchmark workflow.
-See [`IMPROVING.md`](IMPROVING.md) for future options: live linting,
-structured final responses, repair passes, and eventual fine-tuning.
+See [`evals/README.md`](evals/README.md) for the benchmark loop and
+[`IMPROVING.md`](IMPROVING.md) for the backlog.
+
+## Why these numbers
+
+The 3-5 item groups and short lines are engineering defaults, not scripture.
+They are informed by working-memory research, readable line-length guidance,
+and left-edge scanning behavior. More importantly, they are executable rules
+that can be tested instead of an adjective like "concise."
+
+When a rule makes an answer harder to decode, meaning wins.
 
 ## License
 
