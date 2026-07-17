@@ -1,17 +1,13 @@
 Pool exhaustion causes test failures.
 
-```text
-✗ tests
-  ∵ connections never released
-  ∵ pool exhausted
-
-leaks ×3
-  auth middleware
-  report generator
-  webhook handler
-  → wrap each in try/finally
-
-⚠ pool
-  5 < load≈40
-  → raise after leak fix
-```
+- ✗ **tests**
+  - ∵ connections never released
+  - ∵ pool exhausted
+- **leaks ×3**
+  - auth middleware
+  - report generator
+  - webhook handler
+  - → wrap each in try/finally
+- ⚠ **pool**
+  - 5 < load≈40
+  - → raise after leak fix

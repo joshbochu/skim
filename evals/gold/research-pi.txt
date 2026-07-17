@@ -1,17 +1,13 @@
 Pi supports stronger enforcement than current extension uses.
 
-```text
-current extension
-  before_agent_start injects prompt
-  no final validation
-
-available hooks
-  inspect message_end
-  replace finalized message
-  register structured tool
-
-best next step
-  lint first
-  measure failures
-  enforce later
-```
+- **current extension**
+  - before_agent_start injects prompt
+  - no final validation
+- **available hooks**
+  - inspect message_end
+  - replace finalized message
+  - register structured tool
+- **best next step**
+  - lint first
+  - measure failures
+  - enforce later

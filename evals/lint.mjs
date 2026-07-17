@@ -84,9 +84,6 @@ export function lintOutput(output, options = {}) {
 	const structured = block ?? markdown;
 	const bodyKind = block ? "block" : markdown ? "markdown" : "plain";
 
-	if (expectedShape === "block" && !block) {
-		errors.push("missing fenced text body");
-	}
 	if (expectedShape === "plain" && block) {
 		errors.push("unexpected fenced text body");
 	}
@@ -102,7 +99,7 @@ export function lintOutput(output, options = {}) {
 
 	const headline = structured ? structured.headline : output.trim();
 	const headlineLines = headline.split(/\r?\n/).filter((line) => line.trim());
-	const headlineLimit = 1;
+	const headlineLimit = structured ? 1 : 2;
 	if (headlineLines.length > headlineLimit) {
 		errors.push(`headline lines ${headlineLines.length} > ${headlineLimit}`);
 	}

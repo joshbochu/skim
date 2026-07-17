@@ -1,17 +1,13 @@
 Both integrate branches; history differs.
 
-```text
-merge
-  keeps both histories
-  adds merge commit
-  best for shared branch
-
-rebase
-  replays local commits
-  creates linear history
-  rewrites commit hashes
-
-rule
-  shared ⇒ merge
-  local-only ⇒ rebase
-```
+- **merge**
+  - keeps both histories
+  - adds merge commit
+  - best for shared branch
+- **rebase**
+  - replays local commits
+  - creates linear history
+  - rewrites commit hashes
+- **rule**
+  - shared ⇒ merge
+  - local-only ⇒ rebase

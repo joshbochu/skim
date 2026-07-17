@@ -1,11 +1,11 @@
 ---
 name: skim
 description: >-
-  Caveman-full wording inside high-density Skim layout. Uses terse
-  fragments, vertical one-fact lines, 1–5 top-level anchors, short
-  line budgets, and clear relation symbols. Enable when user says
-  "skim", "/skim on", or asks for dense vertical output. Remains
-  active until "/skim off" or "normal mode".
+  Formats replies with Caveman-full wording inside high-density Skim
+  layout. Uses terse fragments, vertical one-fact lines, 1–5 top-level
+  anchors in structured bodies, short line budgets, and clear relation
+  symbols. Use when the user says "skim", "/skim on", or asks for dense
+  vertical output. Remains active until "/skim off" or "normal mode".
 ---
 
 # Skim
@@ -31,19 +31,21 @@ Meaning beats compression. Keep only grammar needed for exact meaning.
 ## Reply contract
 
 - Optional headline: 1 terse line.
-- Body: one fenced `text` block, single column.
-- Under 3 facts: one terse line; no block.
+- Body: native Markdown bullets, single column.
+- Under 3 facts: 1–2 plain terse lines; no block.
 - Optional close: one terse handoff line.
-- Top-level anchors: 1–5 total per reply.
+- Structured body: 1–5 top-level anchors total.
 - Child facts: 1–5 per parent.
 - Indent depth: 3 levels maximum.
 - Body: 18 fact lines by default.
-- Expanded body: requested detail, substantial artifact handoff, or safety.
+- Expanded body: 24 lines for requested detail or safety.
+- Artifact handoff: up to 42 lines when completeness requires it.
 
 Count anchors and children toward body limit.
 Long input does not authorize overflow.
 Exceed 18 only for requested detail, substantial artifact handoffs,
-or safety-critical meaning. Use smallest explicit expanded budget.
+or safety-critical meaning. Use 24 or 42 as smallest sufficient budget.
+Exceed 42 only for safety-critical meaning or explicitly exhaustive detail.
 Otherwise keep strongest evidence, omit lower-signal detail, offer expansion.
 Vertical expansion outranks horizontal packing.
 Never pack several facts onto one line to satisfy body budget.
@@ -134,106 +136,84 @@ Never invent symbols.
 
 Short fact:
 
-```text
 Port 3000, set in `vite.config.ts`.
-```
+
+Two facts:
+
+Cached data remains stale.
+Invalidation arrives 30 seconds late.
 
 Diagnosis:
 
-````text
 Pool exhaustion causes test failures.
 
-```text
-✗ tests
-  ∵ connections never released
-  ∵ pool exhausted
-
-leaks ×3
-  auth middleware
-  report generator
-  webhook handler
-  → wrap each in try/finally
-
-⚠ pool
-  5 < load≈40
-  → raise after leak fix
-```
-````
+- ✗ **tests**
+  - ∵ connections never released
+  - ∵ pool exhausted
+- **leaks ×3**
+  - auth middleware
+  - report generator
+  - webhook handler
+  - → wrap each in try/finally
+- ⚠ **pool**
+  - 5 < load≈40
+  - → raise after leak fix
 
 Comparison:
 
-````text
 Both integrate branches; history differs.
 
-```text
-merge
-  keeps both histories
-  adds merge commit
-  best for shared branch
-
-rebase
-  replays local commits
-  creates linear history
-  rewrites commit hashes
-
-rule
-  shared ⇒ merge
-  local-only ⇒ rebase
-```
-````
+- **merge**
+  - keeps both histories
+  - adds merge commit
+  - best for shared branch
+- **rebase**
+  - replays local commits
+  - creates linear history
+  - rewrites commit hashes
+- **rule**
+  - shared ⇒ merge
+  - local-only ⇒ rebase
 
 Change summary:
 
-````text
 Auth flow updated.
 
-```text
-✓ changes
-  auth.ts refresh logic
-  session.ts expiry handling
-  api.ts retry on 401
-
-✓ verification
-  tests 42/42
-
-⚠ remaining
-  mobile client untouched
-```
-````
+- ✓ **changes**
+  - auth.ts refresh logic
+  - session.ts expiry handling
+  - api.ts retry on 401
+- ✓ **verification**
+  - tests 42/42
+- ⚠ **remaining**
+  - mobile client untouched
 
 Nested artifact handoff:
 
-````text
 Artifact ready.
 
-```text
-coverage
-  Background
-    contracts · anatomy
-    eval harness
-  Diagrams
-    structure
-      reply anatomy
-      structure tree
-    process
-      eval dataflow
-      improvement loop
-
-✓ checks
-  tests 14/14
-```
-````
+- **coverage**
+  - **Background**
+    - contracts · anatomy
+    - eval harness
+  - **Diagrams**
+    - **structure**
+      - reply anatomy
+      - structure tree
+    - **process**
+      - eval dataflow
+      - improvement loop
+- ✓ **checks**
+  - tests 14/14
 
 ## Settings
 
 In Pi, `/skim capture [note]` saves the last prompt and response for later
 skill improvement. Capture only on explicit user command.
 
-`/skim fence on` uses fenced `text` blocks.
-`/skim fence off` uses native Markdown bullets.
 All limits and Caveman wording remain unchanged.
 
-Fence-off target:
+Skim uses native Markdown bullets for structured replies:
 
 Pool exhaustion causes test failures.
 
@@ -248,11 +228,11 @@ Pool exhaustion causes test failures.
 
 Before sending:
 
-- Active fence setting honored?
+- Native Markdown structure honored?
 - Caveman wording everywhere?
 - No polished introduction?
-- 1–5 top-level anchors total?
+- Plain reply has 1–2 fact lines, or structured body has 1–5 anchors?
 - 1–5 children per parent?
-- Body within default or explicit expanded budget?
+- Body within 18, 24, or 42-line budget unless safety requires more?
 - Every grouping semantically real?
 - Meaning complete?

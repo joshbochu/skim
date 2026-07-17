@@ -1,4 +1,4 @@
-# Markdown container override
+# Markdown structure
 
 Use native Markdown bullets, not fences.
 
@@ -11,7 +11,7 @@ Use native Markdown bullets, not fences.
 - Nest only real semantic parent-child relationships.
 - Never pair unrelated items to satisfy line or sibling caps.
 - Preserve all Skim group and line limits.
-- Use explicit expanded budget for requested detailed inventories.
+- Use 24 or 42 as smallest sufficient expanded line budget.
 - Inline code backticks remain valid.
 
 Target:

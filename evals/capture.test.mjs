@@ -61,7 +61,6 @@ test("creates stable capture schema", () => {
 		sessionFile: "/sessions/one.jsonl",
 		model: { provider: "test", id: "model" },
 		mode: "on",
-		container: "fence",
 		rulesFingerprint: "abc123",
 		now: new Date("2026-07-11T12:34:56.789Z"),
 		uuid: "12345678-1234-1234-1234-123456789abc",

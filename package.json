@@ -1,7 +1,7 @@
 {
-  "name": "pi-skim",
+  "name": "@joshbochu/skim",
   "version": "0.1.0",
-  "description": "Skim mode for pi: high-density, low-load output.",
+  "description": "🎯 agent skill for signal > noise",
   "keywords": [
     "pi-package",
     "pi-extension",
@@ -15,6 +15,9 @@
     "url": "git+https://github.com/joshbochu/skim.git"
   },
   "homepage": "https://github.com/joshbochu/skim",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "node --test evals/*.test.mjs",
     "eval:lint": "node evals/lint.mjs --gold",
@@ -25,7 +28,14 @@
     "extensions",
     "rules",
     "skills",
-    "evals",
+    "evals/capture.test.mjs",
+    "evals/cases.json",
+    "evals/fixtures",
+    "evals/gold",
+    "evals/lint.mjs",
+    "evals/lint.test.mjs",
+    "evals/README.md",
+    "evals/run.mjs",
     "IMPROVING.md",
     "README.md",
     "LICENSE"

@@ -10,14 +10,14 @@ Implemented now:
 
 - Caveman-full wording contract.
 - Skim structure contract.
-- Global limit of 1–5 top-level anchors per response.
+- Global limit of 1–5 top-level anchors per structured body.
 - Positive gold examples.
-- 31-case benchmark corpus.
-- Deterministic fenced and native-Markdown linter.
+- 32-case benchmark corpus.
+- Deterministic plain and native-Markdown linter.
 - Repeated headless Pi benchmark runner.
 - Raw outputs and exact prompt saved for every benchmark.
 - `/skim capture [note]` for real prompt/output evidence.
-- Local capture inbox with model, session, container, and rule fingerprint.
+- Local capture inbox with model, session, mode, and rule fingerprint.
 
 Current extension remains prompt-driven. It does not validate or rewrite the
 final live response.
@@ -140,7 +140,7 @@ Tradeoffs:
 Use when:
 
 - More than 5 anchors remains common.
-- Indentation or container compliance must be deterministic.
+- Indentation and Markdown-shape compliance must be deterministic.
 - Prompt tuning no longer improves structural pass rate.
 
 Suggested schema:

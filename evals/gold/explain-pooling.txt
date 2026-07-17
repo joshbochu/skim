@@ -1,15 +1,11 @@
 Pool reuses open DB connections.
 
-```text
-benefit
-  no new connection per request
-  handshake cost gone
-
-risk
-  pool exhaustion
-  ∵ leaked connections
-
-rule
-  release every connection
-  use try/finally
-```
+- **benefit**
+  - no new connection per request
+  - handshake cost gone
+- **risk**
+  - pool exhaustion
+  - ∵ leaked connections
+- **rule**
+  - release every connection
+  - use try/finally

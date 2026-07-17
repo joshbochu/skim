@@ -54,6 +54,12 @@ Same payload. Less archaeology.
 
 ## Install
 
+For Pi from npm:
+
+```bash
+pi install npm:@joshbochu/skim
+```
+
 From the skills registry:
 
 ```bash
@@ -84,8 +90,6 @@ Ask for `skim`, or use the Pi commands:
 /skim on        activate and persist
 /skim off       return to normal prose
 /skim capture   save last exchange for review
-/skim fence on  use fenced text blocks
-/skim fence off use native Markdown lists
 ```
 
 Capture accepts a note:
@@ -104,9 +108,9 @@ the output a grammar.
 
 ```text
 shape
-  1 terse headline
+  0-1 terse headline
   1 fact per line
-  1-5 top-level anchors
+  structured body: 1-5 top-level anchors
   1-5 child facts per anchor
   3 indent levels maximum
 
@@ -117,13 +121,14 @@ wording
   no invented abbreviations
 
 line budget
+  18 default · 24 detail/safety · 42 artifact
   45-65 visible characters preferred
   split before 72 when possible
   code and errors remain exact
 
 escape hatch
   fewer than 3 facts
-  use 1 plain sentence
+  use 1-2 plain fact lines
   put the machinery away
 ```
 

@@ -17,7 +17,7 @@ function safeLabel(value) {
 	return value.replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-|-$/g, "");
 }
 
-async function buildPrompt(args, container) {
+async function buildPrompt(args) {
 	const promptFile = option(args, "--prompt-file");
 	if (promptFile) return (await readFile(resolve(promptFile), "utf8")).trim();
 
@@ -29,11 +29,9 @@ async function buildPrompt(args, container) {
 		wording.trim(),
 		structure.trim(),
 	];
-	if (container === "markdown") {
-		const markdown = await readFile(resolve(ROOT, "rules/skim-markdown.md"), "utf8");
-		parts.push(markdown.trim());
-	}
-	parts.push("FINAL CHECK: active container honored; Caveman wording everywhere; 1–5 top-level anchors total; 1–5 children per parent; count anchors plus children; body ≤18 fact lines by default; select strongest evidence instead of overflowing; no polished introduction; no prose escape mode.");
+	const markdown = await readFile(resolve(ROOT, "rules/skim-markdown.md"), "utf8");
+	parts.push(markdown.trim());
+	parts.push("FINAL CHECK: Caveman wording everywhere; plain reply has 1–2 fact lines or structured body has 1–5 top-level anchors; 1–5 children per parent; count anchors plus children; use 18, 24, or 42 as smallest sufficient fact-line budget; exceed 42 only for safety-critical meaning or explicitly exhaustive detail; select strongest evidence instead of overflowing; no polished introduction; no prose escape mode.");
 	return parts.join("\n\n");
 }
 
@@ -53,18 +51,13 @@ async function main() {
 		? allCases.filter((testCase) => testCase.id === caseFilter)
 		: allCases;
 	if (cases.length === 0) throw new Error(`Unknown case: ${caseFilter}`);
-	const containers = [...new Set(cases.map((testCase) => testCase.container ?? "fence"))];
-	const systemPrompts = new Map(await Promise.all(
-		containers.map(async (container) => [container, await buildPrompt(args, container)]),
-	));
+	const systemPrompt = await buildPrompt(args);
 
 	if (dryRun) {
 		console.log(`cases=${cases.length}`);
 		console.log(`runs=${runs}`);
 		console.log(`generations=${cases.length * runs}`);
-		for (const [container, prompt] of systemPrompts) {
-			console.log(`promptChars.${container}=${prompt.length}`);
-		}
+		console.log(`promptChars=${systemPrompt.length}`);
 		console.log(`provider=${provider ?? "Pi default"}`);
 		console.log(`model=${model ?? "Pi default"}`);
 		return;
@@ -76,8 +69,6 @@ async function main() {
 	const reports = [];
 
 	for (const testCase of cases) {
-		const container = testCase.container ?? "fence";
-		const systemPrompt = systemPrompts.get(container);
 		for (let run = 1; run <= runs; run += 1) {
 			const piArgs = [
 				"--print",
@@ -112,7 +103,6 @@ async function main() {
 			const report = {
 				caseId: testCase.id,
 				category: testCase.category,
-				container,
 				run,
 				exitCode: result.status,
 				outputFile,
@@ -143,12 +133,7 @@ async function main() {
 		reports,
 	};
 	await writeFile(resolve(resultDir, "summary.json"), `${JSON.stringify(summary, null, 2)}\n`, "utf8");
-	for (const [container, prompt] of systemPrompts) {
-		await writeFile(resolve(resultDir, `system-prompt-${container}.md`), prompt, "utf8");
-	}
-	if (systemPrompts.size === 1) {
-		await writeFile(resolve(resultDir, "system-prompt.md"), systemPrompts.values().next().value, "utf8");
-	}
+	await writeFile(resolve(resultDir, "system-prompt.md"), systemPrompt, "utf8");
 	console.log(`results=${resultDir}`);
 	console.log(`passRate=${(summary.passRate * 100).toFixed(1)}%`);
 

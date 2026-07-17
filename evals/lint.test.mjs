@@ -12,16 +12,35 @@ test("accepts terse floor response", () => {
 	assert.equal(report.pass, true);
 });
 
+test("accepts two plain fact lines without anchors", () => {
+	const output = "Cached data remains stale.\nInvalidation arrives 30 seconds late.";
+	const report = lintOutput(output, {
+		expectedShape: "plain",
+		requiredTerms: ["cached data", "invalidation", "30 seconds"],
+	});
+	assert.equal(report.pass, true, report.errors.join("\n"));
+	assert.equal(report.metrics.headlineLines, 2);
+	assert.equal(report.metrics.anchors, 0);
+});
+
+test("rejects more than two plain fact lines", () => {
+	const report = lintOutput("fact one\nfact two\nfact three", {
+		expectedShape: "plain",
+	});
+	assert.equal(report.pass, false);
+	assert.match(report.errors.join("\n"), /headline lines 3 > 2/);
+});
+
 test("rejects more than 5 top-level anchors", () => {
-	const output = "Result.\n\n```text\na\nb\nc\nd\ne\nf\n```";
-	const report = lintOutput(output, { expectedShape: "block" });
+	const output = "Result.\n\n- a\n- b\n- c\n- d\n- e\n- f";
+	const report = lintOutput(output, { expectedShape: "markdown" });
 	assert.equal(report.pass, false);
 	assert.match(report.errors.join("\n"), /top-level anchors 6 > 5/);
 });
 
 test("rejects more than 5 children", () => {
-	const output = "Result.\n\n```text\nroot\n  a\n  b\n  c\n  d\n  e\n  f\n```";
-	const report = lintOutput(output, { expectedShape: "block" });
+	const output = "Result.\n\n- root\n  - a\n  - b\n  - c\n  - d\n  - e\n  - f";
+	const report = lintOutput(output, { expectedShape: "markdown" });
 	assert.equal(report.pass, false);
 	assert.match(report.errors.join("\n"), /parent has >5 children/);
 });
@@ -70,19 +89,17 @@ test("rejects non-terse close and invented abbreviation", () => {
 	const output = [
 		"Result.",
 		"",
-		"```text",
-		"risk",
-		"  one large fn",
-		"```",
+		"- risk",
+		"  - one large fn",
 		"This is a polished closing paragraph that repeats the result and explains everything all over again.",
 	].join("\n");
-	const report = lintOutput(output, { expectedShape: "block" });
+	const report = lintOutput(output, { expectedShape: "markdown" });
 	assert.equal(report.pass, false);
 	assert.match(report.errors.join("\n"), /close not terse/);
 	assert.match(report.errors.join("\n"), /invented abbreviation: fn/);
 });
 
-test("real fence-off failure remains rejected", async () => {
+test("fenced regression remains rejected", async () => {
 	const path = resolve("evals/fixtures/review-rust-quality-bad.txt");
 	const output = await readFile(path, "utf8");
 	const report = lintOutput(output, {

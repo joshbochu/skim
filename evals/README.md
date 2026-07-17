@@ -59,16 +59,25 @@ npm run eval -- --prompt-file /tmp/skim-candidate.md --label candidate
 Results land under `evals/results/<timestamp>-<label>/` with raw outputs,
 the exact system prompt, stderr where present, and `summary.json`.
 
+## Baseline TODO
+
+- [ ] Run one successful full-corpus baseline for every model intended for
+  support.
+- [ ] Record provider, exact model ID, date, skill revision, pass rate, and
+  result path.
+- [ ] Compare future contract changes against the same models and run count.
+
 ## Score interpretation
 
 Hard failures:
 
 - Missing required facts.
-- Wrong plain/fenced/markdown shape.
+- Wrong plain/markdown shape.
+- More than 2 lines in a plain reply.
 - More than 5 top-level anchors.
 - More than 5 children under one parent.
 - More than 3 indentation levels.
-- More than default body-line budget.
+- More than the case's 18, 24, or 42-line budget.
 - More than two prose lines over 72 characters.
 - Any prose line over 100 characters.
 - Polished introduction.
