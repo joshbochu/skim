@@ -72,9 +72,7 @@ const DEFAULT_CONFIG: SkimConfig = {
 };
 
 function normalizeMode(value: unknown): Mode | null {
-	if (value === "off") return "off";
-	// One-way migration only; legacy presentation modes no longer exist.
-	if (value === "on" || value === "text" || value === "emoji") return "on";
+	if (value === "off" || value === "on") return value;
 	return null;
 }
 

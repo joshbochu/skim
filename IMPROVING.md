@@ -31,12 +31,6 @@ Auto-Clarity:
 - Reintroduce only after a concrete ambiguity failure becomes an eval case.
 - Any future exception must target that exact failure.
 
-Emoji mode:
-
-- Removed from extension, commands, skill, and documentation.
-- Text relation sigils remain part of Skim grammar.
-- Do not reintroduce without explicit user demand.
-
 ## Capture review workflow
 
 User workflow:
