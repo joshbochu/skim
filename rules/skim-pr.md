@@ -149,7 +149,7 @@ One to three plain sentences at the top of the body, before any section.
 Inside sections and template fills:
 
 - One fact per line.
-- Cap each section at 4 bullets. When you have more, first drop
+- Cap each section at 3 bullets. When you have more, first drop
   non-essential facts — internal refactor detail, persistence
   mechanics, and other things the diff already shows are the first
   cuts. Merge only when items are semantically the same ("same change
