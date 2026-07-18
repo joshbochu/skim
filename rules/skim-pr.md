@@ -149,8 +149,12 @@ One to three plain sentences at the top of the body, before any section.
 Inside sections and template fills:
 
 - One fact per line.
-- Cap each section at 4 bullets. Merge related items rather than
-  growing the list; PR bodies are read once by many people, and a
+- Cap each section at 4 bullets. When you have more, first drop
+  non-essential facts — internal refactor detail, persistence
+  mechanics, and other things the diff already shows are the first
+  cuts. Merge only when items are semantically the same ("same change
+  in file A and file B"); never stitch distinct facts into one bullet
+  to fit the cap. PR bodies are read once by many people; a
   bullet-heavy section makes reviewers scan longer than they should.
 - Terse. Verb-first or noun-stack. Drop articles, copulas, filler.
 - Plain English. Standard technical terms (401, retry, GraphQL) are
