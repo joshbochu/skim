@@ -161,9 +161,12 @@ Inside sections and template fills:
   bullet-heavy section makes reviewers scan longer than they should.
 - Terse. Verb-first or noun-stack. Drop articles, copulas, filler.
 - Plain English. Standard technical terms (401, retry, GraphQL) are
-  fine; coined project shorthand and internal metaphors ("the refunds
-  bot", "hydration drift") force reviewers to decode. Name the thing
-  literally.
+  fine. Never reference things that exist only in your context:
+  coined project shorthand ("the refunds bot"), internal metaphors
+  ("hydration drift"), or design alternatives that were considered
+  and discarded during development ("simpler than the two-boolean
+  version" — the reviewer never saw the two-boolean version). Name
+  the thing literally; never compare to a phantom baseline.
 - Describe what changed, not which files. The diff tab already
   enumerates the files.
 - Preserve identifiers, paths, and commands byte-exact when you
