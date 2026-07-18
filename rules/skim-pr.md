@@ -165,14 +165,16 @@ template-provided).
   Terse but self-contained: drop articles, copulas, and filler, but
   keep enough grammar for a cold reviewer to parse without session
   context. Two specific failure modes to avoid:
-    - **Missing subject or object**: "toggles reshape" (toggles what?),
-      "`off` disables" (`off` is a value, not an actor). Add the
-      missing piece: "toggles PR-body reshape mode"; "`off` — mode
-      disabled, PR bodies keep normal conventions".
-    - **Compressing into coined noun-phrases**: "over-narration",
-      "hydration drift" — packing a fact into your own invented
-      term forces the reviewer to guess the definition. Spell it
-      out: "narrating what the diff already shows".
+    - **Missing subject or object**: "returns early on error" (returns
+      from where? which error?), "hook fires on save" (which hook?).
+      Add the missing piece: "the request handler returns early on
+      validation failure"; "the `beforeSave` hook runs on every write".
+    - **Compressing into coined noun-phrases**: "the sync layer glitch",
+      "signal poisoning" — packing an observation into a term you
+      coined during your investigation forces reviewers to guess the
+      definition. Spell out the observation itself: "connection reset
+      events arrive out of order"; "concurrent writes silently
+      overwrite each other".
   When a fact genuinely needs a full sentence to be clear, use one.
   Chat-skim can go extreme because the user shares your session;
   PR reviewers do not.
