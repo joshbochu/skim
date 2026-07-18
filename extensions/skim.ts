@@ -7,17 +7,21 @@
  * https://github.com/joshbochu/skim
  *
  * Commands:
- *   /skim           Toggle skim on/off
- *   /skim capture   Save last prompt/response for later improvement
- *   /skim off       Disable (aliases: stop, quit)
+ *   /skim              Toggle skim on/off
+ *   /skim capture      Save last prompt/response for later improvement
+ *   /skim off          Disable (aliases: stop, quit)
+ *   /skim pr           Report PR state
+ *   /skim pr off       Disable PR body mode
+ *   /skim pr preview   Reshape PR body but don't write
+ *   /skim pr auto      Reshape PR body and write it back
  *
- * Mode persists across sessions via ~/.pi/agent/skim.json.
+ * Chat mode and PR state persist across sessions via
+ * ~/.pi/agent/skim.json.
  * Rules are re-read from rules/ on every turn.
  * Edits apply to the next message without reinstalling.
  */
 
-import { readFile, writeFile, mkdir } from "node:fs/promises";
-import { join } from "node:path";
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import type {
 	ExtensionAPI,
@@ -28,11 +32,17 @@ import {
 	createCaptureRecord,
 	findLatestExchange,
 	fingerprintText,
-	getAgentDir,
 	saveCapture,
 } from "./skim-capture.mjs";
+import type { Mode, PrState, SkimConfig } from "./skim-config.mjs";
+import {
+	DEFAULT_CONFIG,
+	loadConfig,
+	normalizeMode,
+	normalizePrState,
+	saveConfig,
+} from "./skim-config.mjs";
 
-type Mode = "off" | "on";
 const STOP_ALIASES = new Set(["off", "stop", "quit"]);
 
 const COMMAND_OPTIONS = [
@@ -51,58 +61,18 @@ const COMMAND_OPTIONS = [
 		label: "capture",
 		description: "Save last prompt and response for later improvement",
 	},
+	{
+		value: "pr",
+		label: "pr",
+		description: "PR body mode. Args: off, preview, auto",
+	},
 ] as const;
 
 // ------------------------------------------------------------------
 // Persistent config (survives across sessions)
 // ------------------------------------------------------------------
 
-interface SkimConfig {
-	/** Mode applied to new sessions. "off" means don't auto-enable. */
-	defaultMode: Mode;
-	/** Optional override path to the skim-core rules file. */
-	rulesPath?: string;
-	/** Optional override path to the Caveman-full wording rules file. */
-	ultraPath?: string;
-}
 
-const CONFIG_PATH = join(getAgentDir(), "skim.json");
-const DEFAULT_CONFIG: SkimConfig = {
-	defaultMode: "off",
-};
-
-function normalizeMode(value: unknown): Mode | null {
-	if (value === "off" || value === "on") return value;
-	return null;
-}
-
-async function loadConfig(): Promise<SkimConfig> {
-	try {
-		const parsed = JSON.parse(await readFile(CONFIG_PATH, "utf8"));
-		const defaultMode =
-			normalizeMode(parsed.defaultMode) ?? DEFAULT_CONFIG.defaultMode;
-		const rulesPath =
-			typeof parsed.rulesPath === "string" ? parsed.rulesPath : undefined;
-		const ultraPath =
-			typeof parsed.ultraPath === "string" ? parsed.ultraPath : undefined;
-		return {
-			defaultMode,
-			rulesPath,
-			ultraPath,
-		};
-	} catch {
-		return { ...DEFAULT_CONFIG };
-	}
-}
-
-async function saveConfig(config: SkimConfig): Promise<void> {
-	await mkdir(getAgentDir(), { recursive: true });
-	await writeFile(
-		CONFIG_PATH,
-		JSON.stringify(config, null, 2) + "\n",
-		"utf8",
-	);
-}
 
 // ------------------------------------------------------------------
 // Rules reload each turn; fallback if file missing
@@ -333,15 +303,24 @@ async function loadMarkdownRules(): Promise<LoadedText> {
 	return loadFirstText([markdownPath], MARKDOWN_FALLBACK);
 }
 
+async function loadPrRules(config: SkimConfig): Promise<LoadedText> {
+	const prPath = fileURLToPath(
+		new URL("../rules/skim-pr.md", import.meta.url),
+	);
+	return loadFirstText([config.prRulesPath, prPath], "");
+}
+
 // ------------------------------------------------------------------
 // Extension
 // ------------------------------------------------------------------
 
 export default function skim(pi: ExtensionAPI) {
 	let mode: Mode = "off";
+	let prState: PrState = "off";
 	let config: SkimConfig = { ...DEFAULT_CONFIG };
 	let configLoadPromise: Promise<void> | null = null;
 	let warnedFallback = false;
+	let warnedPrMissing = false;
 
 	const ensureConfigLoaded = async () => {
 		if (!configLoadPromise) {
@@ -349,6 +328,9 @@ export default function skim(pi: ExtensionAPI) {
 				config = await loadConfig();
 				if (mode === "off" && config.defaultMode !== "off") {
 					mode = config.defaultMode;
+				}
+				if (prState === "off" && config.prState !== "off") {
+					prState = config.prState;
 				}
 			})();
 		}
@@ -429,11 +411,18 @@ export default function skim(pi: ExtensionAPI) {
 		await ensureConfigLoaded();
 
 		let sessionMode: Mode | null = null;
+		let sessionPrState: PrState | null = null;
+
 		for (const entry of ctx.sessionManager.getEntries()) {
-			if (entry.type === "custom" && entry.customType === "skim-mode") {
+			if (entry.type !== "custom") continue;
+			if (entry.customType === "skim-mode") {
 				const data = entry.data as { mode?: unknown };
-				const restoredMode = normalizeMode(data?.mode);
-				if (restoredMode) sessionMode = restoredMode;
+				const restored = normalizeMode(data?.mode);
+				if (restored) sessionMode = restored;
+			} else if (entry.customType === "skim-pr-state") {
+				const data = entry.data as { state?: unknown };
+				const restored = normalizePrState(data?.state);
+				if (restored) sessionPrState = restored;
 			}
 		}
 
@@ -442,6 +431,13 @@ export default function skim(pi: ExtensionAPI) {
 		} else if (config.defaultMode !== "off") {
 			mode = config.defaultMode;
 			pi.appendEntry("skim-mode", { mode });
+		}
+
+		if (sessionPrState !== null) {
+			prState = sessionPrState;
+		} else if (config.prState !== "off") {
+			prState = config.prState;
+			pi.appendEntry("skim-pr-state", { state: prState });
 		}
 
 		syncStatus(ctx);
@@ -464,11 +460,30 @@ export default function skim(pi: ExtensionAPI) {
 			const rawArg = args?.trim() ?? "";
 			const arg = rawArg.toLowerCase();
 			const activeMode = mode === "off" ? "on" : mode;
-			const [primary = "", secondary] = arg.split(/\s+/, 2);
+			const tokens = arg.split(/\s+/).filter(Boolean);
+			const [primary = "", secondary = ""] = tokens;
 
 			if (primary === "capture") {
 				const note = rawArg.slice(rawArg.split(/\s+/, 1)[0].length).trim();
 				await captureLatest(note, ctx);
+			} else if (primary === "pr") {
+				if (!secondary) {
+					ctx.ui.notify(`Skim PR: ${prState}.`, "info");
+				} else {
+					const normalized = normalizePrState(secondary);
+					if (!normalized) {
+						ctx.ui.notify(
+							`Unknown: "pr ${secondary}". Use: pr off, pr preview, pr auto`,
+							"error",
+						);
+					} else {
+						prState = normalized;
+						pi.appendEntry("skim-pr-state", { state: prState });
+						config.prState = prState;
+						await saveConfig(config);
+						ctx.ui.notify(`Skim PR: ${prState}.`, "info");
+					}
+				}
 			} else if (!arg) {
 				await applyState(mode === "off" ? activeMode : "off", ctx);
 			} else if (arg === "on") {
@@ -477,7 +492,7 @@ export default function skim(pi: ExtensionAPI) {
 				await setMode("off", ctx);
 			} else {
 				ctx.ui.notify(
-					`Unknown: "${arg}". Use: on, off, capture`,
+					`Unknown: "${arg}". Use: on, off, capture, pr`,
 					"error",
 				);
 			}
@@ -488,21 +503,41 @@ export default function skim(pi: ExtensionAPI) {
 
 	pi.on("before_agent_start", async (event, ctx) => {
 		await ensureConfigLoaded();
-		if (mode === "off") return;
+		if (mode === "off" && prState === "off") return;
 
-		const { text, fromFile } = await loadRules(config);
-		if (!fromFile && !warnedFallback) {
-			warnedFallback = true;
-			ctx.ui.notify(
-				"skim: rule file missing — using fallback rules",
-				"warning",
-			);
+		const parts: string[] = [];
+
+		if (mode === "on") {
+			const { text, fromFile } = await loadRules(config);
+			if (!fromFile && !warnedFallback) {
+				warnedFallback = true;
+				ctx.ui.notify(
+					"skim: rule file missing — using fallback rules",
+					"warning",
+				);
+			}
+
+			parts.push("IMPORTANT — SKIM MODE ACTIVE:", text);
+			const { text: markdownRules } = await loadMarkdownRules();
+			parts.push(markdownRules);
+			parts.push(FINAL_CHECK);
 		}
 
-		const parts = ["IMPORTANT — SKIM MODE ACTIVE:", text];
-		const { text: markdownRules } = await loadMarkdownRules();
-		parts.push(markdownRules);
-		parts.push(FINAL_CHECK);
+		if (prState !== "off") {
+			const pr = await loadPrRules(config);
+			if (!pr.fromFile) {
+				if (!warnedPrMissing) {
+					warnedPrMissing = true;
+					ctx.ui.notify(
+						"skim: rules/skim-pr.md missing — PR mode skipped",
+						"warning",
+					);
+				}
+			} else {
+				parts.push("IMPORTANT — SKIM PR MODE ACTIVE:", pr.text);
+				parts.push(`Current /skim pr state: ${prState}.`);
+			}
+		}
 
 		return {
 			systemPrompt: `${event.systemPrompt}\n\n${parts.join("\n\n")}`,
