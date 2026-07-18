@@ -143,6 +143,9 @@ One to three plain sentences at the top of the body, before any section.
 - Lead with the outcome or the why, not "This PR...".
 - Normal English prose. The terse-bullet rule does not apply here.
 - Never restate the PR title verbatim.
+- Do not restate the `## What` section. The headline is the elevator
+  pitch (outcome + why); What is the concrete detail. If a reviewer
+  reading the headline could skip What, the headline is too detailed.
 
 ## Bullet grammar
 
