@@ -149,6 +149,9 @@ One to three plain sentences at the top of the body, before any section.
 Inside sections and template fills:
 
 - One fact per line.
+- Cap each section at 4 bullets. Merge related items rather than
+  growing the list; PR bodies are read once by many people, and a
+  bullet-heavy section makes reviewers scan longer than they should.
 - Terse. Verb-first or noun-stack. Drop articles, copulas, filler.
 - Plain English. Standard technical terms (401, retry, GraphQL) are
   fine; coined project shorthand and internal metaphors ("the refunds
