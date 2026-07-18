@@ -84,13 +84,15 @@ When the argument is a PR URL or ref:
 
 1. Factual correctness and safety.
 2. Repository PR template conventions.
-3. skim-pr structure below.
-4. Caveman-full wording inside anchors and facts (see `skim-core.md`
-   for the grammar). Applies to everything below the headline.
+3. skim-pr structure below (anchor + indented-fact shape).
+4. Terse wording inside facts — drop articles, copulas, filler, but
+   keep enough grammar that a cold reviewer can parse each fact
+   without session context.
 5. Symbols when immediately clear.
 
 Template obligations outrank skim-pr defaults.
-Facts inside anchors are Caveman-full; headline prose stays normal English.
+Facts drop load-free words but must stand alone for a cold reviewer.
+Headline prose stays normal English.
 
 ## Repository template
 
@@ -160,7 +162,13 @@ template-provided).
 - **Anchor** — 1–4 words. Optional leading sigil (`✓ ⚠ ✗`). Bolded.
   Names the thing (component, behavior, concern).
 - **Facts** — indented 2 spaces below the anchor. One fact per line.
-  Terse, verb-first or noun-stack. Drop articles, copulas, filler.
+  Terse but self-contained: drop articles, copulas, and filler, but
+  keep the subject, object, and enough grammar for a cold reviewer
+  to parse without session context. A fragment like "toggles reshape"
+  is too far; "toggles PR-body reshape mode" earns its place. When
+  a fact genuinely needs a full sentence to be clear, use one.
+  Chat-skim can go extreme because the user shares your session;
+  PR reviewers do not.
 - Cap each section at 3 anchors. Cap facts at 5 per anchor. When you
   have more, first drop non-essential facts — internal refactor
   detail, persistence mechanics, and other things the diff already
@@ -248,20 +256,20 @@ Filled:
 
 ## Summary
 
-- ✓ **retry**
-  - 401 → silent refresh
-  - callers see no error
+- ✓ **retry logic**
+  - on a 401 response, silently refresh the token and retry once
+  - callers never see the auth error
 - ✓ **session expiry**
-  - realigned to refresh-token lifetime
+  - realigned to overlap the refresh-token lifetime
 - ✓ **retry wrapper**
-  - all outbound requests routed through single decorator
+  - all outbound requests routed through a single decorator
 
 ## Testing
 
 - [x] Unit tests
 - [ ] Manual QA
-  - force 401 in dev · retry fires exactly once
-  - mobile client untouched · may need same fix
+  - force a 401 in dev — retry should fire exactly once
+  - mobile client untouched, may need same fix
 
 ## Ticket
 
@@ -275,19 +283,19 @@ No template — default sections:
 
 ## What
 
-- ✓ **retry**
-  - 401 → silent refresh
-  - callers see no error
+- ✓ **retry logic**
+  - on a 401 response, silently refresh the token and retry once
+  - callers never see the auth error
 - ✓ **session expiry**
-  - realigned to refresh-token lifetime
+  - realigned to overlap the refresh-token lifetime
 - ⚠ **mobile client**
-  - untouched
-  - → needs same fix
+  - untouched by this change
+  - → needs the same fix
 
 ## Test plan
 
-- [ ] force 401 in dev · retry fires exactly once
-- [ ] repeated 401s → no infinite loop
+- [ ] Force a 401 in dev — retry fires exactly once
+- [ ] Repeated 401s don't produce an infinite loop
 
 Closes #1234
 ```
@@ -299,7 +307,7 @@ Before emitting a PR body:
 - Template detected and preserved, or default sections chosen?
 - Headline prose leads with outcome, not ceremony?
 - Sections use anchor + indented-fact structure, not flat prose?
-- Facts are Caveman-full (articles/copulas/filler dropped)?
+- Facts are terse but self-contained for a cold reviewer?
 - Never-emit list swept?
 - No model attribution trailer in the body?
 - Ticket link or `Closes #N` present when applicable?
