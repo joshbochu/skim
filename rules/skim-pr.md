@@ -163,10 +163,17 @@ template-provided).
   Names the thing (component, behavior, concern).
 - **Facts** — indented 2 spaces below the anchor. One fact per line.
   Terse but self-contained: drop articles, copulas, and filler, but
-  keep the subject, object, and enough grammar for a cold reviewer
-  to parse without session context. A fragment like "toggles reshape"
-  is too far; "toggles PR-body reshape mode" earns its place. When
-  a fact genuinely needs a full sentence to be clear, use one.
+  keep enough grammar for a cold reviewer to parse without session
+  context. Two specific failure modes to avoid:
+    - **Missing subject or object**: "toggles reshape" (toggles what?),
+      "`off` disables" (`off` is a value, not an actor). Add the
+      missing piece: "toggles PR-body reshape mode"; "`off` — mode
+      disabled, PR bodies keep normal conventions".
+    - **Compressing into coined noun-phrases**: "over-narration",
+      "hydration drift" — packing a fact into your own invented
+      term forces the reviewer to guess the definition. Spell it
+      out: "narrating what the diff already shows".
+  When a fact genuinely needs a full sentence to be clear, use one.
   Chat-skim can go extreme because the user shares your session;
   PR reviewers do not.
 - Cap each section at 3 anchors. Cap facts at 5 per anchor. When you
