@@ -85,11 +85,12 @@ When the argument is a PR URL or ref:
 1. Factual correctness and safety.
 2. Repository PR template conventions.
 3. skim-pr structure below.
-4. Terse wording inside bullets (drop articles, copulas, filler).
+4. Caveman-full wording inside anchors and facts (see `skim-core.md`
+   for the grammar). Applies to everything below the headline.
 5. Symbols when immediately clear.
 
 Template obligations outrank skim-pr defaults.
-Bullet content is terse; headline prose is normal English.
+Facts inside anchors are Caveman-full; headline prose stays normal English.
 
 ## Repository template
 
@@ -150,25 +151,29 @@ One to three plain sentences at the top of the body, before any section.
   pitch (outcome + why); What is the concrete detail. If a reviewer
   reading the headline could skip What, the headline is too detailed.
 
-## Bullet grammar
+## Anchor + fact grammar
 
-Inside sections and template fills:
+Same shape as chat-skim: bold anchor at the top level, facts indented
+two spaces below. Applies inside every `##` section (default or
+template-provided).
 
-- One fact per line.
-- Cap each section at 3 bullets. When you have more, first drop
-  non-essential facts — internal refactor detail, persistence
-  mechanics, and other things the diff already shows are the first
-  cuts. Merge only when items are semantically the same ("same change
-  in file A and file B"); never stitch distinct facts into one bullet
-  to fit the cap. PR bodies are read once by many people; a
-  bullet-heavy section makes reviewers scan longer than they should.
-- Terse. Verb-first or noun-stack. Drop articles, copulas, filler.
-- Plain English. Standard technical terms (401, retry, GraphQL) are
-  fine. Never reference things that exist only in your context:
-  coined project shorthand ("the refunds bot"), internal metaphors
-  ("hydration drift"), or design alternatives that were considered
-  and discarded during development. Name the thing literally; never
-  compare to a phantom baseline.
+- **Anchor** — 1–4 words. Optional leading sigil (`✓ ⚠ ✗`). Bolded.
+  Names the thing (component, behavior, concern).
+- **Facts** — indented 2 spaces below the anchor. One fact per line.
+  Terse, verb-first or noun-stack. Drop articles, copulas, filler.
+- Cap each section at 3 anchors. Cap facts at 5 per anchor. When you
+  have more, first drop non-essential facts — internal refactor
+  detail, persistence mechanics, and other things the diff already
+  shows are the first cuts. Merge only when items are semantically the
+  same ("same change in file A and file B"); never stitch distinct
+  facts into one anchor to fit the cap.
+- Max 3 indent levels total (including the `##` heading).
+- Plain English at fact level. Standard technical terms (401, retry,
+  GraphQL) are fine. Never reference things that exist only in your
+  context: coined project shorthand ("the refunds bot"), internal
+  metaphors ("hydration drift"), or design alternatives that were
+  considered and discarded during development. Name the thing
+  literally; never compare to a phantom baseline.
 - Describe what changed, not which files. The diff tab already
   enumerates the files.
 - Preserve identifiers, paths, and commands byte-exact when you
@@ -178,16 +183,14 @@ Inside sections and template fills:
 
 ## Symbols
 
-Keep sparingly, only where instantly readable in a GitHub review UI:
+Use the full chat-skim vocabulary (see `skim-core.md`). Symbols are
+allowed anywhere inside sections — anchors, facts, checkbox notes.
 
-- `✓` done or pass
-- `✗` fail or missing
-- `⚠` risk or gotcha
-- `→` next or result
-- `+` `−` added or removed
-- `×N` count
-
-Drop for PR bodies: `∵`, `∴`, `Δ`. Cause and result stay in words.
+- Preserve identifiers, paths, and commands byte-exact even when a
+  symbol would compress them.
+- Never invent new symbols. Never decorate.
+- Use only where the meaning is instantly readable to a GitHub
+  reviewer; when in doubt, use the word.
 
 ## Fenced blocks
 
@@ -241,21 +244,24 @@ Template:
 Filled:
 
 ```markdown
-Adds 401 retry to the auth flow so expired tokens refresh transparently
-instead of surfacing errors to the caller.
+401 retry lets the auth flow refresh expired tokens transparently.
 
 ## Summary
 
-- On a 401 response, silently refresh the token and retry the request once.
-- Session expiry realigned to overlap the refresh-token lifetime.
-- All outbound requests now route through a shared retry wrapper.
+- ✓ **retry**
+  - 401 → silent refresh
+  - callers see no error
+- ✓ **session expiry**
+  - realigned to refresh-token lifetime
+- ✓ **retry wrapper**
+  - all outbound requests routed through single decorator
 
 ## Testing
 
 - [x] Unit tests
 - [ ] Manual QA
-  - force a 401 in dev, confirm retry fires exactly once
-  - mobile client untouched, may need same fix
+  - force 401 in dev · retry fires exactly once
+  - mobile client untouched · may need same fix
 
 ## Ticket
 
@@ -265,20 +271,23 @@ Closes #1234
 No template — default sections:
 
 ```markdown
-Adds 401 retry to the auth flow so expired tokens refresh transparently
-instead of surfacing errors to the caller.
+401 retry lets the auth flow refresh expired tokens transparently.
 
 ## What
 
-- 401 responses trigger a silent token refresh; callers never see the error.
-- Session expiry realigned to overlap the refresh-token lifetime.
-- Outbound requests now route through a shared retry wrapper.
-- ⚠ mobile client untouched — needs the same fix.
+- ✓ **retry**
+  - 401 → silent refresh
+  - callers see no error
+- ✓ **session expiry**
+  - realigned to refresh-token lifetime
+- ⚠ **mobile client**
+  - untouched
+  - → needs same fix
 
 ## Test plan
 
-- [ ] Force a 401 in dev — retry fires exactly once
-- [ ] Repeated 401s don't produce an infinite loop
+- [ ] force 401 in dev · retry fires exactly once
+- [ ] repeated 401s → no infinite loop
 
 Closes #1234
 ```
@@ -289,7 +298,8 @@ Before emitting a PR body:
 
 - Template detected and preserved, or default sections chosen?
 - Headline prose leads with outcome, not ceremony?
-- Bullets terse, one fact per line?
+- Sections use anchor + indented-fact structure, not flat prose?
+- Facts are Caveman-full (articles/copulas/filler dropped)?
 - Never-emit list swept?
 - No model attribution trailer in the body?
 - Ticket link or `Closes #N` present when applicable?
