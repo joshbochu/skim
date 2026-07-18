@@ -133,8 +133,9 @@ empty scaffolding:
 
 - `## Test plan` — manual verification steps CI can't cover. Skip
   entirely when CI already runs the same tests you would. Items are
-  checkboxes (`- [x]` when done, `- [ ]` when pending) so reviewers
-  see completion state at a glance.
+  checkboxes; default to `- [ ]` (pending), since manual test-plan
+  items are usually not done at PR open time. Flip to `- [x]` as you
+  verify each one.
 - Gotchas, follow-ups, and known limitations go inline under `## What`
   with a `⚠` prefix, next to the change they concern.
 
@@ -276,8 +277,8 @@ instead of surfacing errors to the caller.
 
 ## Test plan
 
-- [x] Force a 401 in dev — retry fires exactly once
-- [x] Repeated 401s don't produce an infinite loop
+- [ ] Force a 401 in dev — retry fires exactly once
+- [ ] Repeated 401s don't produce an infinite loop
 
 Closes #1234
 ```
