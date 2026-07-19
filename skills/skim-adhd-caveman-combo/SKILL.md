@@ -2,11 +2,11 @@
 name: skim-adhd-caveman-combo
 description: >-
   Format replies with mandatory Caveman-Ultra wording inside vertical Skim
-  layout plus ADHD-friendly action and state handling. Use when the user
-  explicitly invokes $skim-adhd-caveman-combo or asks to test the combined
-  Skim, ADHD, and Caveman output style. Never expand autonomously; only a user
-  message whose first nonblank line is exactly "Full Explanation Please"
-  activates one-reply expanded mode.
+  layout plus ADHD-friendly action and state handling. On Pi, /skim on injects
+  this skill every turn until /skim off. Elsewhere, use when invoked as
+  $skim-adhd-caveman-combo or when dense action-first output is requested.
+  Never expand autonomously; only a user message whose first nonblank line is
+  exactly "Full Explanation Please" activates one-reply expanded mode.
 ---
 
 # Skim ADHD Caveman Combo

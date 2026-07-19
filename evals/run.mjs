@@ -17,9 +17,31 @@ function safeLabel(value) {
 	return value.replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-|-$/g, "");
 }
 
+function stripFrontmatter(text) {
+	const normalized = text.replace(/^\uFEFF/, "");
+	if (!normalized.startsWith("---")) return normalized.trim();
+	const match = normalized.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/);
+	if (!match) return normalized.trim();
+	return normalized.slice(match[0].length).trim();
+}
+
 async function buildPrompt(args) {
 	const promptFile = option(args, "--prompt-file");
 	if (promptFile) return (await readFile(resolve(promptFile), "utf8")).trim();
+
+	const profile = option(args, "--profile", "classic");
+	if (profile === "combo") {
+		const skill = await readFile(
+			resolve(ROOT, "skills/skim-adhd-caveman-combo/SKILL.md"),
+			"utf8",
+		);
+		return [
+			"IMPORTANT — SKIM MODE ACTIVE",
+			"Always-on profile: skim-adhd-caveman-combo.",
+			"Apply these rules to every chat reply until /skim off.",
+			stripFrontmatter(skill),
+		].join("\n\n");
+	}
 
 	const wording = await readFile(resolve(ROOT, "rules/ultra-max-supreme.md"), "utf8");
 	const structure = await readFile(resolve(ROOT, "rules/skim-core.md"), "utf8");
