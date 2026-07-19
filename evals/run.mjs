@@ -44,9 +44,13 @@ async function main() {
 	const model = option(args, "--model");
 	const piPath = option(args, "--pi", "pi");
 	const label = safeLabel(option(args, "--label", "candidate"));
+	const casesFile = resolve(
+		ROOT,
+		option(args, "--cases-file", "evals/cases.json"),
+	);
 	if (!Number.isInteger(runs) || runs < 1) throw new Error("--runs must be a positive integer");
 
-	const allCases = JSON.parse(await readFile(resolve(ROOT, "evals/cases.json"), "utf8"));
+	const allCases = JSON.parse(await readFile(casesFile, "utf8"));
 	const cases = caseFilter
 		? allCases.filter((testCase) => testCase.id === caseFilter)
 		: allCases;
@@ -57,6 +61,7 @@ async function main() {
 		console.log(`cases=${cases.length}`);
 		console.log(`runs=${runs}`);
 		console.log(`generations=${cases.length * runs}`);
+		console.log(`casesFile=${casesFile}`);
 		console.log(`promptChars=${systemPrompt.length}`);
 		console.log(`provider=${provider ?? "Pi default"}`);
 		console.log(`model=${model ?? "Pi default"}`);

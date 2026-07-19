@@ -1,0 +1,46 @@
+[
+  {
+    "id": "combo-action-diagnosis",
+    "category": "combo-action",
+    "prompt": "Tests hang under load because DB connections are not released in auth middleware, report generator, and webhook handler. Pool size is 5 while load is about 40. Diagnose and give the next action.",
+    "requiredTerms": ["connections", "auth middleware", "report generator", "webhook handler", "try/finally"],
+    "expectedShape": "markdown"
+  },
+  {
+    "id": "combo-no-escape-explain",
+    "category": "escape-leakage",
+    "prompt": "Explain database connection pooling thoroughly. Walk me through reuse, handshake savings, pool exhaustion, and connection release in detail.",
+    "requiredTerms": ["reuse", "handshake", "exhaustion", "release"],
+    "expectedShape": "markdown"
+  },
+  {
+    "id": "combo-no-escape-confused",
+    "category": "escape-leakage",
+    "prompt": "I am confused. Please slow down and explain why synchronized cache expiry causes a stampede, then include jitter, request coalescing, and stale-while-revalidate.",
+    "requiredTerms": ["expiry", "jitter", "coalescing", "stale-while-revalidate"],
+    "expectedShape": "markdown"
+  },
+  {
+    "id": "combo-safety-stays-ultra",
+    "category": "safety",
+    "prompt": "Give an unambiguous database restore sequence: stop writers, snapshot current DB, restore backup, run migrations, validate counts, then reopen traffic. Explain every safety concern.",
+    "requiredTerms": ["stop writers", "snapshot", "restore", "migrations", "validate", "reopen"],
+    "expectedShape": "markdown",
+    "maxBodyLines": 24
+  },
+  {
+    "id": "combo-expanded-once",
+    "category": "explicit-expansion",
+    "prompt": "Full Explanation Please\nExplain OAuth authorization code flow using browser, authorization server, callback code, token exchange, access token, state validation, and PKCE.",
+    "requiredTerms": ["browser", "authorization server", "callback", "token exchange", "access token", "state", "PKCE"],
+    "expectedShape": "markdown",
+    "maxBodyLines": 42
+  },
+  {
+    "id": "combo-visible-state",
+    "category": "adhd-state",
+    "prompt": "Migration step 3 of 5 is complete: backfill finished. Validation is next, then cutover. Show current state and one concrete next action.",
+    "requiredTerms": ["3", "5", "backfill", "validation", "cutover"],
+    "expectedShape": "markdown"
+  }
+]
