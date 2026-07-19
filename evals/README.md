@@ -56,11 +56,11 @@ Use an alternate compiled prompt:
 npm run eval -- --prompt-file /tmp/skim-candidate.md --label candidate
 ```
 
-Run the opt-in experimental skill:
+Run the alternate skill:
 
 ```bash
-npm run eval:experimental:dry
-npm run eval:experimental -- --label experimental
+npm run eval:skim-2:dry
+npm run eval:skim-2 -- --label candidate
 ```
 
 Results land under `evals/results/<timestamp>-<label>/` with raw outputs,

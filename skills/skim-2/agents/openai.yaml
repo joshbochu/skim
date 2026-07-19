@@ -1,0 +1,7 @@
+interface:
+  display_name: "Skim 2"
+  short_description: "Alternate ultra-dense Skim output profile"
+  default_prompt: "Use $skim-2 to answer with the alternate ultra-dense Skim profile."
+
+policy:
+  allow_implicit_invocation: false

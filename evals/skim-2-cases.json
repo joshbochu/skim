@@ -1,27 +1,27 @@
 [
   {
-    "id": "experimental-action-diagnosis",
-    "category": "experimental-action",
+    "id": "skim-2-action-diagnosis",
+    "category": "skim-2-action",
     "prompt": "Tests hang under load because DB connections are not released in auth middleware, report generator, and webhook handler. Pool size is 5 while load is about 40. Diagnose and give the next action.",
     "requiredTerms": ["connections", "auth middleware", "report generator", "webhook handler", "try/finally"],
     "expectedShape": "markdown"
   },
   {
-    "id": "experimental-no-escape-explain",
+    "id": "skim-2-no-escape-explain",
     "category": "escape-leakage",
     "prompt": "Explain database connection pooling thoroughly. Walk me through reuse, handshake savings, pool exhaustion, and connection release in detail.",
     "requiredTerms": ["reuse", "handshake", "exhaustion", "release"],
     "expectedShape": "markdown"
   },
   {
-    "id": "experimental-no-escape-confused",
+    "id": "skim-2-no-escape-confused",
     "category": "escape-leakage",
     "prompt": "I am confused. Please slow down and explain why synchronized cache expiry causes a stampede, then include jitter, request coalescing, and stale-while-revalidate.",
     "requiredTerms": ["expiry", "jitter", "coalescing", "stale-while-revalidate"],
     "expectedShape": "markdown"
   },
   {
-    "id": "experimental-safety-stays-ultra",
+    "id": "skim-2-safety-stays-ultra",
     "category": "safety",
     "prompt": "Give an unambiguous database restore sequence: stop writers, snapshot current DB, restore backup, run migrations, validate counts, then reopen traffic. Explain every safety concern.",
     "requiredTerms": ["stop writers", "snapshot", "restore", "migrations", "validate", "reopen"],
@@ -30,7 +30,7 @@
     "minOrderedItems": 6
   },
   {
-    "id": "experimental-expanded-once",
+    "id": "skim-2-expanded-once",
     "category": "explicit-expansion",
     "prompt": "Full Explanation Please\nExplain OAuth authorization code flow using browser, authorization server, callback code, token exchange, access token, state validation, and PKCE.",
     "requiredTerms": ["browser", "authorization server", "callback", "token exchange", "access token", "state", "PKCE"],
@@ -38,28 +38,28 @@
     "maxBodyLines": 42
   },
   {
-    "id": "experimental-visible-state",
+    "id": "skim-2-visible-state",
     "category": "adhd-state",
     "prompt": "Migration step 3 of 5 is complete: backfill finished. Validation is next, then cutover. Show current state and one concrete next action.",
     "requiredTerms": ["3", "5", "backfill", "validation", "cutover"],
     "expectedShape": "markdown"
   },
   {
-    "id": "experimental-evidence-estimate",
+    "id": "skim-2-evidence-estimate",
     "category": "adhd-numbers",
     "prompt": "Estimate this change. Evidence: one localized handler edit; existing tests cover the path; comparable changes took 10–20 minutes. If coverage is missing, the work takes 1–2 hours. Show the estimate, its basis, and the main assumption.",
     "requiredTerms": ["10–20", "min", "tests", "1–2", "hr"],
     "expectedShape": "markdown"
   },
   {
-    "id": "experimental-estimate-unknown",
+    "id": "skim-2-estimate-unknown",
     "category": "adhd-numbers",
     "prompt": "Give an exact implementation-time estimate for an unknown legacy migration. No repository, scope, test coverage, system size, or prior measurements are available.",
     "requiredTerms": ["estimate", "unavailable", "scope"],
     "expectedShape": "markdown"
   },
   {
-    "id": "experimental-nonexact-expansion",
+    "id": "skim-2-nonexact-expansion",
     "category": "escape-leakage",
     "prompt": "Please give a full explanation of OAuth authorization code flow. Include browser, authorization server, callback code, token exchange, state validation, and PKCE.",
     "requiredTerms": ["browser", "authorization server", "callback", "token exchange", "state", "PKCE"],

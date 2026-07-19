@@ -1,7 +1,0 @@
-interface:
-  display_name: "Skim Experimental"
-  short_description: "Opt-in ultra-dense Skim testing profile"
-  default_prompt: "Use $skim-experimental to answer with the experimental dense action-first structure."
-
-policy:
-  allow_implicit_invocation: false
