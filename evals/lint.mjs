@@ -62,7 +62,7 @@ function extractMarkdownBody(output) {
 	let end = start;
 	for (; end < lines.length; end += 1) {
 		const line = lines[end];
-		if (!line.trim() || /^ *(?:-\s+|\d+[.)]\s+)\S/.test(line)) continue;
+		if (!line.trim() || /^ *(?:-\s+|\d+\.\s+)\S/.test(line)) continue;
 		break;
 	}
 
@@ -125,7 +125,7 @@ export function lintOutput(output, options = {}) {
 	if (structured) {
 		for (const [index, sourceLine] of structured.body.split(/\r?\n/).entries()) {
 			const rawLine = bodyKind === "markdown"
-				? sourceLine.replace(/^( *)(?:-\s+|\d+[.)]\s+)/, "$1")
+				? sourceLine.replace(/^( *)(?:-\s+|\d+\.\s+)/, "$1")
 				: sourceLine;
 			if (!rawLine.trim()) continue;
 			bodyLines += 1;
@@ -137,7 +137,7 @@ export function lintOutput(output, options = {}) {
 				errors.push(`line ${index + 1}: indentation not multiple of 2`);
 			}
 			const depth = Math.floor(spaces / 2);
-			if (/^ *\d+[.)]\s+\S/.test(sourceLine)) orderedItems += 1;
+			if (/^ *\d+\.\s+\S/.test(sourceLine)) orderedItems += 1;
 			maxDepth = Math.max(maxDepth, depth);
 			if (depth > 3) errors.push(`line ${index + 1}: depth ${depth} > 3`);
 			if (depth === 0) anchors += 1;

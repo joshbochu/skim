@@ -158,6 +158,8 @@ Handshake cost gone.
 ## Action handling
 
 - Number only true ordered sequences.
+- Format ordered steps with Arabic digits plus periods: `1.`, `2.`, `3.`.
+- Never use Roman numerals, letters, or `1)`-style markers.
 - Use bullets for facts, options, or independent actions.
 - Put 1 bounded action in each numbered step.
 - Keep prerequisites before dependent actions.
@@ -191,7 +193,7 @@ Handshake cost gone.
 - Never chain `A → B → C` horizontally.
 - Never repeat a fact.
 - Indentation must express real parent-child relationship.
-- Ordered actions use numbered children under semantic phase anchors.
+- Ordered actions use `1.`, `2.`, `3.` children under semantic phase anchors.
 
 Relations start their own child line:
 

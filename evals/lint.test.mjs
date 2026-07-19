@@ -113,6 +113,38 @@ test("rejects unordered actions when ordered sequence required", () => {
 	assert.match(report.errors.join("\n"), /ordered items 0 < 2/);
 });
 
+test("rejects Roman numerals when decimal steps required", () => {
+	const output = [
+		"Restore order fixed.",
+		"",
+		"- **prepare**",
+		"  i. stop writers",
+		"  ii. snapshot current DB",
+	].join("\n");
+	const report = lintOutput(output, {
+		expectedShape: "markdown",
+		minOrderedItems: 2,
+	});
+	assert.equal(report.pass, false);
+	assert.match(report.errors.join("\n"), /ordered items 0 < 2/);
+});
+
+test("rejects parenthesized numbers when decimal-period steps required", () => {
+	const output = [
+		"Restore order fixed.",
+		"",
+		"- **prepare**",
+		"  1) stop writers",
+		"  2) snapshot current DB",
+	].join("\n");
+	const report = lintOutput(output, {
+		expectedShape: "markdown",
+		minOrderedItems: 2,
+	});
+	assert.equal(report.pass, false);
+	assert.match(report.errors.join("\n"), /ordered items 0 < 2/);
+});
+
 test("rejects fenced output when markdown container required", () => {
 	const output = "Result.\n\n```text\nproof\n  tests pass\n```";
 	const report = lintOutput(output, { expectedShape: "markdown" });
