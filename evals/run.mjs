@@ -30,15 +30,15 @@ async function buildPrompt(args) {
 	if (promptFile) return (await readFile(resolve(promptFile), "utf8")).trim();
 
 	const profile = option(args, "--profile", "classic");
-	if (profile === "combo") {
+	if (profile === "experimental") {
 		const skill = await readFile(
-			resolve(ROOT, "skills/skim-adhd-caveman-combo/SKILL.md"),
+			resolve(ROOT, "skills/skim-experimental/SKILL.md"),
 			"utf8",
 		);
 		return [
 			"IMPORTANT — SKIM MODE ACTIVE",
-			"Always-on profile: skim-adhd-caveman-combo.",
-			"Apply these rules to every chat reply until /skim off.",
+			"Opt-in profile: skim-experimental.",
+			"Apply these rules to this reply.",
 			stripFrontmatter(skill),
 		].join("\n\n");
 	}

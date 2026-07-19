@@ -1,15 +1,18 @@
 ---
-name: skim-adhd-caveman-combo
+name: skim-experimental
 description: >-
-  Format replies with mandatory Caveman-Ultra wording inside vertical Skim
-  layout plus ADHD-friendly action and state handling. On Pi, /skim on injects
-  this skill every turn until /skim off. Elsewhere, use when invoked as
-  $skim-adhd-caveman-combo or when dense action-first output is requested.
+  Experimental, opt-in Skim profile for testing mandatory Caveman-Ultra
+  wording, vertical layout, action/state handling, and user-controlled depth.
+  Use only when the user explicitly invokes $skim-experimental or asks to test
+  the experimental Skim profile. Never replace or activate stable $skim.
   Never expand autonomously; only a user message whose first nonblank line is
   exactly "Full Explanation Please" activates one-reply expanded mode.
 ---
 
-# Skim ADHD Caveman Combo
+# Skim Experimental
+
+Keep this profile opt-in. Never modify, replace, or implicitly activate stable
+`$skim` behavior.
 
 Treat output as a closed state machine. Default to `DEFAULT_ULTRA`.
 Never choose a weaker style.

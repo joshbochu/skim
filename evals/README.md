@@ -56,6 +56,13 @@ Use an alternate compiled prompt:
 npm run eval -- --prompt-file /tmp/skim-candidate.md --label candidate
 ```
 
+Run the opt-in experimental skill:
+
+```bash
+npm run eval:experimental:dry
+npm run eval:experimental -- --label experimental
+```
+
 Results land under `evals/results/<timestamp>-<label>/` with raw outputs,
 the exact system prompt, stderr where present, and `summary.json`.
 

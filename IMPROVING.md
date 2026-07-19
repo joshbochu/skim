@@ -22,6 +22,15 @@ Implemented now:
 Current extension remains prompt-driven. It does not validate or rewrite the
 final live response.
 
+## Experimental lifecycle
+
+- Keep `skills/skim/`, `/skim on`, and live `rules/` stable during experiments.
+- Overwrite `skills/skim-experimental/` with each new candidate.
+- Invoke candidates explicitly with `$skim-experimental`.
+- Evaluate candidates with `--profile experimental` and
+  `evals/experimental-cases.json`.
+- Promote reviewed behavior deliberately; never make experimental implicit.
+
 ## Deliberate exclusions
 
 Auto-Clarity:
@@ -45,7 +54,8 @@ Codex workflow:
 2. Read unreviewed JSON files from `<agent-dir>/skim/captures/`.
 3. Dedupe and classify: wording, structure, missing fact, invented fact,
    ambiguity, or unrelated model failure.
-4. Snapshot `skills/skim/` and `rules/` before editing.
+4. Keep `skills/skim/` and `rules/` as baseline; overwrite
+   `skills/skim-experimental/` with candidate changes.
 5. Select representative captures; do not promote every capture.
 6. Draft objective expectations only where behavior is measurable.
 7. Run old and candidate versions as independent, context-isolated tests.
@@ -53,8 +63,9 @@ Codex workflow:
 9. Apply `evals/lint.mjs` to every generated output.
 10. Compare outputs blindly; reveal version labels only afterward.
 11. Ask user to judge subjective Caveman/readability differences.
-12. Promote approved prompts to `evals/cases.json` and preferred outputs to
-    `evals/gold/`.
+12. Promote approved rules from `skills/skim-experimental/` to stable
+    `skills/skim/`; promote prompts to `evals/cases.json` and preferred outputs
+    to `evals/gold/`.
 13. Mark capture JSON `status` as `promoted`, `duplicate`, or `discarded`.
 14. Run fixed corpus; commit only with no mandatory-gate regression.
 
@@ -231,9 +242,9 @@ Then compare:
 
 1. Read unreviewed files from `<agent-dir>/skim/captures/`.
 2. Dedupe and classify captures.
-3. Snapshot old skill and rules.
+3. Keep stable skill and rules as baseline.
 4. Select representative cases; draft expectations.
-5. Make one candidate change.
+5. Overwrite `skills/skim-experimental/` with one candidate change.
 6. Run old and candidate with same model and sample count.
 7. Lint, blind-compare, then collect user preference.
 8. Promote only with zero mandatory-gate regressions.

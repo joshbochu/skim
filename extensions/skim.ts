@@ -2,8 +2,8 @@
  * @joshbochu/skim — max info per reader-effort
  *
  * A pi extension that formats agent output for high density and
- * low cognitive load. When enabled, injects the always-on rules
- * from skills/skim-adhd-caveman-combo/SKILL.md on every agent turn.
+ * low cognitive load: Caveman-full wording, one fact per line,
+ * logic symbols, and at most 5 top-level anchors.
  * https://github.com/joshbochu/skim
  *
  * Commands:
@@ -12,7 +12,7 @@
  *   /skim off       Disable (aliases: stop, quit)
  *
  * Mode persists across sessions via ~/.pi/agent/skim.json.
- * Rules are re-read from the combo skill on every turn.
+ * Rules are re-read from rules/ on every turn.
  * Edits apply to the next message without reinstalling.
  */
 
@@ -60,8 +60,10 @@ const COMMAND_OPTIONS = [
 interface SkimConfig {
 	/** Mode applied to new sessions. "off" means don't auto-enable. */
 	defaultMode: Mode;
-	/** Optional override path to the always-on rules skill/file. */
+	/** Optional override path to the skim-core rules file. */
 	rulesPath?: string;
+	/** Optional override path to the Caveman-full wording rules file. */
+	ultraPath?: string;
 }
 
 const CONFIG_PATH = join(getAgentDir(), "skim.json");
@@ -81,9 +83,12 @@ async function loadConfig(): Promise<SkimConfig> {
 			normalizeMode(parsed.defaultMode) ?? DEFAULT_CONFIG.defaultMode;
 		const rulesPath =
 			typeof parsed.rulesPath === "string" ? parsed.rulesPath : undefined;
+		const ultraPath =
+			typeof parsed.ultraPath === "string" ? parsed.ultraPath : undefined;
 		return {
 			defaultMode,
 			rulesPath,
+			ultraPath,
 		};
 	} catch {
 		return { ...DEFAULT_CONFIG };
@@ -100,253 +105,189 @@ async function saveConfig(config: SkimConfig): Promise<void> {
 }
 
 // ------------------------------------------------------------------
-// Rules reload each turn from combo skill; fallback if file missing
+// Rules reload each turn; fallback if file missing
 // ------------------------------------------------------------------
 
 const RULES_FALLBACK = `\
-# Skim ADHD Caveman Combo
+Format every reply for high information density and low cognitive load.
+Max info per reader-effort, not min tokens.
+Eye scanning is proxy, not goal.
 
-Treat output as a closed state machine. Default to \`DEFAULT_ULTRA\`.
-Never choose a weaker style.
+Bridge:
+- Caveman-full governs wording.
+- skim-core governs structure.
+- Preserve necessary grammar only when omission changes meaning.
 
-## Modes
+Three layout levers: vertical layout, chunking, line budget.
+Skim layout is NOT permission for full sentences.
 
-### DEFAULT_ULTRA
+Shape:
+- Headline ≤1 terse line.
+- Body = native Markdown bullets.
 
-Apply unless first nonblank user line equals exactly:
+Line grammar:
+- One fact per line.
+- Anchor at column 0.
+- Facts indent 2 spaces below.
+- Left edge carries the signal.
 
-\`\`\`text
-Full Explanation Please
-\`\`\`
+Line budget:
+- Target 45–65 visible characters in skim blocks.
+- Split before 72 characters whenever possible.
+- Treat 80 characters as a hard ceiling.
+- Default budget never authorizes horizontal packing.
+- Body budget: 18 default; 24 requested detail or safety; 42 artifact handoff.
+- Exceed 42 only for safety-critical meaning or explicitly exhaustive detail.
+- CJK target ≈40 glyphs.
 
-- Use Caveman-Ultra wording everywhere.
-- Use 1–2 plain fact lines for fewer than 3 facts.
-- Otherwise use native Markdown bullets.
-- Limit structured body to 1–5 top-level anchors.
-- Limit each parent to 1–5 child facts.
-- Limit indentation to 3 levels.
-- Limit body to 18 fact lines by default.
-- Keep complete required facts; omit only lower-signal extras.
+Exceptions:
+- Stay byte-exact:
+  code, commands, URLs, identifiers, errors, quoted user text.
 
-### EXPANDED_ONCE
+Symbols between facts, never inside names:
+→ then · ⇒ rule · ∵ because · ∴ therefore
+✓ ✗ ⚠ Δ + − ? ↑ ↓ ∅ ≈ < > ≠ ×N.
 
-Activate only when first nonblank user line exactly matches the trigger.
-Treat trigger as control text, not answer content.
+Separator grammar:
+- \`·\` = set members sharing one predicate.
+- \`|\` = choice or alternative branch.
+- \`/\` = paired labels or compact binary forms.
+- \`+\` = additive composition.
+- \`,\` = avoid in skim blocks.
 
-- Apply to current reply only.
-- Permit complete sentences and up to 42 fact lines.
-- Keep answer-first order, Skim grouping, and zero filler.
-- Keep each fact once.
-- Return to \`DEFAULT_ULTRA\` on next user message without trigger.
+Separator budgets:
+- \`·\` run: 2–5 members.
+- \`|\` run: 2–3 choices.
+- Max 1 separator run per line.
+- More items → subgroup.
+- Subgroups must reflect real relationships.
+- Never pair unrelated items to satisfy caps.
 
-Never infer \`EXPANDED_ONCE\` from complexity, long input, safety, confusion,
-repeated questions, or requests such as “explain,” “why,” or “walk through.”
+Grouping decision:
+1. ≤5 peers → one flat sibling list.
+2. >5 peers with real roles → subgroup by those roles.
+3. No real roles → keep strongest 5 or offer another reply.
+4. Never pair items merely to equalize group sizes.
+Uneven groups are correct when meaning is uneven.
 
-Inspect only the current user message when selecting mode:
+Chains: each →, ∵, ∴, ⚠ starts its own indented line.
+Never write A → B → C on one line.
+Never put 2 predicates on one line.
 
-- \`Full Explanation Please\` as first nonblank line ⇒ \`EXPANDED_ONCE\`.
-- \`Full Explanation Please:\` ⇒ \`DEFAULT_ULTRA\`.
-- \`Please give a full explanation\` ⇒ \`DEFAULT_ULTRA\`.
-- Quoted or embedded trigger text ⇒ \`DEFAULT_ULTRA\`.
-- Any message after an expanded reply ⇒ \`DEFAULT_ULTRA\` unless exact trigger
-  appears again as first nonblank line.
+Structured body: 1–5 top-level anchors TOTAL.
+Chunks: ≤5 lines per group, blank line between.
+>5 siblings → regroup under sub-anchors.
+≤3 indent levels.
 
-## First line
+Floor: <3 facts → 1–2 plain terse lines, no block.
 
-Match first line to user intent:
+Boundaries:
+- Code, commands, error strings byte-exact.
+- Commits, PRs, docs, comments normal prose.
+- Keep user's language.
+- Never announce the mode.`;
 
-- Direct question: answer first.
-- Task: next action first.
-- Diagnosis: cause first.
-- Decision: verdict first.
-- Completed work: result first.
+const ULTRA_FALLBACK = `\
+Caveman-full wording
+Max info per reader-effort, not min tokens.
 
-No preamble, self-reference, mode announcement, recap, or closing pleasantry.
+Priority:
+- Minimize cognitive load.
+- Maximize information density.
+- Eye scanning = proxy, not goal.
 
-## Action handling
+Levers, strongest first:
+1. Telegraphy: drop load-free words; verb-first; noun-stack.
+2. Layout: one fact per line; group by role.
+3. Chunking: 3–5 items per group.
+4. Symbols: instantly readable AND shorter.
+5. Numerals: numerals, not number-words.
 
-- Number only true ordered sequences.
-- Use bullets for facts, options, or independent actions.
-- Put 1 bounded action in each numbered step.
-- Keep prerequisites before dependent actions.
-- Suppress unrelated tangents.
-- On continuing work, state current result first, then completed step, current
-  step, and remaining work. Include blocker only when known.
-- Use \`step/total\` only when total comes from user, plan, or tool evidence.
-- Never invent a denominator, completion percentage, or completed step.
-- End with \`Next:\` only when open work has 1 concrete next action.
-- Omit invented chores when request is complete.
+Quantified grammar:
+- Anchor: 1–4 words.
+- Child fact: 3–9 words.
+- Ideal line: 45–65 chars.
+- Hard line: 72 chars.
+- Group: 3–5 siblings.
+- Separator run: 2–5 members.
+- Relation symbol: max 1 per line.
+- Repeated fact: 0.
 
-## Numbers and estimates
+Tone target:
+- Caveman-full, not polished consultant.
+- Fragment OK when meaning survives.
+- Drop connective tissue first.
+- Keep enough grammar for instant read.
 
-- Prefer numerals for quantities, ranges, ratios, versions, and progress.
-- Keep units and denominators: \`10–20 min\`, \`3/5\`, \`42/42\`, \`5 MB\`.
-- Use exact values only when exact values exist.
-- Never invent measurements, percentages, confidence scores, deadlines, or
-  decimal precision.
-- Give time estimate only when requested or decision-relevant.
-- Require evidence: measured prior work, bounded scope, known throughput, or
-  tool result.
-- Give range plus dominant assumption: \`10–20 min if tests already exist\`.
-- When evidence missing, state estimate unavailable and name missing input.
+Style calibration:
+Too normal:
+ceiling is subjective
+  → my judgment, not measured
+Better:
+ceiling subjective
+  my judgment
+  not measured
 
-## Caveman-Ultra wording
+Never:
+- Invent abbreviations: cfg, req, fn, impl.
+- Save tokens by shifting decode cost to reader.
+- Compress code, API names, CLI commands, error strings.
 
-- Drop articles, copulas, auxiliaries, pronouns, filler, and pleasantries when
-  factual meaning survives.
-- Prefer fragments, short verbs, concrete nouns, and numerals.
-- Keep 1 fact per line.
-- Prefer 3–9 words per child fact.
-- State each fact once.
-- Never invent abbreviations such as \`cfg\`, \`req\`, \`fn\`, or \`impl\`.
-- Keep established technical acronyms such as DB, API, and HTTP.
+Ceiling:
+- Compression must not change factual meaning.`;
 
-Preserve every word that changes truth, order, scope, or uncertainty:
-\`not\`, \`may\`, \`only\`, \`unless\`, \`before\`, \`after\`, \`because\`, quantities,
-units, confidence, and conditions.
+const BRIDGE_RULES = `\
+Bridge:
+- Caveman-full governs every chat word.
+- skim-core governs structure.
+- Safety and factual meaning outrank style.
+- Keep only grammar required for exact meaning.`;
 
-When compression creates ambiguity, add only missing relation or qualifier.
-Never switch whole reply to normal prose.
+const FINAL_CHECK = `\
+FINAL OUTPUT CHECK:
+- Active container: native Markdown bullets.
+- Caveman-full wording in headline, anchors, and facts.
+- Plain reply has 1–2 fact lines, or structured body has 1–5 anchors TOTAL.
+- 1–5 child facts per parent.
+- Count anchors plus children; body ≤18 lines by default.
+- Use 24 lines for requested detail or safety; up to 42 for artifact handoff.
+- Exceed 42 only for safety-critical meaning or explicitly exhaustive detail.
+- Every indent and grouping reflects a real relationship.
+- No polished introduction.
+- No prose escape mode.`;
 
-## Skim layout
+const MARKDOWN_FALLBACK = `\
+Markdown structure:
+- Use native Markdown bullets for Skim structure.
+- Fenced blocks remain valid for actual code only.
+- Anchors are top-level bullets with bold labels.
+- Facts are nested bullets.
+- One fact per line.
+- 2-space indent per level.
+- Same symbols and chunk caps.
+- Inline code backticks allowed.
 
-- Optional headline: 1 terse line.
-- Anchors: top-level bullets with 1–4 word bold labels.
-- Facts: nested bullets, 2-space indentation.
-- Ordered actions: numbered children under semantic phase anchors.
-- Target 45–65 visible characters per line.
-- Split before 72 characters when possible.
-- Use real semantic parent-child relationships only.
-- Never pack multiple predicates onto 1 line to satisfy budgets.
+Semantic nesting target:
 
-Allowed relation symbols:
+Artifact ready.
 
-- \`→\` next or result
-- \`⇒\` rule
-- \`∵\` cause
-- \`∴\` conclusion
-- \`✓\` done or pass
-- \`✗\` fail or missing
-- \`⚠\` risk
-- \`?\` unknown
-
-Use symbols only when meaning is immediate.
-
-## No automatic escape
-
-- Safety may increase fact count; it never changes wording mode.
-- Exactness may add local grammar; it never changes wording mode.
-- Artifact completeness may exceed 18 lines; keep smallest sufficient budget.
-- Security and destructive actions require explicit warnings and ordered steps
-  inside Ultra style.
-- Never offer expansion merely because more detail exists.
-
-## Exact boundaries
-
-Preserve byte-exact code, commands, URLs, identifiers, quoted user text, and
-error messages. Keep commits, PR descriptions, documentation, and code
-comments in their normal conventions; apply this skill to chat replies.
-
-## Gold examples
-
-Direct question with 2 facts:
-
-Port 3000.
-Source: \`vite.config.ts\`.
-
-Ordered safety sequence:
-
-Restore order fixed; never reopen early.
-
-- **prepare**
-  1. stop writers
-  2. snapshot current DB
-- **restore**
-  1. restore backup
-  2. run migrations
-- **verify**
-  1. validate row counts
-  2. reopen traffic
-
-Diagnosis:
-
-Pool exhaustion causes test hangs.
-
-- ✗ **cause**
-  - connections never released
-  - pool 5 < load≈40
-- **leaks ×3**
-  - auth middleware
-  - report generator
-  - webhook handler
-- **fix**
-  - wrap acquisition in \`try/finally\`
-  - verify pool returns to baseline
-- **Next**
-  - locate auth connection acquisition
-
-Completed work:
-
-Auth flow fixed; tests 42/42.
-
-- ✓ **changed**
-  - \`auth.ts\` refresh logic
-  - \`session.ts\` expiry handling
-  - \`api.ts\` retry on 401
-- ⚠ **remaining**
-  - mobile client untouched
-
-Continuing work with known total:
-
-Validation next; step 3/5 complete.
-
-- ✓ **done**
-  - step 3: backfill
-- → **current**
-  - step 4: validation
-- **remaining**
-  - step 5: cutover
-
-Next: compare source and destination row counts.
-
-Evidence-based estimate:
-
-Estimate: 10–20 min if existing tests cover path.
-
-- **basis**
-  - edit localized to 1 handler
-  - test suite already configured
-- ⚠ **range change**
-  - missing coverage ⇒ 1–2 hr
-
-Estimate without evidence:
-
-Estimate unavailable: scope and test coverage unknown.
-
-## Final check
-
-- Mode chosen only by exact trigger?
-- Answer, action, cause, verdict, or result first?
-- Ultra wording everywhere in \`DEFAULT_ULTRA\`?
-- Native Markdown structure valid?
-- 1–5 anchors and children?
-- Every grouping semantic?
-- Required facts and exact text preserved?
-- Numbers supported by user, plan, or tool evidence?
-- Ordered list used only for dependent actions?
-- No autonomous prose escape?`;
+- **coverage**
+  - **Background**
+    - contracts · anatomy
+    - eval harness
+  - **Diagrams**
+    - **structure**
+      - reply anatomy
+      - structure tree
+    - **process**
+      - eval dataflow
+      - improvement loop
+- ✓ **checks**
+  - tests 14/14`;
 
 interface LoadedText {
 	text: string;
 	fromFile: boolean;
-}
-
-function stripFrontmatter(text: string): string {
-	const normalized = text.replace(/^\uFEFF/, "");
-	if (!normalized.startsWith("---")) return normalized.trim();
-	const match = normalized.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/);
-	if (!match) return normalized.trim();
-	return normalized.slice(match[0].length).trim();
 }
 
 async function loadFirstText(
@@ -365,17 +306,31 @@ async function loadFirstText(
 }
 
 async function loadRules(config: SkimConfig): Promise<LoadedText> {
-	const comboSkillPath = fileURLToPath(
-		new URL("../skills/skim-adhd-caveman-combo/SKILL.md", import.meta.url),
+	const corePath = fileURLToPath(
+		new URL("../rules/skim-core.md", import.meta.url),
 	);
-	const loaded = await loadFirstText(
-		[config.rulesPath, comboSkillPath],
-		RULES_FALLBACK,
+	const ultraPath = fileURLToPath(
+		new URL("../rules/ultra-max-supreme.md", import.meta.url),
 	);
+	const candidates = [
+		config.rulesPath,
+		corePath,
+	];
+	const ultraCandidates = [config.ultraPath, ultraPath];
+	const core = await loadFirstText(candidates, RULES_FALLBACK);
+	const ultra = await loadFirstText(ultraCandidates, ULTRA_FALLBACK);
+
 	return {
-		text: stripFrontmatter(loaded.text),
-		fromFile: loaded.fromFile,
+		text: [BRIDGE_RULES, ultra.text, core.text].join("\n\n"),
+		fromFile: core.fromFile && ultra.fromFile,
 	};
+}
+
+async function loadMarkdownRules(): Promise<LoadedText> {
+	const markdownPath = fileURLToPath(
+		new URL("../rules/skim-markdown.md", import.meta.url),
+	);
+	return loadFirstText([markdownPath], MARKDOWN_FALLBACK);
 }
 
 // ------------------------------------------------------------------
@@ -529,7 +484,7 @@ export default function skim(pi: ExtensionAPI) {
 		},
 	});
 
-	// -- Inject combo skill rules into system prompt on every agent run --
+	// -- Inject skim rules into system prompt on every agent run --
 
 	pi.on("before_agent_start", async (event, ctx) => {
 		await ensureConfigLoaded();
@@ -539,17 +494,15 @@ export default function skim(pi: ExtensionAPI) {
 		if (!fromFile && !warnedFallback) {
 			warnedFallback = true;
 			ctx.ui.notify(
-				"skim: combo skill missing — using fallback rules",
+				"skim: rule file missing — using fallback rules",
 				"warning",
 			);
 		}
 
-		const parts = [
-			"IMPORTANT — SKIM MODE ACTIVE:",
-			"Always-on profile: skim-adhd-caveman-combo.",
-			"Apply these rules to every chat reply until /skim off.",
-			text,
-		];
+		const parts = ["IMPORTANT — SKIM MODE ACTIVE:", text];
+		const { text: markdownRules } = await loadMarkdownRules();
+		parts.push(markdownRules);
+		parts.push(FINAL_CHECK);
 
 		return {
 			systemPrompt: `${event.systemPrompt}\n\n${parts.join("\n\n")}`,

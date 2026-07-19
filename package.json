@@ -22,7 +22,9 @@
     "test": "node --test evals/*.test.mjs",
     "eval:lint": "node evals/lint.mjs --gold",
     "eval:dry": "node evals/run.mjs --dry-run",
-    "eval": "node evals/run.mjs"
+    "eval": "node evals/run.mjs",
+    "eval:experimental:dry": "node evals/run.mjs --dry-run --profile experimental --cases-file evals/experimental-cases.json",
+    "eval:experimental": "node evals/run.mjs --profile experimental --cases-file evals/experimental-cases.json"
   },
   "files": [
     "extensions",
@@ -30,6 +32,7 @@
     "skills",
     "evals/capture.test.mjs",
     "evals/cases.json",
+    "evals/experimental-cases.json",
     "evals/fixtures",
     "evals/gold",
     "evals/lint.mjs",

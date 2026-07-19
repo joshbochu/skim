@@ -101,6 +101,18 @@ Capture accepts a note:
 Captures stay local in `~/.pi/agent/skim/captures/`. They may contain prompts,
 responses, code, or other sensitive material. Inspect them before sharing.
 
+### Experimental profile
+
+Stable `skim` and `/skim on` behavior remain unchanged during experiments.
+Invoke the work-in-progress profile explicitly:
+
+```text
+$skim-experimental
+```
+
+Overwrite `skills/skim-experimental/` during iteration. Promote reviewed rules
+to stable `skills/skim/` only after evaluation and user approval.
+
 ## The contract
 
 Skim does not ask the agent to "be concise" and hope for the best. It gives
@@ -183,9 +195,11 @@ Use Caveman when the token bill hurts. Use Skim when the scrollback hurts.
 
 ```text
 skills/skim/SKILL.md    portable skill contract
+skills/skim-experimental/ opt-in candidate contract
 extensions/skim.ts      Pi toggle and persistence
 rules/                  live-reloaded Pi rules
 evals/cases.json        behavior corpus
+evals/experimental-cases.json candidate behavior corpus
 evals/gold/             hand-approved outputs
 evals/lint.mjs          deterministic structure checks
 ```
@@ -200,6 +214,8 @@ npm test
 npm run eval:lint
 npm run eval:dry
 npm run eval -- --label baseline
+npm run eval:experimental:dry
+npm run eval:experimental -- --label candidate
 ```
 
 `eval:lint` checks the gold corpus without calling a model. `eval:dry` shows

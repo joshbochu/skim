@@ -1,7 +1,0 @@
-interface:
-  display_name: "Skim ADHD Caveman Combo"
-  short_description: "Ultra-dense action-first replies with user-only expansion"
-  default_prompt: "Use $skim-adhd-caveman-combo to answer with dense action-first structure."
-
-policy:
-  allow_implicit_invocation: false
