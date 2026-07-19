@@ -78,6 +78,41 @@ test("accepts native markdown container", () => {
 	assert.equal(report.metrics.anchors, 2);
 });
 
+test("accepts ordered actions nested under phase anchors", () => {
+	const output = [
+		"Restore order fixed.",
+		"",
+		"- **prepare**",
+		"  1. stop writers",
+		"  2. snapshot current DB",
+		"- **restore**",
+		"  1. restore backup",
+		"  2. run migrations",
+	].join("\n");
+	const report = lintOutput(output, {
+		expectedShape: "markdown",
+		minOrderedItems: 4,
+	});
+	assert.equal(report.pass, true, report.errors.join("\n"));
+	assert.equal(report.metrics.orderedItems, 4);
+});
+
+test("rejects unordered actions when ordered sequence required", () => {
+	const output = [
+		"Restore order fixed.",
+		"",
+		"- **prepare**",
+		"  - stop writers",
+		"  - snapshot current DB",
+	].join("\n");
+	const report = lintOutput(output, {
+		expectedShape: "markdown",
+		minOrderedItems: 2,
+	});
+	assert.equal(report.pass, false);
+	assert.match(report.errors.join("\n"), /ordered items 0 < 2/);
+});
+
 test("rejects fenced output when markdown container required", () => {
 	const output = "Result.\n\n```text\nproof\n  tests pass\n```";
 	const report = lintOutput(output, { expectedShape: "markdown" });

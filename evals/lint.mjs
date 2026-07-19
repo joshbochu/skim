@@ -62,7 +62,7 @@ function extractMarkdownBody(output) {
 	let end = start;
 	for (; end < lines.length; end += 1) {
 		const line = lines[end];
-		if (!line.trim() || /^ *-\s+\S/.test(line)) continue;
+		if (!line.trim() || /^ *(?:-\s+|\d+[.)]\s+)\S/.test(line)) continue;
 		break;
 	}
 
@@ -118,13 +118,14 @@ export function lintOutput(output, options = {}) {
 	let maxDepth = 0;
 	let fullSentenceLines = 0;
 	let longProseLines = 0;
+	let orderedItems = 0;
 	const siblingCounts = new Map();
 	const stack = [];
 
 	if (structured) {
 		for (const [index, sourceLine] of structured.body.split(/\r?\n/).entries()) {
 			const rawLine = bodyKind === "markdown"
-				? sourceLine.replace(/^( *)-\s+/, "$1")
+				? sourceLine.replace(/^( *)(?:-\s+|\d+[.)]\s+)/, "$1")
 				: sourceLine;
 			if (!rawLine.trim()) continue;
 			bodyLines += 1;
@@ -136,6 +137,7 @@ export function lintOutput(output, options = {}) {
 				errors.push(`line ${index + 1}: indentation not multiple of 2`);
 			}
 			const depth = Math.floor(spaces / 2);
+			if (/^ *\d+[.)]\s+\S/.test(sourceLine)) orderedItems += 1;
 			maxDepth = Math.max(maxDepth, depth);
 			if (depth > 3) errors.push(`line ${index + 1}: depth ${depth} > 3`);
 			if (depth === 0) anchors += 1;
@@ -186,6 +188,10 @@ export function lintOutput(output, options = {}) {
 		errors.push(`body fact lines ${bodyLines} > ${maxBodyLines}`);
 	}
 	if (structured && anchors === 0) errors.push("body has no top-level anchor");
+	const minOrderedItems = options.minOrderedItems ?? 0;
+	if (orderedItems < minOrderedItems) {
+		errors.push(`ordered items ${orderedItems} < ${minOrderedItems}`);
+	}
 
 	const analyzedText = `${headline}\n${structured?.body ?? ""}\n${structured?.trailing ?? ""}`;
 	const abbreviationText = stripProtected(analyzedText).toLocaleLowerCase();
@@ -225,6 +231,7 @@ export function lintOutput(output, options = {}) {
 			functionWordRate: Number(functionWordRate.toFixed(1)),
 			bodySentenceRate: Number(sentenceRate.toFixed(1)),
 			longProseLines,
+			orderedItems,
 			words: wordCount(analyzedText),
 		},
 	};
