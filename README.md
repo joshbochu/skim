@@ -90,6 +90,8 @@ Ask for `skim`, or use the Pi commands:
 /skim on        activate and persist
 /skim off       return to normal prose
 /skim capture   save last exchange for review
+/skim pr        reshape and update the current branch PR body
+/skim pr <url>  reshape and update the given GitHub PR body
 ```
 
 Capture accepts a note:
@@ -135,8 +137,8 @@ escape hatch
 Hard boundary: code, commands, URLs, identifiers, quoted text, and error
 messages stay byte-exact. Compression never gets to "fix" the evidence.
 
-Commits, pull requests, documentation, and code comments keep normal prose.
-Skim is a reply format, not permission to write cursed release notes.
+Commits, documentation, and code comments keep normal prose. Pull request
+descriptions do too unless `/skim pr` explicitly applies the PR-body rules.
 
 ## Small symbol cult
 

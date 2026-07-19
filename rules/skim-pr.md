@@ -1,82 +1,45 @@
 # Skim for PR bodies
 
-Overrides the default PR boundary. Applies terse, structure-first shape
-to pull request descriptions the agent generates or reshapes.
+Overrides the default PR boundary for the one-shot command. Applies
+terse, structure-first shape to the selected pull request description.
 
 Chat replies stay under `skim-core`. This rule governs PR text only.
 
-## Activation
+## Command
 
-State is tri-valued: `off` → `preview` → `auto`. Only one is active at
-a time.
+`/skim pr` is a one-shot write action. It has no persistent state and
+does not affect later agent turns.
 
-- `/skim pr off` — disabled. PR text follows normal conventions.
-  Initial default.
-- `/skim pr preview` — enabled. Every PR body the agent generates or
-  reshapes follows this rule; the result is printed to the user and
-  never written back.
-- `/skim pr auto` — enabled. Same shape rules as `preview`. For
-  `/skim pr <pr-url>`, the agent also writes the reshaped body back to
-  the PR via the available GitHub tool.
-- `/skim pr <body>` — one-shot. Reshape the pasted draft. Output only;
-  there is nothing to write.
-- `/skim pr <pr-url>` — one-shot. Fetch the PR body from GitHub and
-  reshape it. `preview` prints; `auto` writes. Accepts full URLs
-  (`https://github.com/owner/repo/pull/N`), short refs
-  (`owner/repo#N`), or bare `#N` when the working directory resolves to
-  a matching repo.
-- `/skim pr` — report current state.
+- `/skim pr <github-pr-url>` — reshape and update that pull request's
+  description.
+- `/skim pr` — resolve the pull request for the current Git branch,
+  then reshape and update its description.
 
-Chat-skim state (`/skim on|off`) is independent.
-skim-pr does not activate automatically; the user must opt in.
+The explicit command invocation authorizes one body-only update to the
+resolved pull request. It never authorizes other repository changes.
 
-The agent auto-detects the one-shot input: URL- or ref-shaped arguments
-are fetched; everything else is treated as a pasted body.
-
-## Persistence
-
-Mode state is scoped by the agent runner. "Persistent" survives only as
-long as the runner keeps state on disk.
-
-- **pi** — persisted via `extensions/skim.ts` to
-  `$PI_CODING_AGENT_DIR/skim.json` (default `~/.pi/agent/skim.json`).
-  `/skim pr preview` and `/skim pr auto` survive shell restarts.
-  Delete the file to reset.
-- **Other runners** (Claude Code, Cursor, etc.) — no bundled
-  extension. State is session-scoped. Put `/skim pr preview` or
-  `/skim pr auto` in your runner's startup rules or dotfiles for
-  always-on.
-
-Config shape (pi):
-
-- `defaultMode` — chat-skim state (`on` | `off`).
-- `prState` — PR body state (`off` | `preview` | `auto`).
-- `rulesPath`, `ultraPath`, `prRulesPath` — optional rule-file
-  overrides.
-
-## PR link input
-
-When the argument is a PR URL or ref:
+For either command:
 
 - Fetch the body using whatever GitHub tool the agent has available
   (`gh`, REST API, MCP). The rule does not prescribe a mechanism.
-- No tool available or fetch fails: prompt the user to paste the body
-  instead. Do not guess.
+- When no URL is supplied, resolve the current Git repository and branch,
+  then find its open pull request.
+- No matching pull request: ask the user for a full GitHub PR URL.
+- Multiple matching pull requests: list them and require an explicit URL.
+- No tool available or fetch fails: report the failure. Do not guess.
 - Resolve the repo's PR template from the current head or base state,
   not from the point-in-time template used when the PR was created.
   Reviewers expect the current shape.
-- Output behavior depends on the current state:
-  - `preview` — print the reshaped body to the user. Do not write
-    until an explicit follow-up says to.
-  - `auto` — write the reshaped body via the available GitHub write
-    path (`gh pr edit --body`, REST PATCH, MCP equivalent). Print the
-    applied body as confirmation.
+- Write the reshaped body through the available GitHub write path
+  (`gh pr edit --body`, REST PATCH, MCP equivalent).
+- Print the applied body and PR link as confirmation.
 - On write failure: print the reshaped body, note the failure, do not
   retry silently.
-- Skip the write and fall back to preview when the reshape produces an
-  empty body or drops content the agent cannot account for.
+- Skip the write when the reshape produces an empty body or drops
+  content the agent cannot account for.
+- No-op when the existing body already matches the reshaped body.
 - Never merge, never bypass branch protection, never touch anything
-  beyond the PR body — even under `auto`.
+  beyond the PR body.
 - Reshape body only. Leave the PR title alone; titles are already one
   line and rarely need it.
 

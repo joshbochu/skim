@@ -4,10 +4,8 @@ import { getAgentDir } from "./skim-capture.mjs";
 
 /**
  * @typedef {"on" | "off"} Mode
- * @typedef {"off" | "preview" | "auto"} PrState
  * @typedef {{
  *   defaultMode: Mode,
- *   prState: PrState,
  *   rulesPath?: string,
  *   ultraPath?: string,
  *   prRulesPath?: string,
@@ -17,7 +15,6 @@ import { getAgentDir } from "./skim-capture.mjs";
 /** @type {SkimConfig} */
 export const DEFAULT_CONFIG = {
 	defaultMode: "off",
-	prState: "off",
 };
 
 /**
@@ -26,15 +23,6 @@ export const DEFAULT_CONFIG = {
  */
 export function normalizeMode(value) {
 	if (value === "off" || value === "on") return value;
-	return null;
-}
-
-/**
- * @param {unknown} value
- * @returns {PrState | null}
- */
-export function normalizePrState(value) {
-	if (value === "off" || value === "preview" || value === "auto") return value;
 	return null;
 }
 
@@ -56,8 +44,6 @@ export async function loadConfig(env = process.env) {
 		const parsed = JSON.parse(await readFile(path, "utf8"));
 		const defaultMode =
 			normalizeMode(parsed.defaultMode) ?? DEFAULT_CONFIG.defaultMode;
-		const prState =
-			normalizePrState(parsed.prState) ?? DEFAULT_CONFIG.prState;
 		const rulesPath =
 			typeof parsed.rulesPath === "string" ? parsed.rulesPath : undefined;
 		const ultraPath =
@@ -66,7 +52,6 @@ export async function loadConfig(env = process.env) {
 			typeof parsed.prRulesPath === "string" ? parsed.prRulesPath : undefined;
 		return {
 			defaultMode,
-			prState,
 			rulesPath,
 			ultraPath,
 			prRulesPath,
