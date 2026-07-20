@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
 	adjudicateJudgeResult,
@@ -18,7 +19,7 @@ const config = {
 	description: "test",
 	profiles: {
 		stable: { label: "Stable", skill: "skills/skim/SKILL.md" },
-		candidate: { label: "Candidate", skill: "skills/skim-2/SKILL.md" },
+		candidate: { label: "Candidate", skill: "skills/skim-v2/SKILL.md" },
 	},
 	preferenceCriteria: ["Correctness"],
 	cases: [
@@ -256,4 +257,13 @@ test("validates required profiles, cases, and assertion ids", () => {
 		() => validateConfig({ ...config, cases: [{ id: "Bad ID", prompt: "x" }] }),
 		/invalid case id/,
 	);
+});
+
+test("repository comparison config targets the packaged skim-v2 skill", () => {
+	const repositoryConfig = JSON.parse(
+		readFileSync(new URL("./compare-cases.json", import.meta.url), "utf8"),
+	);
+	assert.doesNotThrow(() => validateConfig(repositoryConfig));
+	assert.equal(repositoryConfig.profiles.candidate.label, "Skim v2");
+	assert.equal(repositoryConfig.profiles.candidate.skill, "skills/skim-v2/SKILL.md");
 });

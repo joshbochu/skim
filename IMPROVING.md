@@ -16,6 +16,12 @@ Implemented now:
 - Deterministic plain and native-Markdown linter.
 - Repeated headless Pi benchmark runner.
 - Raw outputs and exact prompt saved for every benchmark.
+- Balanced literal-skill A/B runner with deterministic interleaving.
+- Exact provider, model, token, cost, duration, and event-stream capture.
+- Blind semantic assertion grader and pairwise judge.
+- Deterministic semantic/mechanical hard-gate adjudication with raw preference
+  preservation.
+- Static side-by-side reviewer with blinded labels and feedback export.
 - `/skim capture [note]` for real prompt/output evidence.
 - Local capture inbox with model, session, mode, and rule fingerprint.
 
@@ -83,17 +89,13 @@ evals/workspaces/iteration-N/
 
 Review UI:
 
-- Reuse Anthropic skill-creator’s Apache-2.0 `generate_review.py` and
-  `viewer.html`; do not rebuild a generic viewer.
-- Source: `anthropics/skills`, `skills/skill-creator/eval-viewer/`.
-- Validated source revision: `9d2f1ae187231d8199c64b5b762e1bdf2244733d`.
-- Clone to a temporary directory when needed; keep third-party code outside
-  this MIT package unless vendoring becomes necessary.
-- Static HTML is acceptable when browser-server launch is unavailable.
+- Use the generated `review.html` in each comparison result directory.
+- Keep A/B identities hidden until subjective feedback is recorded.
+- Inspect raw answers, mechanical errors, and semantic evidence separately.
+- Export `feedback.json`; do not infer preference from lint score alone.
 
-The Anthropic trigger optimizer calls `claude -p` and does not test Pi.
-Do not reuse that executor. Use Skim’s Pi adapter or isolated Codex runs;
-reuse only the workflow, schemas, aggregation concepts, and review viewer.
+The local implementation follows the skill-creator workflow concepts while
+remaining Pi-native. It does not import Anthropic’s executor or viewer.
 
 ## Improvement ladder
 
@@ -134,6 +136,14 @@ Method:
 - Apply deterministic Skim checks.
 - Blind-compare outputs.
 - Collect user feedback before promotion.
+
+Commands:
+
+```bash
+npm run eval:compare:dry
+npm run eval:compare:smoke
+npm run eval:compare
+```
 
 Tradeoffs:
 
@@ -230,6 +240,15 @@ Mandatory gates:
 - No invented fact.
 - Safety and ordered procedures remain unambiguous.
 - Exact code, commands, identifiers, and errors preserved.
+- One generation model/provider used across both profiles.
+- No candidate-only hard regression in promotion cases.
+
+Preference order after mandatory gates:
+
+1. Fewer semantic assertion failures.
+2. Mechanical pass; when both fail, fewer violations.
+3. Lower reader effort without relation loss.
+4. Lower word count only when meaning and clarity remain equal.
 
 Then compare:
 
@@ -238,6 +257,9 @@ Then compare:
 - Function-word rate.
 - Full-sentence rate inside body.
 - Human preference against previous baseline.
+- Semantic assertion pass rate.
+- Blind pairwise wins and ties.
+- Token, cost, and latency deltas.
 
 ## Next-session checklist
 
@@ -252,7 +274,6 @@ Then compare:
 
 ## Deferred tooling
 
-- LLM semantic judge for omissions and inventions.
 - Live `/skim score` command.
 - Structured final-response tool.
 - Conditional repair pass.

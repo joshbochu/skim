@@ -25,7 +25,10 @@
     "eval": "node evals/run.mjs",
     "eval:skim-v2:dry": "node evals/run.mjs --dry-run --profile skim-v2 --cases-file evals/skim-v2-cases.json",
     "eval:skim-v2": "node evals/run.mjs --profile skim-v2 --cases-file evals/skim-v2-cases.json",
-    "prepublishOnly": "npm test && npm run eval:lint && npm run eval:dry && npm run eval:skim-v2:dry"
+    "eval:compare:dry": "node evals/compare.mjs --dry-run --judge",
+    "eval:compare:smoke": "node evals/compare.mjs --runs 1 --judge --label smoke",
+    "eval:compare": "node evals/compare.mjs --judge --label promotion",
+    "prepublishOnly": "npm test && npm run eval:lint && npm run eval:dry && npm run eval:skim-v2:dry && npm run eval:compare:dry"
   },
   "files": [
     "extensions",
@@ -33,11 +36,16 @@
     "skills",
     "evals/capture.test.mjs",
     "evals/cases.json",
+    "evals/compare-cases.json",
+    "evals/compare-lib.mjs",
+    "evals/compare.mjs",
+    "evals/compare.test.mjs",
     "evals/skim-v2-cases.json",
     "evals/fixtures",
     "evals/gold",
     "evals/lint.mjs",
     "evals/lint.test.mjs",
+    "evals/review.mjs",
     "evals/README.md",
     "evals/run.mjs",
     "IMPROVING.md",

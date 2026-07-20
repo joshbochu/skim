@@ -1,5 +1,5 @@
 {
-  "name": "skim-vs-skim-2",
+  "name": "skim-vs-skim-v2",
   "description": "Balanced stable-origin and candidate-origin prompts for matched skill comparison.",
   "profiles": {
     "stable": {
@@ -7,8 +7,8 @@
       "skill": "skills/skim/SKILL.md"
     },
     "candidate": {
-      "label": "Skim 2",
-      "skill": "skills/skim-2/SKILL.md"
+      "label": "Skim v2",
+      "skill": "skills/skim-v2/SKILL.md"
     }
   },
   "preferenceCriteria": [

@@ -206,6 +206,8 @@ skills/skim-v2/            v2 portable and Pi profile contract
 extensions/skim.ts         exclusive stable/v2 toggle and persistence
 rules/                     stable live-reloaded Pi rules
 evals/cases.json           stable behavior corpus
+evals/compare-cases.json   balanced stable/v2 A/B corpus
+evals/compare.mjs          matched skill comparison
 evals/skim-v2-cases.json   v2 behavior corpus
 evals/gold/                hand-approved outputs
 evals/lint.mjs             deterministic structure checks
@@ -223,11 +225,15 @@ npm run eval:dry
 npm run eval -- --label baseline
 npm run eval:skim-v2:dry
 npm run eval:skim-v2 -- --label candidate
+npm run eval:compare:dry
+npm run eval:compare:smoke
 ```
 
 `eval:lint` checks the gold corpus without calling a model. `eval:dry` shows
 the planned benchmark. The full eval stores raw outputs, exact prompts, stderr,
 and summaries under `evals/results/`.
+The comparison runner also records exact token/cost/timing data, blind semantic
+grades, a Markdown report, and a side-by-side feedback reviewer.
 
 See [`evals/README.md`](evals/README.md) for the benchmark loop and
 [`IMPROVING.md`](IMPROVING.md) for the backlog.
