@@ -23,8 +23,8 @@
     "eval:lint": "node evals/lint.mjs --gold",
     "eval:dry": "node evals/run.mjs --dry-run",
     "eval": "node evals/run.mjs",
-    "eval:skim-2:dry": "node evals/run.mjs --dry-run --profile skim-2 --cases-file evals/skim-2-cases.json",
-    "eval:skim-2": "node evals/run.mjs --profile skim-2 --cases-file evals/skim-2-cases.json"
+    "eval:skim2:dry": "node evals/run.mjs --dry-run --profile skim2 --cases-file evals/skim2-cases.json",
+    "eval:skim2": "node evals/run.mjs --profile skim2 --cases-file evals/skim2-cases.json"
   },
   "files": [
     "extensions",
@@ -32,7 +32,7 @@
     "skills",
     "evals/capture.test.mjs",
     "evals/cases.json",
-    "evals/skim-2-cases.json",
+    "evals/skim2-cases.json",
     "evals/fixtures",
     "evals/gold",
     "evals/lint.mjs",

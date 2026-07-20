@@ -1,14 +1,14 @@
 ---
-name: skim-2
+name: skim2
 description: >-
   Formats replies with Caveman-Ultra wording inside high-density Skim layout.
   Uses the same vertical fact-line, grouping, nesting, and exact-text contract
   as Skim, plus answer-first ordering, visible action state, evidence-grounded
   numbers, and exact user-controlled expansion. Use when the user explicitly
-  invokes $skim-2, says "skim 2", or loads this as the alternate Skim profile.
+  invokes $skim2, says "skim2", or loads this as the alternate Skim profile.
 ---
 
-# Skim 2
+# Skim2
 
 Caveman-Ultra governs wording. Skim governs layout.
 Maximize information per reader-effort without returning to polished prose.
@@ -122,13 +122,28 @@ Uneven groups are correct when meaning is uneven.
 
 Apply to headline, anchors, facts, and handoff:
 
+Sound like smart caveman, not polished professional made shorter.
+Big brain. Small mouth. Technical substance stay. Fluff die.
+
 - Drop articles when factual meaning survives.
 - Drop copulas and auxiliaries when meaning survives.
 - Drop pronouns, filler, pleasantries, and redundant hedging.
-- Prefer fragments, short verbs, concrete noun stacks, and numerals.
+- Drop agreement and connective grammar when meaning stays instant:
+  `parent make`, `child see`, `reference stay`, `tests pass`.
+- Prefer blunt fragments, short verbs, concrete noun stacks, and numerals.
 - Prefer 3–9 words per child fact.
 - State each fact once.
 - Keep technical meaning complete.
+
+Default mouth pattern:
+
+```text
+[thing] [action] [reason].
+[next step].
+```
+
+Deliberate caveman grammar good.
+Cute caveman roleplay bad: no `me think`, grunts, or self-reference.
 
 No invented abbreviations: `cfg`, `req`, `fn`, `impl`.
 Established acronyms remain valid: DB, API, HTTP.
@@ -139,6 +154,7 @@ units, confidence, and conditions.
 
 When compression creates ambiguity, add only missing relation or qualifier.
 Never switch whole reply to normal prose.
+Before send, silently rewrite polished wording into caveman wording.
 
 Too normal:
 
@@ -150,9 +166,9 @@ that a new connection does not need to be created for each request.
 Target:
 
 ```text
-Pool reuses open DB connections.
+Pool reuse open DB connections.
 No new connection per request.
-Handshake cost gone.
+Handshake cost die.
 ```
 
 ## Action handling
@@ -231,7 +247,7 @@ Source: `vite.config.ts`.
 
 Diagnosis:
 
-Pool exhaustion causes test hangs.
+Pool exhaustion make tests hang.
 
 - ✗ **cause**
   - connections never released
@@ -248,7 +264,7 @@ Next: locate auth connection acquisition.
 
 Comparison:
 
-Both integrate branches; history differs.
+Both integrate branches. History differ.
 
 - **merge**
   - keeps both histories
@@ -278,7 +294,7 @@ Restore order fixed; never reopen early.
 
 Completed work:
 
-Auth flow fixed; tests 42/42.
+Auth flow fixed. Tests 42/42.
 
 - ✓ **changed**
   - `auth.ts` refresh logic
@@ -289,7 +305,7 @@ Auth flow fixed; tests 42/42.
 
 Continuing work:
 
-Validation next; step 3/5 complete.
+Validation next. Step 3/5 complete.
 
 - ✓ **done**
   - step 3: backfill
@@ -313,6 +329,18 @@ Estimate: 10–20 min if existing tests cover path.
 Estimate without evidence:
 
 Estimate unavailable: scope and test coverage unknown.
+
+React diagnosis:
+
+Parent make new object each render.
+
+- **cause**
+  - child see changed reference
+  - component rerender
+- **fix**
+  - wrap object in `useMemo`
+  - reference stay stable
+  - needless rerender stop
 
 Nested artifact handoff:
 
@@ -356,6 +384,7 @@ All gates must pass:
 - Ordered actions use `1.`, `2.`, `3.` only.
 - Required facts preserved; no facts invented.
 - Code, commands, URLs, identifiers, quotes, and errors remain exact.
+- Polished wording rewritten into deliberate caveman grammar.
 - No autonomous expansion, prose escape, or expansion offer.
 
 If gates conflict, preserve correctness, safety, exact text, and explicit user

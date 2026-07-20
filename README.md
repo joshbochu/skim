@@ -107,10 +107,10 @@ Stable `skim` and `/skim on` behavior remain unchanged.
 Load the alternate profile instead:
 
 ```text
-$skim-2
+$skim2
 ```
 
-Overwrite `skills/skim-2/` during iteration. Promote reviewed rules
+Overwrite `skills/skim2/` during iteration. Promote reviewed rules
 to stable `skills/skim/` only after evaluation and user approval.
 
 ## The contract
@@ -195,11 +195,11 @@ Use Caveman when the token bill hurts. Use Skim when the scrollback hurts.
 
 ```text
 skills/skim/SKILL.md    portable skill contract
-skills/skim-2/          alternate candidate contract
+skills/skim2/           alternate candidate contract
 extensions/skim.ts      Pi toggle and persistence
 rules/                  live-reloaded Pi rules
 evals/cases.json        behavior corpus
-evals/skim-2-cases.json candidate behavior corpus
+evals/skim2-cases.json  candidate behavior corpus
 evals/gold/             hand-approved outputs
 evals/lint.mjs          deterministic structure checks
 ```
@@ -214,8 +214,8 @@ npm test
 npm run eval:lint
 npm run eval:dry
 npm run eval -- --label baseline
-npm run eval:skim-2:dry
-npm run eval:skim-2 -- --label candidate
+npm run eval:skim2:dry
+npm run eval:skim2 -- --label candidate
 ```
 
 `eval:lint` checks the gold corpus without calling a model. `eval:dry` shows

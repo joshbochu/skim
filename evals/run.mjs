@@ -30,14 +30,14 @@ async function buildPrompt(args) {
 	if (promptFile) return (await readFile(resolve(promptFile), "utf8")).trim();
 
 	const profile = option(args, "--profile", "classic");
-	if (profile === "skim-2") {
+	if (profile === "skim2") {
 		const skill = await readFile(
-			resolve(ROOT, "skills/skim-2/SKILL.md"),
+			resolve(ROOT, "skills/skim2/SKILL.md"),
 			"utf8",
 		);
 		return [
 			"IMPORTANT — SKIM MODE ACTIVE",
-			"Active profile: skim-2.",
+			"Active profile: skim2.",
 			"Apply these rules to this reply.",
 			stripFrontmatter(skill),
 		].join("\n\n");

@@ -205,11 +205,15 @@ export function lintOutput(output, options = {}) {
 	const functionWordRate = words.length === 0 ? 0 : (functionWords / words.length) * 100;
 	const sentenceRate = bodyLines === 0 ? 0 : (fullSentenceLines / bodyLines) * 100;
 
-	if (functionWordRate > 8) {
-		warnings.push(`function-word rate ${functionWordRate.toFixed(1)}% > 8%`);
+	const maxFunctionWordRate = options.maxFunctionWordRate ?? 8;
+	if (functionWordRate > maxFunctionWordRate) {
+		const message = `function-word rate ${functionWordRate.toFixed(1)}% > ${maxFunctionWordRate}%`;
+		(options.strictWording ? errors : warnings).push(message);
 	}
-	if (sentenceRate > 15) {
-		warnings.push(`body sentence rate ${sentenceRate.toFixed(1)}% > 15%`);
+	const maxSentenceRate = options.maxSentenceRate ?? 15;
+	if (sentenceRate > maxSentenceRate) {
+		const message = `body sentence rate ${sentenceRate.toFixed(1)}% > ${maxSentenceRate}%`;
+		(options.strictWording ? errors : warnings).push(message);
 	}
 
 	for (const term of options.requiredTerms ?? []) {
@@ -239,7 +243,16 @@ export function lintOutput(output, options = {}) {
 
 async function loadCases() {
 	const here = fileURLToPath(new URL(".", import.meta.url));
-	return JSON.parse(await readFile(resolve(here, "cases.json"), "utf8"));
+	const files = ["cases.json", "skim2-cases.json"];
+	const groups = await Promise.all(files.map(async (name) => {
+		try {
+			return JSON.parse(await readFile(resolve(here, name), "utf8"));
+		} catch (error) {
+			if (error?.code === "ENOENT") return [];
+			throw error;
+		}
+	}));
+	return groups.flat();
 }
 
 async function main() {
