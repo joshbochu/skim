@@ -104,6 +104,10 @@ test("skim-v2 keeps liked voice plus original Skim layout cues", async () => {
 		"2 spaces",
 		"`→` | next or result",
 		"`∵` | cause",
+		"Layout arithmetic confirmed before wording",
+		"Numbered actions never appear at top level",
+		"Continue global numbering",
+		"No supplied status strengthened",
 	];
 	for (const cue of cues) {
 		assert.ok(skill.includes(cue), `skim-v2 skill missing: ${cue}`);
