@@ -16,11 +16,27 @@ Implemented now:
 - Deterministic plain and native-Markdown linter.
 - Repeated headless Pi benchmark runner.
 - Raw outputs and exact prompt saved for every benchmark.
+- Balanced literal-skill A/B runner with deterministic interleaving.
+- Exact provider, model, token, cost, duration, and event-stream capture.
+- Blind semantic assertion grader and pairwise judge.
+- Deterministic semantic/mechanical hard-gate adjudication with raw preference
+  preservation.
+- Static side-by-side reviewer with blinded labels and feedback export.
 - `/skim capture [note]` for real prompt/output evidence.
 - Local capture inbox with model, session, mode, and rule fingerprint.
 
 Current extension remains prompt-driven. It does not validate or rewrite the
 final live response.
+
+## Alternate skill lifecycle
+
+- Keep `skills/skim/`, `/skim on`, and live `rules/` stable during iteration.
+- Overwrite `skills/skim-v2/` with each new candidate.
+- Pi: load candidates persistently with `/skim on v2`.
+- Portable runners: load candidates with `$skim-v2` instead of `$skim`.
+- Evaluate candidates with `--profile skim-v2` and
+  `evals/skim-v2-cases.json`.
+- Promote reviewed behavior deliberately.
 
 ## Deliberate exclusions
 
@@ -45,7 +61,8 @@ Codex workflow:
 2. Read unreviewed JSON files from `<agent-dir>/skim/captures/`.
 3. Dedupe and classify: wording, structure, missing fact, invented fact,
    ambiguity, or unrelated model failure.
-4. Snapshot `skills/skim/` and `rules/` before editing.
+4. Keep `skills/skim/` and `rules/` as baseline; overwrite
+   `skills/skim-v2/` with candidate changes.
 5. Select representative captures; do not promote every capture.
 6. Draft objective expectations only where behavior is measurable.
 7. Run old and candidate versions as independent, context-isolated tests.
@@ -53,8 +70,9 @@ Codex workflow:
 9. Apply `evals/lint.mjs` to every generated output.
 10. Compare outputs blindly; reveal version labels only afterward.
 11. Ask user to judge subjective Caveman/readability differences.
-12. Promote approved prompts to `evals/cases.json` and preferred outputs to
-    `evals/gold/`.
+12. Promote approved rules from `skills/skim-v2/` to stable
+    `skills/skim/`; promote prompts to `evals/cases.json` and preferred outputs
+    to `evals/gold/`.
 13. Mark capture JSON `status` as `promoted`, `duplicate`, or `discarded`.
 14. Run fixed corpus; commit only with no mandatory-gate regression.
 
@@ -71,17 +89,13 @@ evals/workspaces/iteration-N/
 
 Review UI:
 
-- Reuse Anthropic skill-creator’s Apache-2.0 `generate_review.py` and
-  `viewer.html`; do not rebuild a generic viewer.
-- Source: `anthropics/skills`, `skills/skill-creator/eval-viewer/`.
-- Validated source revision: `9d2f1ae187231d8199c64b5b762e1bdf2244733d`.
-- Clone to a temporary directory when needed; keep third-party code outside
-  this MIT package unless vendoring becomes necessary.
-- Static HTML is acceptable when browser-server launch is unavailable.
+- Use the generated `review.html` in each comparison result directory.
+- Keep A/B identities hidden until subjective feedback is recorded.
+- Inspect raw answers, mechanical errors, and semantic evidence separately.
+- Export `feedback.json`; do not infer preference from lint score alone.
 
-The Anthropic trigger optimizer calls `claude -p` and does not test Pi.
-Do not reuse that executor. Use Skim’s Pi adapter or isolated Codex runs;
-reuse only the workflow, schemas, aggregation concepts, and review viewer.
+The local implementation follows the skill-creator workflow concepts while
+remaining Pi-native. It does not import Anthropic’s executor or viewer.
 
 ## Improvement ladder
 
@@ -122,6 +136,14 @@ Method:
 - Apply deterministic Skim checks.
 - Blind-compare outputs.
 - Collect user feedback before promotion.
+
+Commands:
+
+```bash
+npm run eval:compare:dry
+npm run eval:compare:smoke
+npm run eval:compare
+```
 
 Tradeoffs:
 
@@ -218,6 +240,15 @@ Mandatory gates:
 - No invented fact.
 - Safety and ordered procedures remain unambiguous.
 - Exact code, commands, identifiers, and errors preserved.
+- One generation model/provider used across both profiles.
+- No candidate-only hard regression in promotion cases.
+
+Preference order after mandatory gates:
+
+1. Fewer semantic assertion failures.
+2. Mechanical pass; when both fail, fewer violations.
+3. Lower reader effort without relation loss.
+4. Lower word count only when meaning and clarity remain equal.
 
 Then compare:
 
@@ -226,21 +257,23 @@ Then compare:
 - Function-word rate.
 - Full-sentence rate inside body.
 - Human preference against previous baseline.
+- Semantic assertion pass rate.
+- Blind pairwise wins and ties.
+- Token, cost, and latency deltas.
 
 ## Next-session checklist
 
 1. Read unreviewed files from `<agent-dir>/skim/captures/`.
 2. Dedupe and classify captures.
-3. Snapshot old skill and rules.
+3. Keep stable skill and rules as baseline.
 4. Select representative cases; draft expectations.
-5. Make one candidate change.
+5. Overwrite `skills/skim-v2/` with one candidate change.
 6. Run old and candidate with same model and sample count.
 7. Lint, blind-compare, then collect user preference.
 8. Promote only with zero mandatory-gate regressions.
 
 ## Deferred tooling
 
-- LLM semantic judge for omissions and inventions.
 - Live `/skim score` command.
 - Structured final-response tool.
 - Conditional repair pass.

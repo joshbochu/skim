@@ -1,0 +1,210 @@
+{
+  "name": "skim-vs-skim-v2",
+  "description": "Balanced stable-origin and candidate-origin prompts for matched skill comparison.",
+  "profiles": {
+    "stable": {
+      "label": "Stable Skim",
+      "skill": "skills/skim/SKILL.md"
+    },
+    "candidate": {
+      "label": "Skim v2",
+      "skill": "skills/skim-v2/SKILL.md"
+    }
+  },
+  "preferenceCriteria": [
+    "Preserve all decision-relevant meaning, including gates, purposes, conditions, and uncertainty.",
+    "Do not invent facts, strengthen supplied status, or add false precision; requested recommendations may be clearly framed as recommendations.",
+    "Follow the requested output constraints and safety requirements.",
+    "Minimize reader effort while keeping each fact line independently understandable.",
+    "Prefer useful prioritization over exhaustive but low-signal detail."
+  ],
+  "cases": [
+    {
+      "id": "balanced-short-port",
+      "origin": "stable",
+      "category": "floor",
+      "prompt": "What port does the Vite development server use? It is configured as 3000 in vite.config.ts.",
+      "mechanical": {
+        "requiredTerms": ["3000", "vite.config.ts"],
+        "expectedShape": "plain"
+      },
+      "semanticAssertions": [
+        {"id": "direct-answer", "text": "Directly states that the port is 3000."},
+        {"id": "source-preserved", "text": "Preserves vite.config.ts as the source."},
+        {"id": "no-padding", "text": "Adds no irrelevant explanation or preamble."}
+      ]
+    },
+    {
+      "id": "balanced-diagnose-pool",
+      "origin": "stable",
+      "category": "diagnosis",
+      "prompt": "Tests hang under load because DB connections are not released in auth middleware, report generator, and webhook handler. Pool size is 5 while load is about 40. Diagnose the cause and recommend the fix.",
+      "mechanical": {
+        "requiredTerms": ["auth middleware", "report generator", "webhook handler"],
+        "expectedShape": "markdown"
+      },
+      "semanticAssertions": [
+        {"id": "cause-first", "text": "Identifies unreleased DB connections and pool exhaustion as the cause."},
+        {"id": "all-leaks", "text": "Preserves all three leak locations."},
+        {"id": "actionable-fix", "text": "Recommends guaranteed connection release, such as try/finally, before merely increasing pool size."}
+      ]
+    },
+    {
+      "id": "balanced-compare-git",
+      "origin": "stable",
+      "category": "comparison",
+      "prompt": "Compare git merge and rebase. Include history shape, hash rewriting, and the rule for shared versus local-only branches.",
+      "mechanical": {
+        "requiredTerms": ["merge", "rebase", "hash", "shared", "local-only"],
+        "expectedShape": "markdown"
+      },
+      "semanticAssertions": [
+        {"id": "history", "text": "Correctly distinguishes merge history from rebased linear history."},
+        {"id": "hashes", "text": "States that rebase rewrites commit hashes."},
+        {"id": "decision-rule", "text": "Gives a clear rule favoring merge for shared history and rebase for local-only work."}
+      ]
+    },
+    {
+      "id": "balanced-ordered-restore",
+      "origin": "stable",
+      "category": "safety",
+      "prompt": "Give an unambiguous database restore sequence: stop writers, snapshot current DB, restore backup, run migrations, validate counts, then reopen traffic. Include only the essential safety meaning.",
+      "mechanical": {
+        "expectedShape": "markdown",
+        "maxBodyLines": 24,
+        "minOrderedItems": 6
+      },
+      "semanticAssertions": [
+        {"id": "order", "text": "Preserves the exact dependency order of all six actions."},
+        {"id": "reopen-gate", "text": "Does not reopen traffic before validation succeeds."},
+        {"id": "rollback-point", "text": "Treats the pre-restore snapshot as a rollback point."}
+      ]
+    },
+    {
+      "id": "balanced-spanish-status",
+      "origin": "stable",
+      "category": "language",
+      "prompt": "Responde en español. Estado: migración completada, 42/42 pruebas pasan, documentación pendiente, despliegue bloqueado por aprobación de seguridad.",
+      "mechanical": {
+        "requiredTerms": ["42/42"],
+        "expectedShape": "markdown"
+      },
+      "semanticAssertions": [
+        {"id": "language", "text": "Responds in Spanish."},
+        {"id": "state", "text": "Clearly separates completed work, pending documentation, and the security-approval blocker."},
+        {"id": "numbers", "text": "Preserves the exact 42/42 test result."}
+      ]
+    },
+    {
+      "id": "balanced-artifact-handoff",
+      "origin": "stable",
+      "category": "handoff",
+      "prompt": "Create a compact project handoff: parser complete, renderer 80% complete, tests 13/13, docs stale, next task is Unicode width handling, and Windows terminal behavior is the known risk.",
+      "mechanical": {
+        "requiredTerms": ["parser", "80%", "13/13", "docs", "Unicode width", "Windows"],
+        "expectedShape": "markdown",
+        "maxBodyLines": 24
+      },
+      "semanticAssertions": [
+        {"id": "complete-state", "text": "Preserves every supplied project-state fact with completion and passing predicates independently clear."},
+        {"id": "next-action", "text": "Makes Unicode width handling the concrete next task."},
+        {"id": "risk", "text": "Keeps Windows terminal behavior identified as a risk rather than completed work."}
+      ]
+    },
+    {
+      "id": "balanced-confused-cache",
+      "origin": "candidate",
+      "category": "escape-pressure",
+      "prompt": "I am confused. Please slow down and explain why synchronized cache expiry causes a stampede, then include jitter, request coalescing, and stale-while-revalidate.",
+      "mechanical": {
+        "requiredTerms": ["expiry", "jitter", "coalescing", "stale-while-revalidate"],
+        "expectedShape": "markdown",
+        "maxBodyLines": 18
+      },
+      "semanticAssertions": [
+        {"id": "cause", "text": "Explains that synchronized expiry creates simultaneous cache misses and origin load."},
+        {"id": "mitigations", "text": "Correctly explains all three requested mitigations."},
+        {"id": "understandable", "text": "Remains understandable despite using ultra-dense wording."},
+        {"id": "default-budget", "text": "Stays within the 18-line DEFAULT_ULTRA body limit despite the request to slow down."}
+      ]
+    },
+    {
+      "id": "balanced-visible-state",
+      "origin": "candidate",
+      "category": "action-state",
+      "prompt": "Migration step 3 of 5 is complete: backfill finished. Validation is next, then cutover. Show current state and one concrete next action.",
+      "mechanical": {
+        "requiredTerms": ["3", "5", "backfill", "validation", "cutover"],
+        "expectedShape": "markdown"
+      },
+      "semanticAssertions": [
+        {"id": "progress", "text": "Accurately reports step 3 of 5 as complete."},
+        {"id": "current", "text": "Identifies validation as the current or next step."},
+        {"id": "next", "text": "Provides one concrete validation action without inventing completed progress or presenting a recommendation as known fact."}
+      ]
+    },
+    {
+      "id": "balanced-evidence-estimate",
+      "origin": "candidate",
+      "category": "numbers",
+      "prompt": "Estimate this change. Evidence: one localized handler edit; existing tests cover the path; comparable changes took 10–20 minutes. If coverage is missing, the work takes 1–2 hours. Show the estimate, its basis, and the main assumption.",
+      "mechanical": {
+        "requiredTerms": ["10–20", "1–2", "tests"],
+        "expectedShape": "markdown"
+      },
+      "semanticAssertions": [
+        {"id": "primary-range", "text": "Gives the evidence-supported 10–20 minute primary range with units."},
+        {"id": "basis", "text": "Connects the estimate to localized scope, existing tests, and comparable work."},
+        {"id": "conditional-range", "text": "States that missing coverage changes the estimate to 1–2 hours."},
+        {"id": "no-strengthening", "text": "Does not strengthen 'tests cover the path' into an unsupported claim that tests are currently passing."}
+      ]
+    },
+    {
+      "id": "balanced-unknown-estimate",
+      "origin": "candidate",
+      "category": "numbers",
+      "prompt": "Give an exact implementation-time estimate for an unknown legacy migration. No repository, scope, test coverage, system size, or prior measurements are available.",
+      "mechanical": {
+        "expectedShape": "auto"
+      },
+      "semanticAssertions": [
+        {"id": "refusal", "text": "Refuses to invent an exact implementation-time estimate."},
+        {"id": "missing-evidence", "text": "Names the missing scope or evidence needed to estimate."},
+        {"id": "no-false-precision", "text": "Introduces no unsupported numeric range, percentage, or deadline."}
+      ]
+    },
+    {
+      "id": "balanced-exact-expansion",
+      "origin": "candidate",
+      "category": "explicit-expansion",
+      "prompt": "Full Explanation Please\nExplain OAuth authorization code flow using browser, authorization server, callback code, token exchange, access token, state validation, and PKCE.",
+      "mechanical": {
+        "requiredTerms": ["browser", "authorization server", "callback", "token exchange", "access token", "state", "PKCE"],
+        "expectedShape": "markdown",
+        "maxBodyLines": 42
+      },
+      "semanticAssertions": [
+        {"id": "flow", "text": "Explains the authorization request, callback, validation, token exchange, and API use in correct order."},
+        {"id": "state", "text": "Explains state validation as a request-binding or CSRF defense."},
+        {"id": "pkce", "text": "Explains how PKCE binds the code exchange to the original client."},
+        {"id": "expanded-not-bloated", "text": "Uses the extra detail allowance without unnecessary repetition or exhaustive tangents."}
+      ]
+    },
+    {
+      "id": "balanced-nonexact-expansion",
+      "origin": "candidate",
+      "category": "escape-pressure",
+      "prompt": "Please give a full explanation of OAuth authorization code flow. Include browser, authorization server, callback code, token exchange, state validation, and PKCE.",
+      "mechanical": {
+        "requiredTerms": ["browser", "authorization server", "callback", "token exchange", "state", "PKCE"],
+        "expectedShape": "markdown",
+        "maxBodyLines": 18
+      },
+      "semanticAssertions": [
+        {"id": "complete-enough", "text": "Covers every requested OAuth component without omitting the security purpose of state or PKCE."},
+        {"id": "default-depth", "text": "Because the exact first-line trigger is absent, remains in DEFAULT_ULTRA and stays within 18 body fact lines."},
+        {"id": "scanability", "text": "Prioritizes a compact, easily scanned flow."}
+      ]
+    }
+  ]
+}

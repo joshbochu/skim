@@ -8,6 +8,7 @@
  *
  * Commands:
  *   /skim           Toggle skim on/off
+ *   /skim on v2     Enable persistent skim-v2 mode
  *   /skim capture   Save last prompt/response for later improvement
  *   /skim off       Disable (aliases: stop, quit)
  *
@@ -31,15 +32,24 @@ import {
 	getAgentDir,
 	saveCapture,
 } from "./skim-capture.mjs";
+import {
+	normalizeMode,
+	parseSkimCommand,
+	stripFrontmatter,
+} from "./skim-mode.mjs";
 
-type Mode = "off" | "on";
-const STOP_ALIASES = new Set(["off", "stop", "quit"]);
+type Mode = "off" | "on" | "v2";
 
 const COMMAND_OPTIONS = [
 	{
 		value: "on",
 		label: "on",
-		description: "Enable skim",
+		description: "Enable stable skim",
+	},
+	{
+		value: "on v2",
+		label: "on v2",
+		description: "Enable persistent skim-v2",
 	},
 	{
 		value: "off",
@@ -64,17 +74,14 @@ interface SkimConfig {
 	rulesPath?: string;
 	/** Optional override path to the Caveman-full wording rules file. */
 	ultraPath?: string;
+	/** Optional override path to the skim-v2 skill file. */
+	v2Path?: string;
 }
 
 const CONFIG_PATH = join(getAgentDir(), "skim.json");
 const DEFAULT_CONFIG: SkimConfig = {
 	defaultMode: "off",
 };
-
-function normalizeMode(value: unknown): Mode | null {
-	if (value === "off" || value === "on") return value;
-	return null;
-}
 
 async function loadConfig(): Promise<SkimConfig> {
 	try {
@@ -85,10 +92,13 @@ async function loadConfig(): Promise<SkimConfig> {
 			typeof parsed.rulesPath === "string" ? parsed.rulesPath : undefined;
 		const ultraPath =
 			typeof parsed.ultraPath === "string" ? parsed.ultraPath : undefined;
+		const v2Path =
+			typeof parsed.v2Path === "string" ? parsed.v2Path : undefined;
 		return {
 			defaultMode,
 			rulesPath,
 			ultraPath,
+			v2Path,
 		};
 	} catch {
 		return { ...DEFAULT_CONFIG };
@@ -333,6 +343,35 @@ async function loadMarkdownRules(): Promise<LoadedText> {
 	return loadFirstText([markdownPath], MARKDOWN_FALLBACK);
 }
 
+const V2_FALLBACK = `\
+Skim-v2 rules file missing.
+Keep factual meaning and safety exact.
+Use Caveman-Ultra wording inside native Markdown Skim layout.
+Keep 1 fact per line, 1–5 top-level anchors, 1–5 children per parent,
+3 levels maximum, and 18 fact lines by default.
+No polished introduction. No prose escape mode.`;
+
+async function loadV2Rules(config: SkimConfig): Promise<LoadedText> {
+	const packagedPath = fileURLToPath(
+		new URL("../skills/skim-v2/SKILL.md", import.meta.url),
+	);
+	const loaded = await loadFirstText(
+		[config.v2Path, packagedPath],
+		V2_FALLBACK,
+	);
+	return {
+		text: stripFrontmatter(loaded.text),
+		fromFile: loaded.fromFile,
+	};
+}
+
+async function loadModeRules(
+	mode: Exclude<Mode, "off">,
+	config: SkimConfig,
+): Promise<LoadedText> {
+	return mode === "v2" ? loadV2Rules(config) : loadRules(config);
+}
+
 // ------------------------------------------------------------------
 // Extension
 // ------------------------------------------------------------------
@@ -364,7 +403,8 @@ export default function skim(pi: ExtensionAPI) {
 		}
 
 		try {
-			const { text: rulesText } = await loadRules(config);
+			const activeMode = mode === "off" ? "on" : mode;
+			const { text: rulesText } = await loadModeRules(activeMode, config);
 			const record = createCaptureRecord({
 				exchange,
 				note,
@@ -396,7 +436,7 @@ export default function skim(pi: ExtensionAPI) {
 			return;
 		}
 		const theme = ctx.ui.theme;
-		const label = "ON";
+		const label = mode === "v2" ? "V2" : "ON";
 		ctx.ui.setStatus(
 			"skim",
 			theme.fg("muted", "⇊ skim: ") + theme.fg("text", label),
@@ -414,7 +454,11 @@ export default function skim(pi: ExtensionAPI) {
 		await saveConfig(config);
 		syncStatus(ctx);
 		ctx.ui.notify(
-			mode === "off" ? "Skim off." : "Skim on.",
+			mode === "off"
+				? "Skim off."
+				: mode === "v2"
+					? "Skim v2 on."
+					: "Skim on.",
 			"info",
 		);
 	}
@@ -451,7 +495,7 @@ export default function skim(pi: ExtensionAPI) {
 
 	pi.registerCommand("skim", {
 		description:
-			"Toggle skim or capture output. Args: on, off, capture [note]",
+			"Toggle skim or capture output. Args: on, on v2, off, capture [note]",
 		getArgumentCompletions: (prefix: string) => {
 			const normalized = prefix.trim().toLowerCase();
 			const items = COMMAND_OPTIONS.filter((item) =>
@@ -461,23 +505,15 @@ export default function skim(pi: ExtensionAPI) {
 		},
 		handler: async (args, ctx) => {
 			await ensureConfigLoaded();
-			const rawArg = args?.trim() ?? "";
-			const arg = rawArg.toLowerCase();
-			const activeMode = mode === "off" ? "on" : mode;
-			const [primary = "", secondary] = arg.split(/\s+/, 2);
+			const command = parseSkimCommand(args, mode);
 
-			if (primary === "capture") {
-				const note = rawArg.slice(rawArg.split(/\s+/, 1)[0].length).trim();
-				await captureLatest(note, ctx);
-			} else if (!arg) {
-				await applyState(mode === "off" ? activeMode : "off", ctx);
-			} else if (arg === "on") {
-				await setMode(activeMode, ctx);
-			} else if (STOP_ALIASES.has(arg)) {
-				await setMode("off", ctx);
+			if (command.kind === "capture") {
+				await captureLatest(command.note, ctx);
+			} else if (command.kind === "mode") {
+				await setMode(command.mode as Mode, ctx);
 			} else {
 				ctx.ui.notify(
-					`Unknown: "${arg}". Use: on, off, capture`,
+					`Unknown: "${command.value}". Use: on, on v2, off, capture`,
 					"error",
 				);
 			}
@@ -490,7 +526,7 @@ export default function skim(pi: ExtensionAPI) {
 		await ensureConfigLoaded();
 		if (mode === "off") return;
 
-		const { text, fromFile } = await loadRules(config);
+		const { text, fromFile } = await loadModeRules(mode, config);
 		if (!fromFile && !warnedFallback) {
 			warnedFallback = true;
 			ctx.ui.notify(
@@ -499,10 +535,17 @@ export default function skim(pi: ExtensionAPI) {
 			);
 		}
 
-		const parts = ["IMPORTANT — SKIM MODE ACTIVE:", text];
-		const { text: markdownRules } = await loadMarkdownRules();
-		parts.push(markdownRules);
-		parts.push(FINAL_CHECK);
+		const parts = [
+			mode === "v2"
+				? "IMPORTANT — SKIM-V2 MODE ACTIVE:"
+				: "IMPORTANT — SKIM MODE ACTIVE:",
+			text,
+		];
+		if (mode === "on") {
+			const { text: markdownRules } = await loadMarkdownRules();
+			parts.push(markdownRules);
+			parts.push(FINAL_CHECK);
+		}
 
 		return {
 			systemPrompt: `${event.systemPrompt}\n\n${parts.join("\n\n")}`,

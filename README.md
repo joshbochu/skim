@@ -54,13 +54,13 @@ Same payload. Less archaeology.
 
 ## Install
 
-For Pi from npm:
+Pi installs the complete extension and both profiles from npm:
 
 ```bash
 pi install npm:@joshbochu/skim
 ```
 
-From the skills registry:
+Portable skill-only install for compatible runners:
 
 ```bash
 npx skills add joshbochu/skim
@@ -79,18 +79,23 @@ Manual install for Claude Code:
 ln -s ~/dev/skim/skills/skim ~/.claude/skills/skim
 ```
 
-Pi can load the included extension. Its mode persists between sessions and
-its rules reload on every turn, so edits apply without a reinstall.
+Pi loads the extension from the npm package. Its selected mode persists between
+sessions and its packaged rules reload on every turn.
 
 ## Use
 
-Ask for `skim`, or use the Pi commands:
+Use the Pi commands:
 
 ```text
-/skim on        activate and persist
-/skim off       return to normal prose
+/skim on        stable profile · activate and persist
+/skim on v2     skim-v2 profile · replace stable and persist
+/skim off       disable either profile
 /skim capture   save last exchange for review
 ```
+
+Stable and v2 are mutually exclusive. Running `/skim on` while v2 is active
+switches back to stable; running `/skim on v2` while stable is active switches
+to v2. The status changes from `ON` to `V2`.
 
 Capture accepts a note:
 
@@ -100,6 +105,20 @@ Capture accepts a note:
 
 Captures stay local in `~/.pi/agent/skim/captures/`. They may contain prompts,
 responses, code, or other sensitive material. Inspect them before sharing.
+
+### Skim v2
+
+Stable `skim` and `/skim on` behavior remain unchanged.
+Pi users activate v2 through the persistent npm extension:
+
+```text
+/skim on v2
+```
+
+Portable skill runners can invoke `$skim-v2` directly.
+
+Overwrite `skills/skim-v2/` during iteration. Promote reviewed rules
+to stable `skills/skim/` only after evaluation and user approval.
 
 ## The contract
 
@@ -182,12 +201,16 @@ Use Caveman when the token bill hurts. Use Skim when the scrollback hurts.
 ## Repository anatomy
 
 ```text
-skills/skim/SKILL.md    portable skill contract
-extensions/skim.ts      Pi toggle and persistence
-rules/                  live-reloaded Pi rules
-evals/cases.json        behavior corpus
-evals/gold/             hand-approved outputs
-evals/lint.mjs          deterministic structure checks
+skills/skim/SKILL.md       stable portable skill contract
+skills/skim-v2/            v2 portable and Pi profile contract
+extensions/skim.ts         exclusive stable/v2 toggle and persistence
+rules/                     stable live-reloaded Pi rules
+evals/cases.json           stable behavior corpus
+evals/compare-cases.json   balanced stable/v2 A/B corpus
+evals/compare.mjs          matched skill comparison
+evals/skim-v2-cases.json   v2 behavior corpus
+evals/gold/                hand-approved outputs
+evals/lint.mjs             deterministic structure checks
 ```
 
 The skill is the product. The Pi extension is the switchboard. The evals keep
@@ -200,14 +223,29 @@ npm test
 npm run eval:lint
 npm run eval:dry
 npm run eval -- --label baseline
+npm run eval:skim-v2:dry
+npm run eval:skim-v2 -- --label candidate
+npm run eval:compare:dry
+npm run eval:compare:smoke
 ```
 
 `eval:lint` checks the gold corpus without calling a model. `eval:dry` shows
 the planned benchmark. The full eval stores raw outputs, exact prompts, stderr,
 and summaries under `evals/results/`.
+The comparison runner also records exact token/cost/timing data, blind semantic
+grades, a Markdown report, and a side-by-side feedback reviewer.
 
 See [`evals/README.md`](evals/README.md) for the benchmark loop and
 [`IMPROVING.md`](IMPROVING.md) for the backlog.
+
+## npm releases
+
+The package version is the release switch. A merge to `main` runs tests,
+checks the packed npm contents, and publishes that version through npm trusted
+publishing. Every publishable merge must increase `package.json`'s version.
+
+See [`RELEASING.md`](RELEASING.md) for the one-time npm trusted-publisher setup
+and merge behavior.
 
 ## Why these numbers
 

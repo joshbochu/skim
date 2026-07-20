@@ -17,9 +17,31 @@ function safeLabel(value) {
 	return value.replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-|-$/g, "");
 }
 
+function stripFrontmatter(text) {
+	const normalized = text.replace(/^\uFEFF/, "");
+	if (!normalized.startsWith("---")) return normalized.trim();
+	const match = normalized.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/);
+	if (!match) return normalized.trim();
+	return normalized.slice(match[0].length).trim();
+}
+
 async function buildPrompt(args) {
 	const promptFile = option(args, "--prompt-file");
 	if (promptFile) return (await readFile(resolve(promptFile), "utf8")).trim();
+
+	const profile = option(args, "--profile", "classic");
+	if (profile === "skim-v2") {
+		const skill = await readFile(
+			resolve(ROOT, "skills/skim-v2/SKILL.md"),
+			"utf8",
+		);
+		return [
+			"IMPORTANT — SKIM MODE ACTIVE",
+			"Active profile: skim-v2.",
+			"Apply these rules to this reply.",
+			stripFrontmatter(skill),
+		].join("\n\n");
+	}
 
 	const wording = await readFile(resolve(ROOT, "rules/ultra-max-supreme.md"), "utf8");
 	const structure = await readFile(resolve(ROOT, "rules/skim-core.md"), "utf8");
@@ -44,9 +66,13 @@ async function main() {
 	const model = option(args, "--model");
 	const piPath = option(args, "--pi", "pi");
 	const label = safeLabel(option(args, "--label", "candidate"));
+	const casesFile = resolve(
+		ROOT,
+		option(args, "--cases-file", "evals/cases.json"),
+	);
 	if (!Number.isInteger(runs) || runs < 1) throw new Error("--runs must be a positive integer");
 
-	const allCases = JSON.parse(await readFile(resolve(ROOT, "evals/cases.json"), "utf8"));
+	const allCases = JSON.parse(await readFile(casesFile, "utf8"));
 	const cases = caseFilter
 		? allCases.filter((testCase) => testCase.id === caseFilter)
 		: allCases;
@@ -57,6 +83,7 @@ async function main() {
 		console.log(`cases=${cases.length}`);
 		console.log(`runs=${runs}`);
 		console.log(`generations=${cases.length * runs}`);
+		console.log(`casesFile=${casesFile}`);
 		console.log(`promptChars=${systemPrompt.length}`);
 		console.log(`provider=${provider ?? "Pi default"}`);
 		console.log(`model=${model ?? "Pi default"}`);
