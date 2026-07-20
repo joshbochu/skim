@@ -1,6 +1,6 @@
 {
   "name": "@joshbochu/skim",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "🎯 agent skill for signal > noise",
   "keywords": [
     "pi-package",
@@ -23,8 +23,9 @@
     "eval:lint": "node evals/lint.mjs --gold",
     "eval:dry": "node evals/run.mjs --dry-run",
     "eval": "node evals/run.mjs",
-    "eval:skim2:dry": "node evals/run.mjs --dry-run --profile skim2 --cases-file evals/skim2-cases.json",
-    "eval:skim2": "node evals/run.mjs --profile skim2 --cases-file evals/skim2-cases.json"
+    "eval:skim-v2:dry": "node evals/run.mjs --dry-run --profile skim-v2 --cases-file evals/skim-v2-cases.json",
+    "eval:skim-v2": "node evals/run.mjs --profile skim-v2 --cases-file evals/skim-v2-cases.json",
+    "prepublishOnly": "npm test && npm run eval:lint && npm run eval:dry && npm run eval:skim-v2:dry"
   },
   "files": [
     "extensions",
@@ -32,7 +33,7 @@
     "skills",
     "evals/capture.test.mjs",
     "evals/cases.json",
-    "evals/skim2-cases.json",
+    "evals/skim-v2-cases.json",
     "evals/fixtures",
     "evals/gold",
     "evals/lint.mjs",

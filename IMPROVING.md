@@ -25,9 +25,11 @@ final live response.
 ## Alternate skill lifecycle
 
 - Keep `skills/skim/`, `/skim on`, and live `rules/` stable during iteration.
-- Overwrite `skills/skim2/` with each new candidate.
-- Load candidates explicitly with `$skim2` instead of `$skim`.
-- Evaluate candidates with `--profile skim2` and `evals/skim2-cases.json`.
+- Overwrite `skills/skim-v2/` with each new candidate.
+- Pi: load candidates persistently with `/skim on v2`.
+- Portable runners: load candidates with `$skim-v2` instead of `$skim`.
+- Evaluate candidates with `--profile skim-v2` and
+  `evals/skim-v2-cases.json`.
 - Promote reviewed behavior deliberately.
 
 ## Deliberate exclusions
@@ -54,7 +56,7 @@ Codex workflow:
 3. Dedupe and classify: wording, structure, missing fact, invented fact,
    ambiguity, or unrelated model failure.
 4. Keep `skills/skim/` and `rules/` as baseline; overwrite
-   `skills/skim2/` with candidate changes.
+   `skills/skim-v2/` with candidate changes.
 5. Select representative captures; do not promote every capture.
 6. Draft objective expectations only where behavior is measurable.
 7. Run old and candidate versions as independent, context-isolated tests.
@@ -62,7 +64,7 @@ Codex workflow:
 9. Apply `evals/lint.mjs` to every generated output.
 10. Compare outputs blindly; reveal version labels only afterward.
 11. Ask user to judge subjective Caveman/readability differences.
-12. Promote approved rules from `skills/skim2/` to stable
+12. Promote approved rules from `skills/skim-v2/` to stable
     `skills/skim/`; promote prompts to `evals/cases.json` and preferred outputs
     to `evals/gold/`.
 13. Mark capture JSON `status` as `promoted`, `duplicate`, or `discarded`.
@@ -243,7 +245,7 @@ Then compare:
 2. Dedupe and classify captures.
 3. Keep stable skill and rules as baseline.
 4. Select representative cases; draft expectations.
-5. Overwrite `skills/skim2/` with one candidate change.
+5. Overwrite `skills/skim-v2/` with one candidate change.
 6. Run old and candidate with same model and sample count.
 7. Lint, blind-compare, then collect user preference.
 8. Promote only with zero mandatory-gate regressions.

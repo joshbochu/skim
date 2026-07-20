@@ -94,8 +94,8 @@ test("strict wording accepts liked voice inside same Skim layout", () => {
 	assert.equal(report.metrics.maxDepth, 1);
 });
 
-test("skim2 keeps liked voice plus original Skim layout cues", async () => {
-	const skill = await readFile("skills/skim2/SKILL.md", "utf8");
+test("skim-v2 keeps liked voice plus original Skim layout cues", async () => {
+	const skill = await readFile("skills/skim-v2/SKILL.md", "utf8");
 	const cues = [
 		"parent make",
 		"child see",
@@ -106,7 +106,7 @@ test("skim2 keeps liked voice plus original Skim layout cues", async () => {
 		"`∵` | cause",
 	];
 	for (const cue of cues) {
-		assert.ok(skill.includes(cue), `skim2 skill missing: ${cue}`);
+		assert.ok(skill.includes(cue), `skim-v2 skill missing: ${cue}`);
 	}
 });
 

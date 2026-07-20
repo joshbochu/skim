@@ -1,0 +1,46 @@
+name: Publish npm
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/publish.yml
+      - extensions/**
+      - rules/**
+      - skills/**
+      - evals/**
+      - package.json
+      - README.md
+      - IMPROVING.md
+      - RELEASING.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'joshbochu/skim'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out merged source
+        uses: actions/checkout@v6
+
+      - name: Set up Node and npm registry
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Verify package contents
+        run: npm pack --dry-run
+
+      - name: Publish package
+        run: npm publish --access public

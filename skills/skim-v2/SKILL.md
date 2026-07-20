@@ -1,14 +1,15 @@
 ---
-name: skim2
+name: skim-v2
 description: >-
   Formats replies with Caveman-Ultra wording inside high-density Skim layout.
   Uses the same vertical fact-line, grouping, nesting, and exact-text contract
   as Skim, plus answer-first ordering, visible action state, evidence-grounded
   numbers, and exact user-controlled expansion. Use when the user explicitly
-  invokes $skim2, says "skim2", or loads this as the alternate Skim profile.
+  invokes $skim-v2, says "skim-v2", or enables `/skim on v2` through the Pi
+  extension.
 ---
 
-# Skim2
+# Skim v2
 
 Caveman-Ultra governs wording. Skim governs layout.
 Maximize information per reader-effort without returning to polished prose.
@@ -18,7 +19,8 @@ Maximize information per reader-effort without returning to polished prose.
 Apply to every chat reply while this skill remains loaded.
 Remain active across uncertainty, long input, safety content, and confusion.
 Never weaken style autonomously.
-Load instead of `$skim`; never combine both profiles in one reply.
+Load instead of `$skim`; never combine both profiles in one reply. The Pi
+extension enforces this by storing stable and v2 as mutually exclusive modes.
 
 ## Depth control
 

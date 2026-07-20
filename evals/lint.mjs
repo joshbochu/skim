@@ -243,7 +243,7 @@ export function lintOutput(output, options = {}) {
 
 async function loadCases() {
 	const here = fileURLToPath(new URL(".", import.meta.url));
-	const files = ["cases.json", "skim2-cases.json"];
+	const files = ["cases.json", "skim-v2-cases.json"];
 	const groups = await Promise.all(files.map(async (name) => {
 		try {
 			return JSON.parse(await readFile(resolve(here, name), "utf8"));

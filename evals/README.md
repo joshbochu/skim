@@ -59,8 +59,8 @@ npm run eval -- --prompt-file /tmp/skim-candidate.md --label candidate
 Run the alternate skill:
 
 ```bash
-npm run eval:skim2:dry
-npm run eval:skim2 -- --label candidate
+npm run eval:skim-v2:dry
+npm run eval:skim-v2 -- --label candidate
 ```
 
 Results land under `evals/results/<timestamp>-<label>/` with raw outputs,
