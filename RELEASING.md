@@ -15,7 +15,9 @@ distribution for the extension, stable rules, and `skim-v2` rules.
 
 The workflow then publishes the exact version declared in `package.json`.
 Every publishable pull request must increase that version; npm rejects attempts
-to overwrite an existing version.
+to overwrite an existing version. If that version is already on the registry
+(for example after a re-run or a docs-only path trigger), the workflow skips
+publish and exits successfully.
 
 ## One-time npm trusted publisher setup
 
