@@ -97,6 +97,10 @@ Stable and v2 are mutually exclusive. Running `/skim on` while v2 is active
 switches back to stable; running `/skim on v2` while stable is active switches
 to v2. The status changes from `ON` to `V2`.
 
+Stable mode uses native Markdown. If a model wraps its response in a fenced
+`text` block, the Pi extension removes that presentation wrapper while
+preserving the response and any code fences inside it.
+
 Capture accepts a note:
 
 ```bash

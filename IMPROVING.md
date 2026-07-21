@@ -24,9 +24,10 @@ Implemented now:
 - Static side-by-side reviewer with blinded labels and feedback export.
 - `/skim capture [note]` for real prompt/output evidence.
 - Local capture inbox with model, session, mode, and rule fingerprint.
+- Stable-mode removal of fenced `text` wrappers from finalized responses.
 
-Current extension remains prompt-driven. It does not validate or rewrite the
-final live response.
+Wording and structure remain prompt-driven. Stable mode deterministically
+removes `text` presentation fences; it does not rewrite response content.
 
 ## Alternate skill lifecycle
 

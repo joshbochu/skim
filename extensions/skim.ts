@@ -37,6 +37,7 @@ import {
 	parseSkimCommand,
 	stripFrontmatter,
 } from "./skim-mode.mjs";
+import { unwrapTextFences } from "./skim-output.mjs";
 
 type Mode = "off" | "on" | "v2";
 
@@ -549,6 +550,32 @@ export default function skim(pi: ExtensionAPI) {
 
 		return {
 			systemPrompt: `${event.systemPrompt}\n\n${parts.join("\n\n")}`,
+		};
+	});
+
+	// Stable Skim promises native Markdown. Remove presentation-only `text`
+	// fences when a model repeats the older fenced container despite that rule.
+	pi.on("message_end", async (event) => {
+		await ensureConfigLoaded();
+		if (mode !== "on" || event.message.role !== "assistant") return;
+
+		let changed = false;
+		const content = event.message.content.map((block) => {
+			if (block.type !== "text") return block;
+
+			const text = unwrapTextFences(block.text);
+			if (text === block.text) return block;
+
+			changed = true;
+			return { ...block, text, textSignature: undefined };
+		});
+		if (!changed) return;
+
+		return {
+			message: {
+				...event.message,
+				content,
+			},
 		};
 	});
 }
