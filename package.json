@@ -12,7 +12,7 @@
   "author": "joshbochu",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joshbochu/skim.git"
+    "url": "https://github.com/joshbochu/skim.git"
   },
   "homepage": "https://github.com/joshbochu/skim",
   "publishConfig": {
