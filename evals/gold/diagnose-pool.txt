@@ -1,13 +1,14 @@
-Pool exhaustion causes test failures.
+Pool exhaustion make tests hang.
 
-- ✗ **tests**
-  - ∵ connections never released
-  - ∵ pool exhausted
+- ✗ **cause**
+  - connections never released
+  - pool 5 < load≈40
 - **leaks ×3**
   - auth middleware
   - report generator
   - webhook handler
-  - → wrap each in try/finally
-- ⚠ **pool**
-  - 5 < load≈40
-  - → raise after leak fix
+- **fix**
+  - wrap acquisition in `try/finally`
+  - verify pool returns to baseline
+
+Next: locate auth connection acquisition.

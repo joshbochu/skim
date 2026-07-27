@@ -1,0 +1,9 @@
+Parent make new object each render.
+
+- **cause**
+  - child see changed reference
+  - component rerender
+- **fix**
+  - wrap object in `useMemo`
+  - reference stay stable
+  - needless rerender stop

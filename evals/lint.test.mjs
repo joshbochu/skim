@@ -94,8 +94,7 @@ test("strict wording accepts liked voice inside same Skim layout", () => {
 	assert.equal(report.metrics.maxDepth, 1);
 });
 
-test("skim-v2 keeps liked voice plus original Skim layout cues", async () => {
-	const skill = await readFile("skills/skim-v2/SKILL.md", "utf8");
+test("stable and skim-v2 keep liked voice plus Skim layout cues", async () => {
 	const cues = [
 		"parent make",
 		"child see",
@@ -109,8 +108,11 @@ test("skim-v2 keeps liked voice plus original Skim layout cues", async () => {
 		"Continue global numbering",
 		"No supplied status strengthened",
 	];
-	for (const cue of cues) {
-		assert.ok(skill.includes(cue), `skim-v2 skill missing: ${cue}`);
+	for (const path of ["skills/skim/SKILL.md", "skills/skim-v2/SKILL.md"]) {
+		const skill = await readFile(path, "utf8");
+		for (const cue of cues) {
+			assert.ok(skill.includes(cue), `${path} missing: ${cue}`);
+		}
 	}
 });
 

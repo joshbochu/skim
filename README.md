@@ -54,7 +54,7 @@ Same payload. Less archaeology.
 
 ## Install
 
-Pi installs the complete extension and both profiles from npm:
+Pi installs the complete extension and packaged profiles from npm:
 
 ```bash
 pi install npm:@joshbochu/skim
@@ -87,15 +87,10 @@ sessions and its packaged rules reload on every turn.
 Use the Pi commands:
 
 ```text
-/skim on        stable profile · activate and persist
-/skim on v2     skim-v2 profile · replace stable and persist
-/skim off       disable either profile
+/skim on        activate and persist
+/skim off       disable
 /skim capture   save last exchange for review
 ```
-
-Stable and v2 are mutually exclusive. Running `/skim on` while v2 is active
-switches back to stable; running `/skim on v2` while stable is active switches
-to v2. The status changes from `ON` to `V2`.
 
 Capture accepts a note:
 
@@ -106,19 +101,17 @@ Capture accepts a note:
 Captures stay local in `~/.pi/agent/skim/captures/`. They may contain prompts,
 responses, code, or other sensitive material. Inspect them before sharing.
 
-### Skim v2
+### Candidate profile sandbox
 
-Stable `skim` and `/skim on` behavior remain unchanged.
-Pi users activate v2 through the persistent npm extension:
+The main `/skim on` profile is the promoted Caveman-Ultra contract.
+Infrastructure for trying alternate versions remains in the repo
+(`skills/skim-v2/`, compare evals, `ENABLE_VERSION_OPTIONS` in
+`extensions/skim-mode.mjs`), but version options are hardcoded **off**.
+Users only see regular skim.
 
-```text
-/skim on v2
-```
-
-Portable skill runners can invoke `$skim-v2` directly.
-
-Overwrite `skills/skim-v2/` during iteration. Promote reviewed rules
-to stable `skills/skim/` only after evaluation and user approval.
+When iterating internally, overwrite `skills/skim-v2/` with a candidate,
+evaluate with `eval:skim-v2` / `eval:compare`, then promote into
+`skills/skim/` and `rules/` after review.
 
 ## The contract
 
@@ -134,13 +127,14 @@ shape
   3 indent levels maximum
 
 wording
-  concrete noun stacks
-  fragments when meaning survives
+  Caveman-Ultra fragments
+  answer-first ordering
   numerals instead of number words
   no invented abbreviations
 
 line budget
-  18 default · 24 detail/safety · 42 artifact
+  18 default (DEFAULT_ULTRA)
+  42 only on exact "Full Explanation Please"
   45-65 visible characters preferred
   split before 72 when possible
   code and errors remain exact
@@ -201,14 +195,15 @@ Use Caveman when the token bill hurts. Use Skim when the scrollback hurts.
 ## Repository anatomy
 
 ```text
-skills/skim/SKILL.md       stable portable skill contract
-skills/skim-v2/            v2 portable and Pi profile contract
-extensions/skim.ts         exclusive stable/v2 toggle and persistence
-rules/                     stable live-reloaded Pi rules
-evals/cases.json           stable behavior corpus
-evals/compare-cases.json   balanced stable/v2 A/B corpus
+skills/skim/SKILL.md       portable skill contract (main)
+skills/skim-v2/            candidate sandbox for next iteration
+extensions/skim.ts         on/off toggle, persistence, injection
+extensions/skim-mode.mjs   command parsing + ENABLE_VERSION_OPTIONS
+rules/                     live-reloaded Pi rules for main mode
+evals/cases.json           main behavior corpus
+evals/compare-cases.json   balanced main/candidate A/B corpus
 evals/compare.mjs          matched skill comparison
-evals/skim-v2-cases.json   v2 behavior corpus
+evals/skim-v2-cases.json   candidate behavior corpus
 evals/gold/                hand-approved outputs
 evals/lint.mjs             deterministic structure checks
 ```
