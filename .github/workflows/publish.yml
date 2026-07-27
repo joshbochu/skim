@@ -51,8 +51,14 @@ jobs:
         run: node scripts/release-version.mjs >> "$GITHUB_OUTPUT"
 
       - name: Verify npm trusted-publisher OIDC
-        if: ${{ secrets.NPM_TOKEN == '' }}
-        run: node scripts/oidc-preflight.mjs
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -n "${NPM_TOKEN}" ]; then
+            echo "NPM_TOKEN present; skipping OIDC preflight."
+            exit 0
+          fi
+          node scripts/oidc-preflight.mjs
 
       - name: Publish package
         env:
