@@ -235,12 +235,10 @@ See [`evals/README.md`](evals/README.md) for the benchmark loop and
 
 ## npm releases
 
-The package version is the release switch. A merge to `main` runs tests,
-checks the packed npm contents, and publishes that version through npm trusted
-publishing. Every publishable merge must increase `package.json`'s version.
+The package version is owned by the publish workflow on `main`. Feature
+pull requests do not need to bump `package.json`; every publishable merge
+ships a fresh npm version. See [`RELEASING.md`](RELEASING.md).
 
-See [`RELEASING.md`](RELEASING.md) for the one-time npm trusted-publisher setup
-and merge behavior.
 
 ## Why these numbers
 
