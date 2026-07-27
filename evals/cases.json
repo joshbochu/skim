@@ -3,84 +3,144 @@
     "id": "short-port",
     "category": "floor",
     "prompt": "What port does the Vite development server use? It is configured as 3000 in vite.config.ts.",
-    "requiredTerms": ["3000", "vite.config.ts"],
+    "requiredTerms": [
+      "3000",
+      "vite.config.ts"
+    ],
     "expectedShape": "plain"
   },
   {
     "id": "short-yes-no",
     "category": "floor",
     "prompt": "Tests passed 42 out of 42. Did the test suite pass?",
-    "requiredTerms": ["42/42"],
+    "requiredTerms": [
+      "42/42"
+    ],
     "expectedShape": "plain"
   },
   {
     "id": "diagnose-pool",
     "category": "diagnosis",
     "prompt": "Explain this failure: tests hang under load because DB connections are not released in auth middleware, report generator, and webhook handler. Pool size is 5 while load is about 40. Recommend the fix.",
-    "requiredTerms": ["connections", "auth middleware", "report generator", "webhook handler", "try/finally"],
+    "requiredTerms": [
+      "connections",
+      "auth middleware",
+      "report generator",
+      "webhook handler",
+      "try/finally"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "diagnose-react",
     "category": "diagnosis",
     "prompt": "Why does this React child rerender? Parent creates a new inline object prop every render. Recommend useMemo.",
-    "requiredTerms": ["object", "render", "useMemo"],
+    "requiredTerms": [
+      "object",
+      "render",
+      "useMemo"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "diagnose-timeout",
     "category": "diagnosis",
     "prompt": "Requests time out after 30 seconds. Upstream responds in 45 seconds, retry runs twice, and no circuit breaker exists. Explain cause, risk, and next action.",
-    "requiredTerms": ["30", "45", "retry", "circuit breaker"],
+    "requiredTerms": [
+      "30",
+      "45",
+      "retry",
+      "circuit breaker"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "change-auth",
     "category": "change-summary",
     "prompt": "Summarize completed work: auth.ts gained refresh logic, session.ts changed expiry handling, api.ts retries on 401, tests pass 42/42, mobile client remains untouched.",
-    "requiredTerms": ["auth.ts", "session.ts", "api.ts", "42/42", "mobile client"],
+    "requiredTerms": [
+      "auth.ts",
+      "session.ts",
+      "api.ts",
+      "42/42",
+      "mobile client"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "change-release",
     "category": "change-summary",
     "prompt": "Release status: build complete, unit tests 186/186, integration tests 24/24, docs updated, deployment waiting for security approval.",
-    "requiredTerms": ["186/186", "24/24", "docs", "security approval"],
+    "requiredTerms": [
+      "186/186",
+      "24/24",
+      "docs",
+      "security approval"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "compare-git",
     "category": "comparison",
     "prompt": "Compare git merge and rebase. Include history shape, hash rewriting, and the rule for shared versus local-only branches.",
-    "requiredTerms": ["merge", "rebase", "hash", "shared", "local-only"],
+    "requiredTerms": [
+      "merge",
+      "rebase",
+      "hash",
+      "shared",
+      "local-only"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "compare-api",
     "category": "comparison",
     "prompt": "Compare REST and GraphQL for a mobile app: caching, overfetching, schema complexity, and best fit for unstable client data needs.",
-    "requiredTerms": ["REST", "GraphQL", "caching", "overfetching", "schema"],
+    "requiredTerms": [
+      "REST",
+      "GraphQL",
+      "caching",
+      "overfetching",
+      "schema"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "compare-storage",
     "category": "comparison",
     "prompt": "Compare localStorage, IndexedDB, and server storage for offline drafts. Include capacity, query ability, synchronization, and recommendation.",
-    "requiredTerms": ["localStorage", "IndexedDB", "server", "offline"],
+    "requiredTerms": [
+      "localStorage",
+      "IndexedDB",
+      "server",
+      "offline"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "plan-evals",
     "category": "plan",
     "prompt": "Plan a staged rollout for this output-style eval system: capture baseline, change prompt, compare, then consider structured output.",
-    "requiredTerms": ["baseline", "prompt", "compare", "structured output"],
+    "requiredTerms": [
+      "baseline",
+      "prompt",
+      "compare",
+      "structured output"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "plan-migration",
     "category": "plan",
     "prompt": "Plan a PostgreSQL migration from integer IDs to UUIDs with backup, dual-write, backfill, validation, cutover, and rollback.",
-    "requiredTerms": ["backup", "dual-write", "backfill", "validation", "cutover", "rollback"],
+    "requiredTerms": [
+      "backup",
+      "dual-write",
+      "backfill",
+      "validation",
+      "cutover",
+      "rollback"
+    ],
     "expectedShape": "markdown",
     "maxBodyLines": 24
   },
@@ -88,49 +148,88 @@
     "id": "plan-refactor",
     "category": "plan",
     "prompt": "Plan refactoring a 2,000-line service into parser, validator, persistence, and API layers while keeping behavior stable.",
-    "requiredTerms": ["parser", "validator", "persistence", "API", "tests"],
+    "requiredTerms": [
+      "parser",
+      "validator",
+      "persistence",
+      "API",
+      "tests"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "research-pi",
     "category": "research",
     "prompt": "Summarize findings: Pi before_agent_start can modify system prompts; message_end can replace finalized messages; structured tools can terminate a run; current skim extension only injects prompt text.",
-    "requiredTerms": ["before_agent_start", "message_end", "structured", "injects"],
+    "requiredTerms": [
+      "before_agent_start",
+      "message_end",
+      "structured",
+      "injects"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "research-options",
     "category": "research",
     "prompt": "Summarize four implementation options: prompt only, prompt plus evals, structured response tool, and second-pass repair. Include cost and reliability tradeoffs.",
-    "requiredTerms": ["prompt", "evals", "structured", "repair", "cost", "reliability"],
+    "requiredTerms": [
+      "prompt",
+      "evals",
+      "structured",
+      "repair",
+      "cost",
+      "reliability"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "explain-pooling",
     "category": "explanation",
     "prompt": "Explain database connection pooling, including reuse, handshake savings, pool exhaustion, and connection release.",
-    "requiredTerms": ["reuse", "handshake", "exhaustion", "release"],
+    "requiredTerms": [
+      "reuse",
+      "handshake",
+      "exhaustion",
+      "release"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "explain-cache",
     "category": "explanation",
     "prompt": "Explain cache stampede, why synchronized expiry causes it, and three mitigations: jitter, request coalescing, stale-while-revalidate.",
-    "requiredTerms": ["expiry", "jitter", "coalescing", "stale-while-revalidate"],
+    "requiredTerms": [
+      "expiry",
+      "jitter",
+      "coalescing",
+      "stale-while-revalidate"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "explain-oauth",
     "category": "explanation",
     "prompt": "Explain OAuth authorization code flow using browser, authorization server, callback code, token exchange, and access token.",
-    "requiredTerms": ["browser", "authorization server", "callback", "token exchange", "access token"],
+    "requiredTerms": [
+      "browser",
+      "authorization server",
+      "callback",
+      "token exchange",
+      "access token"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "security-sql",
     "category": "safety",
     "prompt": "Warn about a SQL injection in /search caused by raw string concatenation. Explain impact and recommend parameterized queries.",
-    "requiredTerms": ["SQL injection", "/search", "concatenation", "parameterized"],
+    "requiredTerms": [
+      "SQL injection",
+      "/search",
+      "concatenation",
+      "parameterized"
+    ],
     "expectedShape": "markdown",
     "maxBodyLines": 24
   },
@@ -138,7 +237,11 @@
     "id": "destructive-drop",
     "category": "safety",
     "prompt": "The user is about to run DROP TABLE users. Warn that all rows will be permanently deleted, require a verified backup, then state the next step.",
-    "requiredTerms": ["DROP TABLE users", "permanently", "backup"],
+    "requiredTerms": [
+      "DROP TABLE users",
+      "permanently",
+      "backup"
+    ],
     "expectedShape": "markdown",
     "maxBodyLines": 24
   },
@@ -146,7 +249,14 @@
     "id": "ordered-restore",
     "category": "safety",
     "prompt": "Give an unambiguous restore sequence: stop writers, snapshot current DB, restore backup, run migrations, validate counts, then reopen traffic.",
-    "requiredTerms": ["stop writers", "snapshot", "restore", "migrations", "validate", "reopen"],
+    "requiredTerms": [
+      "stop writers",
+      "snapshot",
+      "restore",
+      "migrations",
+      "validate",
+      "reopen"
+    ],
     "expectedShape": "markdown",
     "maxBodyLines": 24
   },
@@ -154,79 +264,282 @@
     "id": "handoff-project",
     "category": "handoff",
     "prompt": "Create a project handoff: parser complete, renderer 80% complete, tests 13/13, docs stale, next task is Unicode width handling, risk is Windows terminal behavior.",
-    "requiredTerms": ["parser", "80%", "13/13", "docs", "Unicode width", "Windows"],
+    "requiredTerms": [
+      "parser",
+      "80%",
+      "13/13",
+      "docs",
+      "Unicode width",
+      "Windows"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "review-code",
     "category": "review",
     "prompt": "Summarize code review findings: critical auth bypass in middleware.ts line 42, medium unbounded retry in client.ts, low duplicate logging, tests missing for expired tokens.",
-    "requiredTerms": ["middleware.ts", "42", "client.ts", "retry", "expired tokens"],
+    "requiredTerms": [
+      "middleware.ts",
+      "42",
+      "client.ts",
+      "retry",
+      "expired tokens"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "decision-queue",
     "category": "decision",
     "prompt": "Recommend between RabbitMQ, Kafka, and SQS for a small AWS team processing 2 million independent jobs daily. Prefer low operations burden and managed scaling.",
-    "requiredTerms": ["RabbitMQ", "Kafka", "SQS", "2 million", "operations"],
+    "requiredTerms": [
+      "RabbitMQ",
+      "Kafka",
+      "SQS",
+      "2 million",
+      "operations"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "unknown-root-cause",
     "category": "uncertainty",
     "prompt": "Report uncertainty: CPU spikes correlate with batch jobs, but profiling data is missing. Memory and DB latency look normal. Recommend collecting a flame graph before changing code.",
-    "requiredTerms": ["CPU", "batch jobs", "profiling", "Memory", "DB latency", "flame graph"],
+    "requiredTerms": [
+      "CPU",
+      "batch jobs",
+      "profiling",
+      "Memory",
+      "DB latency",
+      "flame graph"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "api-error",
     "category": "exact-text",
     "prompt": "Explain API failure while preserving this exact error: `HTTP 429: rate_limit_exceeded`. Current limit is 100 requests/minute and traffic is 160 requests/minute. Recommend backoff and throttling.",
-    "requiredTerms": ["HTTP 429: rate_limit_exceeded", "100", "160", "backoff", "throttling"],
+    "requiredTerms": [
+      "HTTP 429: rate_limit_exceeded",
+      "100",
+      "160",
+      "backoff",
+      "throttling"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "docs-summary",
     "category": "summary",
     "prompt": "Summarize documentation changes: installation updated for pnpm, configuration gained rulesPath, troubleshooting gained fallback warning, examples gained markdown mode.",
-    "requiredTerms": ["pnpm", "rulesPath", "fallback", "markdown mode"],
+    "requiredTerms": [
+      "pnpm",
+      "rulesPath",
+      "fallback",
+      "markdown mode"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "long-audit",
     "category": "global-cap",
     "prompt": "Summarize an audit with eight topics without using more than five top-level sections: authentication, authorization, input validation, secrets, logging, dependencies, backups, incident response. Authentication and secrets are critical; dependencies and backups are medium; others pass.",
-    "requiredTerms": ["authentication", "authorization", "input validation", "secrets", "logging", "dependencies", "backups", "incident response"],
+    "requiredTerms": [
+      "authentication",
+      "authorization",
+      "input validation",
+      "secrets",
+      "logging",
+      "dependencies",
+      "backups",
+      "incident response"
+    ],
     "expectedShape": "markdown",
     "maxBodyLines": 24
   },
   {
     "id": "spanish-status",
     "category": "language",
-    "prompt": "Responde en español. Estado: compilación completa, pruebas 18/18, documentación pendiente, despliegue bloqueado por aprobación.",
-    "requiredTerms": ["18/18", "documentación", "aprobación"],
+    "prompt": "Responde en espa\u00f1ol. Estado: compilaci\u00f3n completa, pruebas 18/18, documentaci\u00f3n pendiente, despliegue bloqueado por aprobaci\u00f3n.",
+    "requiredTerms": [
+      "18/18",
+      "documentaci\u00f3n",
+      "aprobaci\u00f3n"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "clarify-compression",
     "category": "clarification",
-    "prompt": "Clarify this compressed claim without polished prose: `cache stale ∵ invalidation lag`. Cached data remains old because invalidation arrives 30 seconds late.",
-    "requiredTerms": ["cached data", "invalidation", "30 seconds"],
+    "prompt": "Clarify this compressed claim without polished prose: `cache stale \u2235 invalidation lag`. Cached data remains old because invalidation arrives 30 seconds late.",
+    "requiredTerms": [
+      "cached data",
+      "invalidation",
+      "30 seconds"
+    ],
     "expectedShape": "plain"
   },
   {
     "id": "review-rust-quality",
     "category": "review",
     "prompt": "Assess whether this Rust codebase is genuinely high quality from verified evidence, not documentation claims. Facts: Rust 2024 with idiomatic let-chains; release build clean in 2.6s with 0 warnings; clippy has 0 warnings across all targets; tests pass in 0.83s against a 5s budget; sole dependency is unicode-width; live-rendered diagrams look correct; B6/B14 behavior references anchor code to specification; render_scene_with_checks verifies renderer output; signed Scene normalization gives exact bounds; doubled coordinates avoid floats; ordered Vec usage and no HashMap enforce determinism; behavior.rs, golden.rs, scene.rs, and quality.rs provide four test layers. Main weakness: layout_fit spans about 556 lines and mixes ranking, sizing, and special cases; layout.rs is 1,730 lines and 40% of the project; accumulated layout heuristics remain undecomposed. Give verdict, evidence, strengths, and weak spots. Offer deeper decomposition only as a terse handoff.",
-    "requiredTerms": ["2.6s", "0 warnings", "layout_fit", "layout.rs", "40%"],
+    "requiredTerms": [
+      "2.6s",
+      "0 warnings",
+      "layout_fit",
+      "layout.rs",
+      "40%"
+    ],
     "expectedShape": "markdown"
   },
   {
     "id": "artifact-explanation",
     "category": "artifact-handoff",
     "prompt": "Summarize this completed artifact handoff without omitting the supplied facts. File: /tmp/2026-07-11-skim-eval-example-explanation.html; 58 KB; self-contained HTML, CSS, and JavaScript. Target: commit 1c80ad4, use eval example to improve; 13 files; +492/-33. Coverage: Background includes deep Skim contracts and anatomy, eval harness and improvement loop, and 3 narrow pre-commit gaps. Intuition includes a specimen with 4 failure modes, the two-forms-one-tree trick, and a 7-child violation. Code includes a 3rd linter shape, 3 new checks, per-container prompts, and rule alignment. Six diagram families: reply anatomy, eval dataflow, improvement loop, two-forms-one-tree, structure tree, and commit thread. Quiz: 5 interactive multiple-choice questions, immediate feedback, and live score. Verification: 19 pre blocks, code whitespace preserved, no ASCII diagrams, balanced tags, tests 14/14. The explanation was built and opened.",
-    "requiredTerms": ["/tmp/2026-07-11-skim-eval-example-explanation.html", "1c80ad4", "reply anatomy", "eval dataflow", "improvement loop", "two-forms-one-tree", "structure tree", "commit thread", "14/14"],
+    "requiredTerms": [
+      "/tmp/2026-07-11-skim-eval-example-explanation.html",
+      "1c80ad4",
+      "reply anatomy",
+      "eval dataflow",
+      "improvement loop",
+      "two-forms-one-tree",
+      "structure tree",
+      "commit thread",
+      "14/14"
+    ],
     "expectedShape": "markdown",
     "maxBodyLines": 42
+  },
+  {
+    "id": "action-diagnosis",
+    "category": "action",
+    "prompt": "Tests hang under load because DB connections are not released in auth middleware, report generator, and webhook handler. Pool size is 5 while load is about 40. Diagnose and give the next action.",
+    "requiredTerms": [
+      "connections",
+      "auth middleware",
+      "report generator",
+      "webhook handler",
+      "try/finally"
+    ],
+    "expectedShape": "markdown"
+  },
+  {
+    "id": "no-escape-explain",
+    "category": "escape-leakage",
+    "prompt": "Explain database connection pooling thoroughly. Walk me through reuse, handshake savings, pool exhaustion, and connection release in detail.",
+    "requiredTerms": [
+      "reuse",
+      "handshake",
+      "exhaustion",
+      "release"
+    ],
+    "expectedShape": "markdown"
+  },
+  {
+    "id": "no-escape-confused",
+    "category": "escape-leakage",
+    "prompt": "I am confused. Please slow down and explain why synchronized cache expiry causes a stampede, then include jitter, request coalescing, and stale-while-revalidate.",
+    "requiredTerms": [
+      "expiry",
+      "jitter",
+      "coalescing",
+      "stale-while-revalidate"
+    ],
+    "expectedShape": "markdown"
+  },
+  {
+    "id": "safety-stays-ultra",
+    "category": "safety",
+    "prompt": "Give an unambiguous database restore sequence: stop writers, snapshot current DB, restore backup, run migrations, validate counts, then reopen traffic. Explain every safety concern.",
+    "requiredTerms": [
+      "stop writers",
+      "snapshot",
+      "restore",
+      "migrations",
+      "validate",
+      "reopen"
+    ],
+    "expectedShape": "markdown",
+    "maxBodyLines": 24,
+    "minOrderedItems": 6
+  },
+  {
+    "id": "expanded-once",
+    "category": "explicit-expansion",
+    "prompt": "Full Explanation Please\nExplain OAuth authorization code flow using browser, authorization server, callback code, token exchange, access token, state validation, and PKCE.",
+    "requiredTerms": [
+      "browser",
+      "authorization server",
+      "callback",
+      "token exchange",
+      "access token",
+      "state",
+      "PKCE"
+    ],
+    "expectedShape": "markdown",
+    "maxBodyLines": 42
+  },
+  {
+    "id": "visible-state",
+    "category": "adhd-state",
+    "prompt": "Migration step 3 of 5 is complete: backfill finished. Validation is next, then cutover. Show current state and one concrete next action.",
+    "requiredTerms": [
+      "3",
+      "5",
+      "backfill",
+      "validation",
+      "cutover"
+    ],
+    "expectedShape": "markdown"
+  },
+  {
+    "id": "evidence-estimate",
+    "category": "adhd-numbers",
+    "prompt": "Estimate this change. Evidence: one localized handler edit; existing tests cover the path; comparable changes took 10\u201320 minutes. If coverage is missing, the work takes 1\u20132 hours. Show the estimate, its basis, and the main assumption.",
+    "requiredTerms": [
+      "10\u201320",
+      "min",
+      "tests",
+      "1\u20132",
+      "hr"
+    ],
+    "expectedShape": "markdown"
+  },
+  {
+    "id": "estimate-unknown",
+    "category": "adhd-numbers",
+    "prompt": "Give an exact implementation-time estimate for an unknown legacy migration. No repository, scope, test coverage, system size, or prior measurements are available.",
+    "requiredTerms": [
+      "estimate",
+      "unavailable",
+      "scope"
+    ],
+    "expectedShape": "markdown"
+  },
+  {
+    "id": "nonexact-expansion",
+    "category": "escape-leakage",
+    "prompt": "Please give a full explanation of OAuth authorization code flow. Include browser, authorization server, callback code, token exchange, state validation, and PKCE.",
+    "requiredTerms": [
+      "browser",
+      "authorization server",
+      "callback",
+      "token exchange",
+      "state",
+      "PKCE"
+    ],
+    "expectedShape": "markdown",
+    "maxBodyLines": 18
+  },
+  {
+    "id": "liked-react",
+    "category": "caveman-voice",
+    "prompt": "Why does this React child rerender? Parent creates a new inline object prop every render. Recommend useMemo.",
+    "requiredTerms": [
+      "object",
+      "render",
+      "useMemo"
+    ],
+    "expectedShape": "markdown",
+    "strictWording": true
   }
 ]

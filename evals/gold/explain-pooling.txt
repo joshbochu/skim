@@ -1,8 +1,8 @@
-Pool reuses open DB connections.
+Pool reuse open DB connections.
 
 - **benefit**
   - no new connection per request
-  - handshake cost gone
+  - handshake cost die
 - **risk**
   - pool exhaustion
   - ∵ leaked connections

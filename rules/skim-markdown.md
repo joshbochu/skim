@@ -11,24 +11,26 @@ Use native Markdown bullets, not fences.
 - Nest only real semantic parent-child relationships.
 - Never pair unrelated items to satisfy line or sibling caps.
 - Preserve all Skim group and line limits.
-- Use 24 or 42 as smallest sufficient expanded line budget.
+- `DEFAULT_ULTRA`: 18 fact lines maximum.
+- `EXPANDED_ONCE` (`Full Explanation Please` first nonblank line): up to 42.
+- Safety or artifact completeness may exceed 18 with smallest sufficient budget.
+- Ordered actions use Arabic `1.`, `2.`, `3.` under phase anchors.
 - Inline code backticks remain valid.
 
 Target:
 
-Pool exhaustion causes test failures.
+Pool exhaustion make tests hang.
 
-- ✗ **tests**
-  - ∵ connections never released
-  - ∵ pool exhausted
+- ✗ **cause**
+  - connections never released
+  - pool 5 < load≈40
 - **leaks ×3**
   - auth middleware
   - report generator
   - webhook handler
-  - → wrap each in try/finally
-- ⚠ **pool**
-  - 5 < load≈40
-  - → raise after leak fix
+- **fix**
+  - wrap acquisition in `try/finally`
+  - verify pool returns to baseline
 
 Semantic nesting target:
 

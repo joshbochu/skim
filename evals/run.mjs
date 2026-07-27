@@ -47,13 +47,13 @@ async function buildPrompt(args) {
 	const structure = await readFile(resolve(ROOT, "rules/skim-core.md"), "utf8");
 	const parts = [
 		"IMPORTANT — SKIM MODE ACTIVE",
-		"Caveman-full governs every chat word. Skim governs structure.",
+		"Caveman-Ultra governs every chat word. Skim governs structure.",
 		wording.trim(),
 		structure.trim(),
 	];
 	const markdown = await readFile(resolve(ROOT, "rules/skim-markdown.md"), "utf8");
 	parts.push(markdown.trim());
-	parts.push("FINAL CHECK: Caveman wording everywhere; plain reply has 1–2 fact lines or structured body has 1–5 top-level anchors; 1–5 children per parent; count anchors plus children; use 18, 24, or 42 as smallest sufficient fact-line budget; exceed 42 only for safety-critical meaning or explicitly exhaustive detail; select strongest evidence instead of overflowing; no polished introduction; no prose escape mode.");
+	parts.push("FINAL CHECK: Caveman-Ultra wording everywhere; mode from exact Full Explanation Please trigger only; first line matches intent; plain reply has 1–2 fact lines or structured body has 1–5 top-level anchors; 1–5 children per parent; DEFAULT_ULTRA ≤18 fact lines; EXPANDED_ONCE ≤42; exceed 42 only for safety-critical meaning or explicitly exhaustive artifacts; no polished introduction; no prose escape mode; no autonomous expansion.");
 	return parts.join("\n\n");
 }
 

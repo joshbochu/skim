@@ -2,15 +2,17 @@
  * @joshbochu/skim — max info per reader-effort
  *
  * A pi extension that formats agent output for high density and
- * low cognitive load: Caveman-full wording, one fact per line,
+ * low cognitive load: Caveman-Ultra wording, one fact per line,
  * logic symbols, and at most 5 top-level anchors.
  * https://github.com/joshbochu/skim
  *
  * Commands:
  *   /skim           Toggle skim on/off
- *   /skim on v2     Enable persistent skim-v2 mode
  *   /skim capture   Save last prompt/response for later improvement
  *   /skim off       Disable (aliases: stop, quit)
+ *
+ * Version options (`/skim on v2`) remain in the codebase behind
+ * ENABLE_VERSION_OPTIONS (hardcoded OFF). Users only see regular skim.
  *
  * Mode persists across sessions via ~/.pi/agent/skim.json.
  * Rules are re-read from rules/ on every turn.
@@ -33,6 +35,9 @@ import {
 	saveCapture,
 } from "./skim-capture.mjs";
 import {
+	ENABLE_VERSION_OPTIONS,
+	commandUsage,
+	getCommandOptions,
 	normalizeMode,
 	parseSkimCommand,
 	stripFrontmatter,
@@ -40,28 +45,8 @@ import {
 
 type Mode = "off" | "on" | "v2";
 
-const COMMAND_OPTIONS = [
-	{
-		value: "on",
-		label: "on",
-		description: "Enable stable skim",
-	},
-	{
-		value: "on v2",
-		label: "on v2",
-		description: "Enable persistent skim-v2",
-	},
-	{
-		value: "off",
-		label: "off",
-		description: "Disable skim",
-	},
-	{
-		value: "capture",
-		label: "capture",
-		description: "Save last prompt and response for later improvement",
-	},
-] as const;
+const COMMAND_OPTIONS = getCommandOptions();
+const COMMAND_USAGE = commandUsage();
 
 // ------------------------------------------------------------------
 // Persistent config (survives across sessions)
@@ -72,7 +57,7 @@ interface SkimConfig {
 	defaultMode: Mode;
 	/** Optional override path to the skim-core rules file. */
 	rulesPath?: string;
-	/** Optional override path to the Caveman-full wording rules file. */
+	/** Optional override path to the Caveman-Ultra wording rules file. */
 	ultraPath?: string;
 	/** Optional override path to the skim-v2 skill file. */
 	v2Path?: string;
@@ -124,7 +109,7 @@ Max info per reader-effort, not min tokens.
 Eye scanning is proxy, not goal.
 
 Bridge:
-- Caveman-full governs wording.
+- Caveman-Ultra governs wording.
 - skim-core governs structure.
 - Preserve necessary grammar only when omission changes meaning.
 
@@ -146,8 +131,10 @@ Line budget:
 - Split before 72 characters whenever possible.
 - Treat 80 characters as a hard ceiling.
 - Default budget never authorizes horizontal packing.
-- Body budget: 18 default; 24 requested detail or safety; 42 artifact handoff.
-- Exceed 42 only for safety-critical meaning or explicitly exhaustive detail.
+- DEFAULT_ULTRA: 18 fact lines.
+- EXPANDED_ONCE only on exact first-line trigger "Full Explanation Please": 42.
+- Safety or artifact completeness may exceed 18 with smallest sufficient budget.
+- Exceed 42 only for safety-critical meaning or explicitly exhaustive artifacts.
 - CJK target ≈40 glyphs.
 
 Exceptions:
@@ -176,7 +163,7 @@ Separator budgets:
 Grouping decision:
 1. ≤5 peers → one flat sibling list.
 2. >5 peers with real roles → subgroup by those roles.
-3. No real roles → keep strongest 5 or offer another reply.
+3. No real roles → keep strongest 5 non-required facts.
 4. Never pair items merely to equalize group sizes.
 Uneven groups are correct when meaning is uneven.
 
@@ -198,7 +185,7 @@ Boundaries:
 - Never announce the mode.`;
 
 const ULTRA_FALLBACK = `\
-Caveman-full wording
+Caveman-Ultra wording
 Max info per reader-effort, not min tokens.
 
 Priority:
@@ -224,7 +211,9 @@ Quantified grammar:
 - Repeated fact: 0.
 
 Tone target:
-- Caveman-full, not polished consultant.
+- Caveman-Ultra, not polished consultant.
+- Drop agreement grammar when meaning stays instant:
+  parent make · child see · reference stay · tests pass.
 - Fragment OK when meaning survives.
 - Drop connective tissue first.
 - Keep enough grammar for instant read.
@@ -248,7 +237,7 @@ Ceiling:
 
 const BRIDGE_RULES = `\
 Bridge:
-- Caveman-full governs every chat word.
+- Caveman-Ultra governs every chat word.
 - skim-core governs structure.
 - Safety and factual meaning outrank style.
 - Keep only grammar required for exact meaning.`;
@@ -256,15 +245,17 @@ Bridge:
 const FINAL_CHECK = `\
 FINAL OUTPUT CHECK:
 - Active container: native Markdown bullets.
-- Caveman-full wording in headline, anchors, and facts.
+- Caveman-Ultra wording in headline, anchors, and facts.
+- Mode selected only from current message exact trigger.
+- First line matches intent: answer, action, cause, verdict, or result.
+- DEFAULT_ULTRA body ≤18 fact lines unless safety requires more.
+- EXPANDED_ONCE only on exact "Full Explanation Please"; body ≤42.
 - Plain reply has 1–2 fact lines, or structured body has 1–5 anchors TOTAL.
-- 1–5 child facts per parent.
-- Count anchors plus children; body ≤18 lines by default.
-- Use 24 lines for requested detail or safety; up to 42 for artifact handoff.
-- Exceed 42 only for safety-critical meaning or explicitly exhaustive detail.
+- 1–5 child facts per parent; ≤3 indent levels.
 - Every indent and grouping reflects a real relationship.
 - No polished introduction.
-- No prose escape mode.`;
+- No prose escape mode.
+- No autonomous expansion or expansion offer.`;
 
 const MARKDOWN_FALLBACK = `\
 Markdown structure:
@@ -276,6 +267,7 @@ Markdown structure:
 - 2-space indent per level.
 - Same symbols and chunk caps.
 - Inline code backticks allowed.
+- DEFAULT_ULTRA: 18 fact lines; EXPANDED_ONCE: 42.
 
 Semantic nesting target:
 
@@ -436,7 +428,8 @@ export default function skim(pi: ExtensionAPI) {
 			return;
 		}
 		const theme = ctx.ui.theme;
-		const label = mode === "v2" ? "V2" : "ON";
+		const label =
+			ENABLE_VERSION_OPTIONS && mode === "v2" ? "V2" : "ON";
 		ctx.ui.setStatus(
 			"skim",
 			theme.fg("muted", "⇊ skim: ") + theme.fg("text", label),
@@ -456,7 +449,7 @@ export default function skim(pi: ExtensionAPI) {
 		ctx.ui.notify(
 			mode === "off"
 				? "Skim off."
-				: mode === "v2"
+				: ENABLE_VERSION_OPTIONS && mode === "v2"
 					? "Skim v2 on."
 					: "Skim on.",
 			"info",
@@ -494,8 +487,7 @@ export default function skim(pi: ExtensionAPI) {
 	// -- /skim command --
 
 	pi.registerCommand("skim", {
-		description:
-			"Toggle skim or capture output. Args: on, on v2, off, capture [note]",
+		description: `Toggle skim or capture output. Args: ${COMMAND_USAGE} [note]`,
 		getArgumentCompletions: (prefix: string) => {
 			const normalized = prefix.trim().toLowerCase();
 			const items = COMMAND_OPTIONS.filter((item) =>
@@ -513,7 +505,7 @@ export default function skim(pi: ExtensionAPI) {
 				await setMode(command.mode as Mode, ctx);
 			} else {
 				ctx.ui.notify(
-					`Unknown: "${command.value}". Use: on, on v2, off, capture`,
+					`Unknown: "${command.value}". Use: ${COMMAND_USAGE}`,
 					"error",
 				);
 			}
@@ -536,7 +528,7 @@ export default function skim(pi: ExtensionAPI) {
 		}
 
 		const parts = [
-			mode === "v2"
+			ENABLE_VERSION_OPTIONS && mode === "v2"
 				? "IMPORTANT — SKIM-V2 MODE ACTIVE:"
 				: "IMPORTANT — SKIM MODE ACTIVE:",
 			text,
