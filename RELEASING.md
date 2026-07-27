@@ -11,38 +11,50 @@ distribution for the extension, stable rules, and candidate `skim-v2` rules.
 1. Choose a free version with `scripts/release-version.mjs`
    (higher of `package.json` and npm latest; bump patch if that version
    already exists).
-2. Run `prepublishOnly` gates via `npm publish`
+2. Verify GitHub Actions → npm OIDC with `scripts/oidc-preflight.mjs`
+   (skipped when `NPM_TOKEN` is set).
+3. Run `prepublishOnly` gates via `npm publish`
    (tests, gold lint, dry-run eval plans).
-3. Publish with npm trusted-publisher OIDC (`--provenance`).
-4. Commit the chosen version back to `main` as
+4. Publish through npm trusted-publisher OIDC (provenance is automatic).
+5. Commit the chosen version back to `main` as
    `chore: release vX.Y.Z [skip ci]` so the repo tracks what shipped.
 
 You do **not** need to bump `package.json` in feature PRs. The publish
 workflow owns release versions. Manual bumps are still honored when they are
 ahead of the registry.
 
-## One-time npm trusted publisher setup
+## Required one-time npm setup
 
-Configure the existing `@joshbochu/skim` package on npmjs.com:
+Publishing cannot succeed until **one** of these is configured:
 
-- provider: GitHub Actions
-- organization or user: `joshbochu`
-- repository: `skim`
-- workflow filename: `publish.yml`
-- environment: leave blank
-- allowed action: `npm publish`
+### Option A — Trusted Publisher (preferred)
 
-The workflow grants `id-token: write` and uses Node 24 on a GitHub-hosted
-runner, so npm authenticates with short-lived OIDC credentials.
+On https://www.npmjs.com/package/@joshbochu/skim/access :
 
-Important: the workflow must **not** use `actions/setup-node`'s
-`registry-url` input. That input injects a placeholder `NODE_AUTH_TOKEN`
-which forces classic token auth and makes trusted publishing fail with
-`E404`.
+1. Open **Trusted Publisher**
+2. Choose **GitHub Actions**
+3. Set:
+   - organization or user: `joshbochu`
+   - repository: `skim`
+   - workflow filename: `publish.yml` (filename only, including `.yml`)
+   - environment: leave blank
+   - allowed action: **npm publish** (required for configs created after
+     2026-05-20)
+4. Save
 
-Optional fallback: set a repository secret `NPM_TOKEN` (granular npm
-automation token with publish permission). When present, the workflow uses
-it instead of OIDC.
+The workflow grants `id-token: write` on the publish job and uses Node 24 /
+npm 11.5+, so npm authenticates with short-lived OIDC credentials.
+
+Do **not** use `actions/setup-node`'s `registry-url` input in this workflow.
+That input injects a placeholder `NODE_AUTH_TOKEN` which forces classic token
+auth and makes trusted publishing fail with `E404` / `ENEEDAUTH`.
+
+### Option B — Automation token fallback
+
+Create a granular npm automation token with publish permission for
+`@joshbochu/skim`, then add it as the repository secret `NPM_TOKEN`.
+When that secret is present, the workflow publishes with the token instead of
+OIDC.
 
 ## Verify a release
 
