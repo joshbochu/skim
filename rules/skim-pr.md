@@ -27,9 +27,9 @@ For either command:
 - No matching pull request: ask the user for a full GitHub PR URL.
 - Multiple matching pull requests: list them and require an explicit URL.
 - No tool available or fetch fails: report the failure. Do not guess.
-- Resolve the repo's PR template from the current head or base state,
-  not from the point-in-time template used when the PR was created.
-  Reviewers expect the current shape.
+- Ignore repository PR templates. Do not read, preserve, fill, or
+  mimic `.github/pull_request_template.md` (or any variant). The goal
+  of `/skim pr` is skim shape, not repo-template compliance.
 - Write the reshaped body through the available GitHub write path
   (`gh pr edit --body`, REST PATCH, MCP equivalent).
 - Print the applied body and PR link as confirmation.
@@ -46,47 +46,20 @@ For either command:
 ## Priority
 
 1. Factual correctness and safety.
-2. Repository PR template conventions.
-3. skim-pr structure below (anchor + indented-fact shape).
-4. Terse wording inside facts — drop articles, copulas, filler, but
+2. skim-pr structure below (anchor + indented-fact shape).
+3. Terse wording inside facts — drop articles, copulas, filler, but
    keep enough grammar that a cold reviewer can parse each fact
    without session context.
-5. Symbols when immediately clear.
+4. Symbols when immediately clear.
 
-Template obligations outrank skim-pr defaults.
-Facts drop load-free words but must stand alone for a cold reviewer.
-Headline prose stays normal English.
+Repo PR templates never outrank skim-pr. Facts drop load-free words but
+must stand alone for a cold reviewer. Headline prose stays normal
+English.
 
-## Repository template
+## Sections
 
-Before generating a body, check for a PR template in this order:
-
-1. `.github/pull_request_template.md`
-2. `.github/PULL_REQUEST_TEMPLATE.md`
-3. `PULL_REQUEST_TEMPLATE.md`
-4. `docs/pull_request_template.md`
-5. `.github/PULL_REQUEST_TEMPLATE/*.md` — multi-template directory
-
-Case-insensitive match. First hit wins.
-
-When a template exists:
-
-- Preserve heading structure and order verbatim.
-- Preserve `<!-- HTML comments -->` untouched. They do not render.
-- Preserve `- [ ]` checklists as checklists. Check or leave unchecked;
-  never convert to plain bullets.
-- Preserve custom markers (`<!-- TYPE: feat -->`, front-matter) untouched.
-- Fill each section with skim-pr bullets and terse content.
-- Leave a section empty, or drop it per template convention, when the
-  diff has nothing to say there. Never invent content to fill slots.
-- Replace placeholder examples (`<!-- e.g. Closes #123 -->`) with real
-  values. Never echo the placeholder.
-
-When no template exists, use the default sections below.
-
-## Default sections
-
-Used only when no repo template exists.
+Always use these sections. Never substitute a repository template's
+headings, checklists, or HTML comments.
 
 - `## What` — bullets describing what changed in plain English.
   Describe the behavior change, not the files; the diff tab already
@@ -105,6 +78,11 @@ empty scaffolding:
 - Gotchas, follow-ups, and known limitations go inline under `## What`
   with a `⚠` prefix, next to the change they concern.
 
+When the existing body was filled from a repo template, extract the
+facts and rewrite them into the sections above. Drop template
+scaffolding: unused headings, HTML comments, placeholder checklists,
+and custom markers that only exist for the template.
+
 ## Headline
 
 One to three plain sentences at the top of the body, before any section.
@@ -119,8 +97,7 @@ One to three plain sentences at the top of the body, before any section.
 ## Anchor + fact grammar
 
 Same shape as chat-skim: bold anchor at the top level, facts indented
-two spaces below. Applies inside every `##` section (default or
-template-provided).
+two spaces below. Applies inside every `##` section.
 
 - **Anchor** — 1–4 words. Optional leading sigil (`✓ ⚠ ✗`). Bolded.
   Names the thing (component, behavior, concern).
@@ -192,63 +169,19 @@ These never appear in the output:
 - Model attribution trailers such as `🤖 Generated with …` and
   `Co-Authored-By: Claude`.
 - Bot or reviewer `@`-mentions.
+- Repository PR template scaffolding: unused template headings, HTML
+  comments, placeholder examples, or custom markers kept only to
+  match a template.
 
 ## Preserve
 
 - Code, commands, URLs, identifiers, error strings — byte-exact.
 - Ticket keys, issue references, PR numbers.
 - User language.
-- Checklist item text from templates.
+- Meaningful checklist items that already record real verification
+  status — rewrite them under `## Test plan` if kept.
 
-## Gold examples
-
-Template-driven (`.github/pull_request_template.md` present).
-
-Template:
-
-```markdown
-## Summary
-
-<!-- What does this PR do? -->
-
-## Testing
-
-- [ ] Unit tests
-- [ ] Manual QA
-
-## Ticket
-
-<!-- e.g. Closes #123 -->
-```
-
-Filled:
-
-```markdown
-401 retry lets the auth flow refresh expired tokens transparently.
-
-## Summary
-
-- ✓ **retry logic**
-  - on a 401 response, silently refresh the token and retry once
-  - callers never see the auth error
-- ✓ **session expiry**
-  - realigned to overlap the refresh-token lifetime
-- ✓ **retry wrapper**
-  - all outbound requests routed through a single decorator
-
-## Testing
-
-- [x] Unit tests
-- [ ] Manual QA
-  - force a 401 in dev — retry should fire exactly once
-  - mobile client untouched, may need same fix
-
-## Ticket
-
-Closes #1234
-```
-
-No template — default sections:
+## Gold example
 
 ```markdown
 401 retry lets the auth flow refresh expired tokens transparently.
@@ -264,6 +197,11 @@ No template — default sections:
   - untouched by this change
   - → needs the same fix
 
+## Why
+
+- expired tokens failed every outbound request
+- callers should not handle refresh themselves
+
 ## Test plan
 
 - [ ] Force a 401 in dev — retry fires exactly once
@@ -276,7 +214,8 @@ Closes #1234
 
 Before emitting a PR body:
 
-- Template detected and preserved, or default sections chosen?
+- skim-pr sections used (`## What`, `## Why`, optional `## Test plan`)?
+- Repo PR template ignored — no template-only scaffolding kept?
 - Headline prose leads with outcome, not ceremony?
 - Sections use anchor + indented-fact structure, not flat prose?
 - Facts are terse but self-contained for a cold reviewer?
