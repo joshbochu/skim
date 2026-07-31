@@ -14,11 +14,8 @@ on:
       - README.md
       - IMPROVING.md
       - RELEASING.md
+      - scripts/**
   workflow_dispatch:
-
-permissions:
-  contents: read
-  id-token: write
 
 concurrency:
   group: npm-publish
@@ -26,28 +23,62 @@ concurrency:
 
 jobs:
   publish:
-    if: github.repository == 'joshbochu/skim'
+    if: >-
+      github.repository == 'joshbochu/skim' &&
+      (github.event_name == 'workflow_dispatch' ||
+       !contains(github.event.head_commit.message, '[skip ci]'))
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - name: Check out merged source
         uses: actions/checkout@v6
 
-      - name: Set up Node and npm registry
+      - name: Set up Node
         uses: actions/setup-node@v6
         with:
           node-version: '24'
-          registry-url: https://registry.npmjs.org
+          # Do not set registry-url. setup-node would inject a placeholder
+          # NODE_AUTH_TOKEN that blocks npm trusted-publisher OIDC.
           package-manager-cache: false
 
       - name: Verify package contents
         run: npm pack --dry-run
 
-      - name: Publish package
+      - name: Choose release version
+        id: version
+        run: node scripts/release-version.mjs >> "$GITHUB_OUTPUT"
+
+      - name: Verify npm trusted-publisher OIDC
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          name="$(node -p "require('./package.json').name")"
-          version="$(node -p "require('./package.json').version")"
-          if npm view "${name}@${version}" version >/dev/null 2>&1; then
-            echo "Already published ${name}@${version}; skipping."
+          if [ -n "${NPM_TOKEN}" ]; then
+            echo "NPM_TOKEN present; skipping OIDC preflight."
             exit 0
           fi
-          npm publish --access public
+          node scripts/oidc-preflight.mjs
+
+      - name: Publish package
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          unset NODE_AUTH_TOKEN
+          if [ -n "${NPM_TOKEN}" ]; then
+            printf '%s\n' "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > "$HOME/.npmrc"
+            printf '%s\n' "registry=https://registry.npmjs.org/" >> "$HOME/.npmrc"
+            npm publish --access public
+          else
+            # Provenance is enabled automatically by npm when OIDC succeeds.
+            npm publish --access public --loglevel verbose
+          fi
+
+      - name: Commit release version
+        if: steps.version.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: release v${{ steps.version.outputs.version }} [skip ci]"
+          git push origin HEAD:main

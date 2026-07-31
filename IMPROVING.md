@@ -8,11 +8,11 @@ shows prompt-only behavior has plateaued.
 
 Implemented now:
 
-- Caveman-full wording contract.
-- Skim structure contract.
+- Caveman-Ultra wording contract (former skim-v2 promoted to main).
+- Skim structure contract with exact-trigger expansion.
 - Global limit of 1–5 top-level anchors per structured body.
 - Positive gold examples.
-- 32-case benchmark corpus.
+- Main and candidate benchmark corpora.
 - Deterministic plain and native-Markdown linter.
 - Repeated headless Pi benchmark runner.
 - Raw outputs and exact prompt saved for every benchmark.
@@ -30,13 +30,16 @@ final live response.
 
 ## Alternate skill lifecycle
 
-- Keep `skills/skim/`, `/skim on`, and live `rules/` stable during iteration.
-- Overwrite `skills/skim-v2/` with each new candidate.
-- Pi: load candidates persistently with `/skim on v2`.
-- Portable runners: load candidates with `$skim-v2` instead of `$skim`.
+- Main user surface is `/skim on` / `/skim off` only.
+- `ENABLE_VERSION_OPTIONS` in `extensions/skim-mode.mjs` is hardcoded
+  **false**, so users do not see version options.
+- Keep candidate infrastructure: `skills/skim-v2/`, compare evals,
+  `loadV2Rules`, and the `v2` mode path behind the flag.
+- Overwrite `skills/skim-v2/` with each new candidate during iteration.
+- Portable runners can still load `$skim-v2` explicitly for experiments.
 - Evaluate candidates with `--profile skim-v2` and
   `evals/skim-v2-cases.json`.
-- Promote reviewed behavior deliberately.
+- Promote reviewed behavior into `skills/skim/` **and** sync `rules/`.
 
 ## Deliberate exclusions
 

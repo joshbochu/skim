@@ -8,18 +8,19 @@ normal Pi work, then ask Codex to review captures and improve Skim.
 
 ## What exists
 
-- `cases.json`: 32 prompts across floor, diagnosis, comparison, plan,
-  research, safety, exact-text, global-cap, language, container, and
-  artifact-handoff cases.
+- `cases.json`: main behavior corpus (promoted Caveman-Ultra contract),
+  including floor, diagnosis, comparison, plan, research, safety,
+  exact-text, expansion, estimates, and artifact-handoff cases.
 - `gold/`: hand-approved outputs defining current taste.
 - `lint.mjs`: deterministic structure, wording, and required-term checks.
 - `run.mjs`: repeated headless Pi runs with raw-output preservation.
-- `compare-cases.json`: balanced stable-origin and v2-origin A/B corpus.
+- `compare-cases.json`: balanced main/candidate A/B corpus.
 - `compare.mjs`: matched literal-skill runner, exact usage capture, optional
   blind semantic judge, hard-gate adjudication, aggregation, and review
   generation.
 - `review.mjs`: static side-by-side review UI with blinded labels and
   `feedback.json` export.
+- `skim-v2-cases.json`: candidate sandbox corpus (infra retained).
 
 Captured interactions live outside the repository:
 
@@ -43,7 +44,7 @@ Inspect planned benchmark size without calling a model:
 npm run eval:dry
 ```
 
-Run all 32 cases 3 times with Pi defaults:
+Run the main corpus 3 times with Pi defaults:
 
 ```bash
 npm run eval -- --label baseline
@@ -69,7 +70,7 @@ npm run eval:skim-v2:dry
 npm run eval:skim-v2 -- --label candidate
 ```
 
-Inspect the balanced stable-versus-v2 plan:
+Inspect the balanced main-versus-candidate plan:
 
 ```bash
 npm run eval:compare:dry
