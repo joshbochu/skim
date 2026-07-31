@@ -87,6 +87,7 @@ Never invent symbols.
 - Preserve code, commands, URLs, identifiers, and errors byte-exact.
 - Preserve user language.
 - Keep commits, PRs, docs, and comments in normal conventions.
+  `/skim pr` is the one-shot override for PR bodies.
 - Never announce mode.
 
 ## Gold examples

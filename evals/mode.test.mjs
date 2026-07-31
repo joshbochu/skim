@@ -55,6 +55,24 @@ test("capture preserves note text and obsolete experimental syntax fails", () =>
 	});
 });
 
+test("pr command is one-shot with optional URL target", () => {
+	assert.deepEqual(parseSkimCommand("pr", "off"), {
+		kind: "pr",
+		target: "",
+	});
+	assert.deepEqual(
+		parseSkimCommand("pr https://github.com/joshbochu/skim/pull/2", "on"),
+		{
+			kind: "pr",
+			target: "https://github.com/joshbochu/skim/pull/2",
+		},
+	);
+	assert.deepEqual(parseSkimCommand("PR preview", "v2"), {
+		kind: "pr",
+		target: "preview",
+	});
+});
+
 test("strips skill frontmatter before prompt injection", () => {
 	assert.equal(
 		stripFrontmatter("---\nname: skim-v2\n---\n\n# Skim v2\n"),
@@ -67,4 +85,12 @@ test("extension loads packaged skim-v2 rules for v2 mode", async () => {
 	assert.ok(extension.includes('new URL("../skills/skim-v2/SKILL.md"'));
 	assert.ok(extension.includes('mode === "v2" ? loadV2Rules(config)'));
 	assert.ok(extension.includes('"on v2"'));
+});
+
+test("extension wires one-shot skim-pr command", async () => {
+	const extension = await readFile("extensions/skim.ts", "utf8");
+	assert.ok(extension.includes('new URL("../rules/skim-pr.md"'));
+	assert.ok(extension.includes("buildPrCommand"));
+	assert.ok(extension.includes("pendingPrRules"));
+	assert.ok(extension.includes("ONE-SHOT SKIM PR COMMAND"));
 });

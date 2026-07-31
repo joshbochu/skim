@@ -24,6 +24,14 @@ export function parseSkimCommand(args, currentMode) {
 		};
 	}
 
+	if (primary === "pr") {
+		const firstSpace = raw.search(/\s/);
+		return {
+			kind: "pr",
+			target: firstSpace === -1 ? "" : raw.slice(firstSpace).trim(),
+		};
+	}
+
 	if (normalized === "on") return { kind: "mode", mode: "on" };
 	if (normalized === "on v2") return { kind: "mode", mode: "v2" };
 	if (STOP_ALIASES.has(normalized)) return { kind: "mode", mode: "off" };

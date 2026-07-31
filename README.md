@@ -91,11 +91,17 @@ Use the Pi commands:
 /skim on v2     skim-v2 profile · replace stable and persist
 /skim off       disable either profile
 /skim capture   save last exchange for review
+/skim pr        reshape and update the current branch PR body
+/skim pr <url>  reshape and update the given GitHub PR body
 ```
 
 Stable and v2 are mutually exclusive. Running `/skim on` while v2 is active
 switches back to stable; running `/skim on v2` while stable is active switches
 to v2. The status changes from `ON` to `V2`.
+
+`/skim pr` is a one-shot write action. It does not persist and does not change
+later agent turns. With a GitHub PR URL it reshapes that PR's description; with
+no URL it resolves the open PR for the current branch.
 
 Capture accepts a note:
 
@@ -154,7 +160,8 @@ escape hatch
 Hard boundary: code, commands, URLs, identifiers, quoted text, and error
 messages stay byte-exact. Compression never gets to "fix" the evidence.
 
-Commits, pull requests, documentation, and code comments keep normal prose.
+Commits, documentation, and code comments keep normal prose. Pull request
+descriptions do too unless `/skim pr` explicitly applies the PR-body rules.
 Skim is a reply format, not permission to write cursed release notes.
 
 ## Small symbol cult

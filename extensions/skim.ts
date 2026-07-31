@@ -11,8 +11,11 @@
  *   /skim on v2     Enable persistent skim-v2 mode
  *   /skim capture   Save last prompt/response for later improvement
  *   /skim off       Disable (aliases: stop, quit)
+ *   /skim pr        Reshape the current branch PR body
+ *   /skim pr <url>  Reshape the given GitHub PR body
  *
  * Mode persists across sessions via ~/.pi/agent/skim.json.
+ * PR reshaping is a one-shot action and does not persist.
  * Rules are re-read from rules/ on every turn.
  * Edits apply to the next message without reinstalling.
  */
@@ -37,6 +40,7 @@ import {
 	parseSkimCommand,
 	stripFrontmatter,
 } from "./skim-mode.mjs";
+import { buildPrCommand } from "./skim-pr-command.mjs";
 
 type Mode = "off" | "on" | "v2";
 
@@ -61,6 +65,11 @@ const COMMAND_OPTIONS = [
 		label: "capture",
 		description: "Save last prompt and response for later improvement",
 	},
+	{
+		value: "pr",
+		label: "pr",
+		description: "Reshape and update a PR body. Optional: GitHub PR URL",
+	},
 ] as const;
 
 // ------------------------------------------------------------------
@@ -76,6 +85,8 @@ interface SkimConfig {
 	ultraPath?: string;
 	/** Optional override path to the skim-v2 skill file. */
 	v2Path?: string;
+	/** Optional override path to the skim-pr rules file. */
+	prRulesPath?: string;
 }
 
 const CONFIG_PATH = join(getAgentDir(), "skim.json");
@@ -94,11 +105,14 @@ async function loadConfig(): Promise<SkimConfig> {
 			typeof parsed.ultraPath === "string" ? parsed.ultraPath : undefined;
 		const v2Path =
 			typeof parsed.v2Path === "string" ? parsed.v2Path : undefined;
+		const prRulesPath =
+			typeof parsed.prRulesPath === "string" ? parsed.prRulesPath : undefined;
 		return {
 			defaultMode,
 			rulesPath,
 			ultraPath,
 			v2Path,
+			prRulesPath,
 		};
 	} catch {
 		return { ...DEFAULT_CONFIG };
@@ -372,6 +386,13 @@ async function loadModeRules(
 	return mode === "v2" ? loadV2Rules(config) : loadRules(config);
 }
 
+async function loadPrRules(config: SkimConfig): Promise<LoadedText> {
+	const prPath = fileURLToPath(
+		new URL("../rules/skim-pr.md", import.meta.url),
+	);
+	return loadFirstText([config.prRulesPath, prPath], "");
+}
+
 // ------------------------------------------------------------------
 // Extension
 // ------------------------------------------------------------------
@@ -381,6 +402,8 @@ export default function skim(pi: ExtensionAPI) {
 	let config: SkimConfig = { ...DEFAULT_CONFIG };
 	let configLoadPromise: Promise<void> | null = null;
 	let warnedFallback = false;
+	/** One-shot PR rules for the next agent turn only. */
+	let pendingPrRules: string | null = null;
 
 	const ensureConfigLoaded = async () => {
 		if (!configLoadPromise) {
@@ -495,7 +518,7 @@ export default function skim(pi: ExtensionAPI) {
 
 	pi.registerCommand("skim", {
 		description:
-			"Toggle skim or capture output. Args: on, on v2, off, capture [note]",
+			"Toggle skim, capture output, or reshape a PR body. Args: on, on v2, off, capture [note], pr [url]",
 		getArgumentCompletions: (prefix: string) => {
 			const normalized = prefix.trim().toLowerCase();
 			const items = COMMAND_OPTIONS.filter((item) =>
@@ -511,9 +534,28 @@ export default function skim(pi: ExtensionAPI) {
 				await captureLatest(command.note, ctx);
 			} else if (command.kind === "mode") {
 				await setMode(command.mode as Mode, ctx);
+			} else if (command.kind === "pr") {
+				const prCommand = buildPrCommand(command.target);
+				if (!prCommand.ok) {
+					ctx.ui.notify(prCommand.error, "error");
+					return;
+				}
+
+				const rules = await loadPrRules(config);
+				if (!rules.fromFile) {
+					ctx.ui.notify(
+						"skim: rules/skim-pr.md missing — PR update skipped",
+						"error",
+					);
+					return;
+				}
+
+				await ctx.waitForIdle();
+				pendingPrRules = rules.text;
+				pi.sendUserMessage(prCommand.prompt);
 			} else {
 				ctx.ui.notify(
-					`Unknown: "${command.value}". Use: on, on v2, off, capture`,
+					`Unknown: "${command.value}". Use: on, on v2, off, capture, pr`,
 					"error",
 				);
 			}
@@ -524,27 +566,37 @@ export default function skim(pi: ExtensionAPI) {
 
 	pi.on("before_agent_start", async (event, ctx) => {
 		await ensureConfigLoaded();
-		if (mode === "off") return;
+		const prRules = pendingPrRules;
+		pendingPrRules = null;
+		if (mode === "off" && prRules === null) return;
 
-		const { text, fromFile } = await loadModeRules(mode, config);
-		if (!fromFile && !warnedFallback) {
-			warnedFallback = true;
-			ctx.ui.notify(
-				"skim: rule file missing — using fallback rules",
-				"warning",
+		const parts: string[] = [];
+
+		if (mode !== "off") {
+			const { text, fromFile } = await loadModeRules(mode, config);
+			if (!fromFile && !warnedFallback) {
+				warnedFallback = true;
+				ctx.ui.notify(
+					"skim: rule file missing — using fallback rules",
+					"warning",
+				);
+			}
+
+			parts.push(
+				mode === "v2"
+					? "IMPORTANT — SKIM-V2 MODE ACTIVE:"
+					: "IMPORTANT — SKIM MODE ACTIVE:",
+				text,
 			);
+			if (mode === "on") {
+				const { text: markdownRules } = await loadMarkdownRules();
+				parts.push(markdownRules);
+				parts.push(FINAL_CHECK);
+			}
 		}
 
-		const parts = [
-			mode === "v2"
-				? "IMPORTANT — SKIM-V2 MODE ACTIVE:"
-				: "IMPORTANT — SKIM MODE ACTIVE:",
-			text,
-		];
-		if (mode === "on") {
-			const { text: markdownRules } = await loadMarkdownRules();
-			parts.push(markdownRules);
-			parts.push(FINAL_CHECK);
+		if (prRules !== null) {
+			parts.push("IMPORTANT — ONE-SHOT SKIM PR COMMAND:", prRules);
 		}
 
 		return {
