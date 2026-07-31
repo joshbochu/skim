@@ -1,7 +1,7 @@
 const STOP_ALIASES = new Set(["off", "stop", "quit"]);
 
 /**
- * Hardcoded OFF: users only see regular skim (on/off/capture).
+ * Hardcoded OFF: users only see regular skim (on/off/capture/pr).
  * Leave true for internal experiments that expose `/skim on v2`.
  * Infrastructure (skills/skim-v2, loadV2Rules, compare evals) stays in place.
  */
@@ -33,6 +33,14 @@ export function parseSkimCommand(
 		return {
 			kind: "capture",
 			note: raw.slice(raw.search(/\s|$/)).trim(),
+		};
+	}
+
+	if (primary === "pr") {
+		const firstSpace = raw.search(/\s/);
+		return {
+			kind: "pr",
+			target: firstSpace === -1 ? "" : raw.slice(firstSpace).trim(),
 		};
 	}
 
@@ -71,6 +79,11 @@ export function getCommandOptions({ allowV2 = ENABLE_VERSION_OPTIONS } = {}) {
 			label: "capture",
 			description: "Save last prompt and response for later improvement",
 		},
+		{
+			value: "pr",
+			label: "pr",
+			description: "Reshape and update a PR body. Optional: GitHub PR URL",
+		},
 	];
 	if (allowV2) {
 		options.splice(1, 0, {
@@ -83,5 +96,7 @@ export function getCommandOptions({ allowV2 = ENABLE_VERSION_OPTIONS } = {}) {
 }
 
 export function commandUsage({ allowV2 = ENABLE_VERSION_OPTIONS } = {}) {
-	return allowV2 ? "on, on v2, off, capture" : "on, off, capture";
+	return allowV2
+		? "on, on v2, off, capture, pr"
+		: "on, off, capture, pr";
 }

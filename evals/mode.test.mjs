@@ -14,9 +14,9 @@ test("version options stay hardcoded off for users", () => {
 	assert.equal(ENABLE_VERSION_OPTIONS, false);
 	assert.deepEqual(
 		getCommandOptions().map((item) => item.value),
-		["on", "off", "capture"],
+		["on", "off", "capture", "pr"],
 	);
-	assert.equal(commandUsage(), "on, off, capture");
+	assert.equal(commandUsage(), "on, off, capture, pr");
 });
 
 test("normalizes modes and coerces persisted v2 when version options are off", () => {
@@ -64,9 +64,12 @@ test("version-option infrastructure still parses on v2 when enabled", () => {
 	});
 	assert.deepEqual(
 		getCommandOptions({ allowV2: true }).map((item) => item.value),
-		["on", "on v2", "off", "capture"],
+		["on", "on v2", "off", "capture", "pr"],
 	);
-	assert.equal(commandUsage({ allowV2: true }), "on, on v2, off, capture");
+	assert.equal(
+		commandUsage({ allowV2: true }),
+		"on, on v2, off, capture, pr",
+	);
 });
 
 test("capture preserves note text and obsolete experimental syntax fails", () => {
@@ -77,6 +80,24 @@ test("capture preserves note text and obsolete experimental syntax fails", () =>
 	assert.deepEqual(parseSkimCommand("on --experimental", "on"), {
 		kind: "error",
 		value: "on --experimental",
+	});
+});
+
+test("pr command is one-shot with optional URL target", () => {
+	assert.deepEqual(parseSkimCommand("pr", "off"), {
+		kind: "pr",
+		target: "",
+	});
+	assert.deepEqual(
+		parseSkimCommand("pr https://github.com/joshbochu/skim/pull/2", "on"),
+		{
+			kind: "pr",
+			target: "https://github.com/joshbochu/skim/pull/2",
+		},
+	);
+	assert.deepEqual(parseSkimCommand("PR preview", "v2"), {
+		kind: "pr",
+		target: "preview",
 	});
 });
 
@@ -113,4 +134,12 @@ test("stable skill carries promoted Caveman-Ultra contract", async () => {
 	for (const cue of cues) {
 		assert.ok(skill.includes(cue), `stable skill missing: ${cue}`);
 	}
+});
+
+test("extension wires one-shot skim-pr command", async () => {
+	const extension = await readFile("extensions/skim.ts", "utf8");
+	assert.ok(extension.includes('new URL("../rules/skim-pr.md"'));
+	assert.ok(extension.includes("buildPrCommand"));
+	assert.ok(extension.includes("pendingPrRules"));
+	assert.ok(extension.includes("ONE-SHOT SKIM PR COMMAND"));
 });

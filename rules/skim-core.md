@@ -199,6 +199,7 @@ Never invent symbols.
   synonym that hides the requested concept.
 - Preserve quoted or user-required text exactly.
 - Keep commits, PRs, docs, and comments in normal conventions.
+  `/skim pr` is the one-shot override for PR bodies.
 - Never announce mode unless user asks about mode.
 - Security and destructive actions require explicit warnings, purposes, gates,
   and ordered steps.
