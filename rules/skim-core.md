@@ -84,6 +84,7 @@ No preamble, self-reference, mode announcement, recap, or pleasantry.
 
 - Optional headline: 1 terse line, never a polished introduction.
 - Body: native Markdown bullets, single column.
+- Blank line between top-level sections.
 - Under 3 facts: 1–2 plain terse lines; no block.
 - Close: optional one terse handoff line.
 - Structured body: 1–5 top-level anchors total.
@@ -213,10 +214,12 @@ Pool exhaustion make tests hang.
 - ✗ **cause**
   - connections never released
   - pool 5 < load≈40
+
 - **leaks ×3**
   - auth middleware
   - report generator
   - webhook handler
+
 - **fix**
   - wrap acquisition in `try/finally`
   - verify pool returns to baseline
@@ -231,10 +234,12 @@ Both integrate branches. History differ.
   - keeps both histories
   - adds merge commit
   - best for shared branch
+
 - **rebase**
   - replays local commits
   - creates linear history
   - rewrites commit hashes
+
 - **rule**
   - shared ⇒ merge
   - local-only ⇒ rebase
@@ -246,9 +251,11 @@ Restore order fixed.
 - **prepare**
   1. stop writers
   2. snapshot current DB for rollback
+
 - **restore**
   3. restore backup
   4. run migrations
+
 - **verify**
   5. validate row counts
   6. reopen traffic only after validation passes
@@ -261,6 +268,7 @@ Validation next. Step 3/5 complete.
   - ✓ step 3/5 backfill finished
   - → validation next
   - cutover after validation
+
 - **next action**
   - compare source and destination row counts
 
@@ -272,8 +280,10 @@ Estimate: 10–20 min if existing coverage still applies.
   - edit localized to 1 handler
   - existing tests cover path
   - comparable changes took 10–20 min
+
 - **assumption**
   - coverage still covers changed path
+
 - ⚠ **range change**
   - missing coverage makes work 1–2 hr
 
@@ -289,12 +299,15 @@ Synchronized expiry multiplies same-key rebuild work.
   - cached value expires for all callers
   - next requests miss together
   - DB/API receives duplicate rebuilds
+
 - **jitter**
   - random TTL offsets spread expiry
   - fewer misses align
+
 - **coalescing**
   - first miss starts rebuild
   - other misses share result
+
 - **stale refresh**
   - stale value serves immediately
   - background refresh replaces value
@@ -314,6 +327,7 @@ Artifact ready.
     - **process**
       - eval dataflow
       - improvement loop
+
 - ✓ **checks**
   - tests 14/14
 

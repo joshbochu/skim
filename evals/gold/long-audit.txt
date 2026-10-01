@@ -3,12 +3,15 @@
 - ✗ **critical**
   - authentication
   - secrets
+
 - ⚠ **medium**
   - dependencies
   - backups
+
 - ✓ **application**
   - authorization
   - input validation
   - logging
+
 - ✓ **operations**
   - incident response

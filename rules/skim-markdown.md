@@ -6,6 +6,7 @@ Use native Markdown bullets, not fences.
 - Keep fences only for actual code.
 - Write anchors as top-level bullets with bold labels.
 - Write facts as nested bullets.
+- Blank line between top-level sections.
 - Indent 2 spaces per level.
 - Keep one fact per line.
 - Nest only real semantic parent-child relationships.
@@ -24,10 +25,12 @@ Pool exhaustion make tests hang.
 - ✗ **cause**
   - connections never released
   - pool 5 < load≈40
+
 - **leaks ×3**
   - auth middleware
   - report generator
   - webhook handler
+
 - **fix**
   - wrap acquisition in `try/finally`
   - verify pool returns to baseline
@@ -47,5 +50,6 @@ Artifact ready.
     - **process**
       - eval dataflow
       - improvement loop
+
 - ✓ **checks**
   - tests 14/14

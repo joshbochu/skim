@@ -80,6 +80,7 @@ test("strict wording accepts liked voice inside same Skim layout", () => {
 		"- **cause**",
 		"  - child see changed reference",
 		"  - component rerender",
+		"",
 		"- **fix**",
 		"  - wrap object in `useMemo`",
 		"  - reference stay stable",
@@ -107,6 +108,7 @@ test("stable and skim-v2 keep liked voice plus Skim layout cues", async () => {
 		"Numbered actions never appear at top level",
 		"Continue global numbering",
 		"No supplied status strengthened",
+		"Blank line between top-level sections",
 	];
 	for (const path of ["skills/skim/SKILL.md", "skills/skim-v2/SKILL.md"]) {
 		const skill = await readFile(path, "utf8");
@@ -132,6 +134,7 @@ test("accepts native markdown container", () => {
 		"- ✓ **proof**",
 		"  - tests 42/42",
 		"  - release build clean",
+		"",
 		"- ⚠ **risk**",
 		"  - layout monolith",
 	].join("\n");
@@ -148,6 +151,7 @@ test("accepts ordered actions nested under phase anchors", () => {
 		"- **prepare**",
 		"  1. stop writers",
 		"  2. snapshot current DB",
+		"",
 		"- **restore**",
 		"  1. restore backup",
 		"  2. run migrations",

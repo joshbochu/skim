@@ -3,10 +3,12 @@ Pool exhaustion make tests hang.
 - ✗ **cause**
   - connections never released
   - pool 5 < load≈40
+
 - **leaks ×3**
   - auth middleware
   - report generator
   - webhook handler
+
 - **fix**
   - wrap acquisition in `try/finally`
   - verify pool returns to baseline

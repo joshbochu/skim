@@ -4,10 +4,12 @@ Explanation built and opened.
   - `/tmp/2026-07-11-skim-eval-example-explanation.html`
   - 58 KB
   - self-contained HTML · CSS · JS
+
 - Δ **change**
   - `1c80ad4` “use eval example to improve”
   - 13 files
   - +492/−33
+
 - **coverage**
   - **Background**
     - deep: Skim contracts · anatomy
@@ -36,6 +38,7 @@ Explanation built and opened.
     - interactive answers
     - immediate feedback
     - live score
+
 - ✓ **checks**
   - 19 `<pre>` blocks
   - code whitespace preserved

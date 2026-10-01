@@ -2,6 +2,7 @@ Compilación completa; despliegue bloqueado.
 
 - ✓ **verificación**
   - pruebas 18/18
+
 - ⚠ **pendiente**
   - documentación
   - aprobación de despliegue

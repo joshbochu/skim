@@ -103,6 +103,7 @@ No preamble, self-reference, mode announcement, recap, or pleasantry.
 
 - Optional headline: 1 terse line.
 - Body: native Markdown bullets, single column.
+- Blank line between top-level sections.
 - Under 3 facts: 1–2 plain terse lines; no block.
 - Optional close: one terse handoff line.
 - Structured body: 1–5 top-level anchors total.
@@ -304,10 +305,12 @@ Pool exhaustion make tests hang.
 - ✗ **cause**
   - connections never released
   - pool 5 < load≈40
+
 - **leaks ×3**
   - auth middleware
   - report generator
   - webhook handler
+
 - **fix**
   - wrap acquisition in `try/finally`
   - verify pool returns to baseline
@@ -322,10 +325,12 @@ Both integrate branches. History differ.
   - keeps both histories
   - adds merge commit
   - best for shared branch
+
 - **rebase**
   - replays local commits
   - creates linear history
   - rewrites commit hashes
+
 - **rule**
   - shared ⇒ merge
   - local-only ⇒ rebase
@@ -337,9 +342,11 @@ Restore order fixed.
 - **prepare**
   1. stop writers
   2. snapshot current DB for rollback
+
 - **restore**
   3. restore backup
   4. run migrations
+
 - **verify**
   5. validate row counts
   6. reopen traffic only after validation passes
@@ -352,6 +359,7 @@ Validation next. Step 3/5 complete.
   - ✓ step 3/5 backfill finished
   - → validation next
   - cutover after validation
+
 - **next action**
   - compare source and destination row counts
 
@@ -363,8 +371,10 @@ Estimate: 10–20 min if existing coverage still applies.
   - edit localized to 1 handler
   - existing tests cover path
   - comparable changes took 10–20 min
+
 - **assumption**
   - coverage still covers changed path
+
 - ⚠ **range change**
   - missing coverage makes work 1–2 hr
 
@@ -380,12 +390,15 @@ Synchronized expiry multiplies same-key rebuild work.
   - cached value expires for all callers
   - next requests miss together
   - DB/API receives duplicate rebuilds
+
 - **jitter**
   - random TTL offsets spread expiry
   - fewer misses align
+
 - **coalescing**
   - first miss starts rebuild
   - other misses share result
+
 - **stale refresh**
   - stale value serves immediately
   - background refresh replaces value
@@ -402,6 +415,7 @@ OAuth code flow gives browser code; client exchanges code for tokens.
   - client creates state and PKCE verifier
   - client sends state and code challenge
   - browser opens authorization server
+
 - **callback**
   - server redirects with code and state
   - state validation rejects mismatch; blocks CSRF
@@ -429,12 +443,14 @@ OAuth code flow gives browser code; client exchanges code, then calls API.
   - client validates returned state
   - state mismatch rejects callback; blocks CSRF
   - valid callback keeps authorization code
+
 - **exchange and use**
   - client sends code and verifier
   - server verifies PKCE; blocks stolen code
   - success returns access token
   - client sends token to resource API
   - API validates token before data
+
 - **access token**
   - token grants scoped resource access
   - API rejects invalid or expired token
@@ -455,6 +471,7 @@ Artifact ready.
     - **process**
       - eval dataflow
       - improvement loop
+
 - ✓ **checks**
   - tests 14/14
 
@@ -480,6 +497,7 @@ All gates must pass:
 - `EXPANDED_ONCE` body has ≤42 fact lines.
 - Fewer than 3 facts ⇒ 1–2 plain fact lines.
 - Otherwise ⇒ native Markdown, 1–5 anchors, 1–5 children, ≤3 levels.
+- Blank line between top-level sections.
 - Every child states independently understandable fact.
 - Every grouping expresses real relationship; no recap grouping repeats facts.
 - Required facts, gates, purposes, conditions, and qualifiers remain present.
